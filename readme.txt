@@ -3,8 +3,8 @@ Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.1
-Requires PHP: 5.6
-Stable tag: 6.6.5
+Requires PHP: 7.2
+Stable tag: 6.6.8
 
 Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
 
@@ -133,6 +133,15 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 7. Ways to support the plugin
 
 == Changelog ==
+
+
+= 6.6.8 =
+
+Moving into own project fork as version 7 codebase diverges significantly
+
+= 6.6.7 =
+
+ * Readme bump only
 
 = 6.6.6 =
 
