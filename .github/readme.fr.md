@@ -31,12 +31,12 @@ Plugin WordPress pour générer une copie statique de votre site et la déployer
 ## Ressources externes
 
  - [La page du plugin sur WordPress.org](https://wordpress.org/plugins/static-html-output-plugin)
- - [Site Web](https://wp2static.com)
- - [Documentation](https://docs.wp2static.com)
- - [Forum](https://forum.wp2static.com)
- - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)
- - [Twitter](https://twitter.com/wp2static)
- - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
+ - [Site Web](https://statichtmloutput.com)
+ - [Documentation](https://docs.statichtmloutput.com)
+ - [Forum](https://forum.statichtmloutput.com)
+ - [Slack](https://join.slack.com/t/statichtmloutput/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)
+ - [Twitter](https://twitter.com/statichtmloutput)
+ - [CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput) *master* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop)
 
 ## Un logiciel partial
 
@@ -50,12 +50,12 @@ Plugin WordPress pour générer une copie statique de votre site et la déployer
 
 ## Commandes WP-CLI
 
- - `wp wp2static options --help`
+ - `wp statichtmloutput options --help`
 
 ```
 NOM
 
-  wp wp2static options
+  wp statichtmloutput options
 
 DESCRIPTION
 
@@ -63,7 +63,7 @@ DESCRIPTION
 
 SYNOPSIS
 
-  wp wp2static options
+  wp statichtmloutput options
 
 OPTIONS
 
@@ -84,39 +84,39 @@ EXEMPLES
 
   Lister toutes les options
 
-    wp wp2static options list
+    wp statichtmloutput options list
 
   Lister toutes les options (afficher les valeurs sensibles)
 
-    wp wp2static options list --reveal_sensitive_values
+    wp statichtmloutput options list --reveal_sensitive_values
 
   Afficher une option
 
-    wp wp2static options get selected_deployment_option
+    wp statichtmloutput options get selected_deployment_option
 
   Définir une option
 
-    wp wp2static options set baseUrl 'https://mystaticsite.com'
+    wp statichtmloutput options set baseUrl 'https://mystaticsite.com'
 ```
 
- - `wp wp2static generate`
-
-```
-Génération d'une copie statique du site WordPress
-Terminé : Génération de l'archive statique du site en 00:00:04
-```
-
- - `wp wp2static deploy --test`
- - `wp wp2static deploy`
- - `wp wp2static generate`
+ - `wp statichtmloutput generate`
 
 ```
 Génération d'une copie statique du site WordPress
 Terminé : Génération de l'archive statique du site en 00:00:04
 ```
 
- - `wp wp2static deploy --test`
- - `wp wp2static deploy`
+ - `wp statichtmloutput deploy --test`
+ - `wp statichtmloutput deploy`
+ - `wp statichtmloutput generate`
+
+```
+Génération d'une copie statique du site WordPress
+Terminé : Génération de l'archive statique du site en 00:00:04
+```
+
+ - `wp statichtmloutput deploy --test`
+ - `wp statichtmloutput deploy`
 
 ```
 Déploiement du site statiqe via : zip
@@ -128,14 +128,14 @@ Envoi de l'email de confirmation…
 
 ### Modifier la liste des URLs à traiter
 
- - `wp2static_modify_initial_crawl_list`
+ - `statichtmloutput_modify_initial_crawl_list`
  - Filter hook
 
 *Signature de la fonction*
 
 ```php
 apply_filters(
-    'wp2static_modify_initial_crawl_list',
+    'statichtmloutput_modify_initial_crawl_list',
     $url_queue
 );
 ```
@@ -157,18 +157,18 @@ function add_additional_urls( $url_queue ) {
     return $url_queue;
 }
 
-add_filter( 'wp2static_modify_initial_crawl_list', 'add_additional_urls' );
+add_filter( 'statichtmloutput_modify_initial_crawl_list', 'add_additional_urls' );
 ```
 ### hook post-déploiement
 
- - `wp2static_post_deploy_trigger`
+ - `statichtmloutput_post_deploy_trigger`
  - Action hook
 
 *Signature de la fonction*
 
 ```php
 do_action(
-  'wp2static_post_deploy_trigger',
+  'statichtmloutput_post_deploy_trigger',
   $archive
 );
 ```
@@ -180,7 +180,7 @@ function printArchiveInfo( $archive ) {
     error_log( print_r( $archive, true ) );
 }
 
-add_filter( 'wp2static_post_deploy_trigger', 'printArchiveInfo' );
+add_filter( 'statichtmloutput_post_deploy_trigger', 'printArchiveInfo' );
 ```
 
 *Exemple de réponse*
@@ -231,9 +231,9 @@ Voir notre [page officielle de traduction sur wordpress.org](https://translate.w
 
 ## Support
 
-Merci d'[ouvrir une issue](https://github.com/leonstafford/wp2static/issues/new) sur GitHub ou sur le [forum de support](https://forum.wp2static.com).
+Merci d'[ouvrir une issue](https://github.com/leonstafford/statichtmloutput/issues/new) sur GitHub ou sur le [forum de support](https://forum.statichtmloutput.com).
 
-Un [groupe Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk) est à votre disposition pour échanger avec les utilisateurs de la communauté.
+Un [groupe Slack](https://join.slack.com/t/statichtmloutput/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk) est à votre disposition pour échanger avec les utilisateurs de la communauté.
 
 ## Notes
 
@@ -247,10 +247,10 @@ Il n'y a pas de grand groupe derrière ce logiciel, si ce n'est une personne pro
 
 Aidez-moi à continuer à faire ce que j'aime : développer et maintenir ce logiciel.
 
- - [Acheter le Plugin](https://wp2static.com)
+ - [Acheter le Plugin](https://statichtmloutput.com)
  - [Me soutenir sur Patreon](https://www.patreon.com/leonstafford)
  - [Donner via PayPal](https://www.paypal.me/leonjstafford)
 
 Leon
 
-[leon@wp2static.com](mailto:leon@wp2static.com)
+[leon@statichtmloutput.com](mailto:leon@statichtmloutput.com)

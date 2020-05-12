@@ -1,16 +1,16 @@
-=== WP2Static ===
+=== Static HTML Output ===
 Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 3.2
-Tested up to: 5.1
+Tested up to: 5.4.1
 Requires PHP: 7.2
 Stable tag: 6.6.8
 
-Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
+Publish your website as static HTML for improved performance and security.
 
 == Description ==
 
-Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
+Security & Performance via static website publishing.
 
 Keep using WordPress for what it's best at - managing content, but remove the security and performance headaches by publishing the site as static HTML.
 
@@ -18,7 +18,7 @@ A static site closes all the doors that an out of date WordPress, theme or plugi
 
 A pre-generated static site will outperform caching plugins, allowing you to serve at local speeds to users around the world.
 
-[**https://wp2static.com**](https://wp2static.com/)
+[**https://statichtmloutput.com**](https://statichtmloutput.com/)
 
 Not compatible with WooCommerce or membership sites, but solutions like [Snipcart](https://snipcart.com) allow for eCommerce on static websites.
 
@@ -70,19 +70,15 @@ That said, you can install the plugin and do an easy test without any other conf
 
 As WordPress allows infinite customization and configurations, I don't think any plugin author would be willing to guarantee complete compatibility with every theme, plugin and custom coding on every site. But my aim is to get as high a % of people as possible able to take advantage of static hosting with their WP site.
 
-If you haven't read on why you may want to host statically, please have a read of this article:
 
-http://docs.wp2static.com/blog/how-and-why-to-host-your-wordpress-site-for-free/
-
-
-Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any questions about this plugin's usage, installation or development, please email me at: [help@wp2static.com](mailto:help@wp2static.com)
+Developed by [**Leon Stafford**](http://ljs.dev). If you have any questions about this plugin's usage, installation or development, please use the: [GitHub Issues](https://github.com/WP2Static/static-html-output-plugin/issues)
 
 == Installation ==
 
 = via WP Admin panel =
 
 1. Go to Plugins > Add New
-2. Search for "WP2Static"
+2. Search for "Static HTML Output"
 3. Click on the Install Now button
 4. Activate the plugin and find it under the Tools menu
 
@@ -103,7 +99,7 @@ Developed by [**Leon Stafford**](http://leonstafford.github.io). If you have any
 
 = How do I configure all the options? =
 
-There's some useful information on the page once you select a deployment method. There are also some good tutorials linked at https://wp2static.com/
+There's some useful information on the page once you select a deployment method. There are also some good tutorials linked at https://statichtmloutput.com/
 
 = Where can I publish my static site to? =
 
@@ -120,8 +116,6 @@ Anywhere that allows HTML files to be uploaded, ie:
 
 Everyone's WordPress hosting environment and configuration is unique, with different plugins, themes, PHP versions, to name a few. Whilst the plugin does its best to support all environments, sometimes you'll encounter a new issue. Sometimes we can adjust the settings in the plugin to overcome an issue, other times, it will require a bugfix and a new release of the plugin (usually a quick process).
 
-When you have an issue, send the contents of your "Export Log" on the plugin screen to the developer, at [help@wp2static.com](mailto:help@wp2static.com). He'll usually respond within 12 hrs, often sooner.
-
 == Screenshots ==
 
 1. Deployment screen
@@ -137,7 +131,11 @@ When you have an issue, send the contents of your "Export Log" on the plugin scr
 
 = 6.6.8 =
 
-Moving into own project fork as version 7 codebase diverges significantly
+ * Tested with WP 5.4.1
+ * Matching project name to wp.org slug
+ * Implement code quality tooling
+ * Performance optimization for slow hosting providers
+
 
 = 6.6.7 =
 
@@ -852,13 +850,13 @@ Critical upgrade with bugfixes and improvements
 
 = 2.8 =
 
-Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@wp2static.com for assistance.
+Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@statichtmloutput.com for assistance.
 
  * Bugfix: critical fix for Dropbox, BunnyCDN and Netlify exports
 
 = 2.7 =
 
-Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@wp2static.com for assistance.
+Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@statichtmloutput.com for assistance.
 
  * Bugfix: Fixes major issue where a failed first export blocked subsequent ones unless page was refreshed
  * Bugfix: Plugin was not respecting the Output Directory Override

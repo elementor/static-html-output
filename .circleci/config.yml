@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Run Code Sniffs
           command: |
-            /tmp/phpcs/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/CSSParser/*,*/FTP/*,*/URL2/*,wp2static.php ./
+            /tmp/phpcs/bin/phpcs --standard=./tools/phpcs.xml --ignore=,*/tests/*,*/CSSParser/*,*/FTP/*,*/URL2/*,statichtmloutput.php ./
       - run:
           name: Run Unit Tests
           command: |

@@ -170,21 +170,21 @@ class WP2Static_CLI {
  *
  * List all options
  *
- *     wp wp2static options list
+ *     wp statichtmloutput options list
  *
  * List all options (revealing sensitive values)
  *
- *     wp wp2static options list --reveal_sensitive_values
+ *     wp statichtmloutput options list --reveal_sensitive_values
  *
  * Get option
  *
- *     wp wp2static options get selected_deployment_option
+ *     wp statichtmloutput options get selected_deployment_option
  *
  * Set option
  *
- *     wp wp2static options set baseUrl 'https://mystaticsite.com'
+ *     wp statichtmloutput options set baseUrl 'https://mystaticsite.com'
  */
-function wp2static_options( $args, $assoc_args ) {
+function statichtmloutput_options( $args, $assoc_args ) {
     $action = isset( $args[0] ) ? $args[0] : null;
     $option_name = isset( $args[1] ) ? $args[1] : null;
     $value = isset( $args[2] ) ? $args[2] : null;
@@ -250,8 +250,8 @@ function wp2static_options( $args, $assoc_args ) {
     }
 }
 
-WP_CLI::add_command( 'wp2static', 'wp2static_cli' );
-WP_CLI::add_command( 'wp2static options', 'wp2static_options' );
+WP_CLI::add_command( 'statichtmloutput', 'statichtmloutput_cli' );
+WP_CLI::add_command( 'statichtmloutput options', 'statichtmloutput_options' );
 
 /*
 TODO:

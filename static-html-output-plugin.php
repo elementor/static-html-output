@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: WP2Static
- * Plugin URI:  https://wp2static.com
+ * Plugin Name: Static HTML Output
+ * Plugin URI:  https://statichtmloutput.com
  * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
  * Version:     6.6.8
  * Author:      Leon Stafford
@@ -28,7 +28,7 @@ require_once 'plugin/URL2/URL2.php';
 WP2Static_Controller::init( __FILE__ );
 
 function plugin_action_links( $links ) {
-    $settings_link = '<a href="admin.php?page=wp2static">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
+    $settings_link = '<a href="admin.php?page=statichtmloutput">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
     array_unshift( $links, $settings_link );
 
     return $links;
@@ -94,5 +94,5 @@ remove_action( 'wp_head', 'wlwmanifest_link' );
 
 // WP CLI support
 if ( defined( 'WP_CLI' ) ) {
-    require_once dirname( __FILE__ ) . '/plugin/wp2static-wp-cli-commands.php';
+    require_once dirname( __FILE__ ) . '/plugin/statichtmloutput-wp-cli-commands.php';
 }

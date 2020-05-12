@@ -256,5 +256,5 @@ class WP2Static_Request {
     }
 }
 
-$wp2static_request = new WP2Static_Request();
+$statichtmloutput_request = new WP2Static_Request();
 

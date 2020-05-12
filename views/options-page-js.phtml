@@ -647,7 +647,7 @@ jQuery(document).ready(function($){
     notices = $('.update-nag, .updated, .error, .is-dismissible');
 
     $.each(notices, function(index, element) {
-        if ( ! $(element).hasClass('wp2static-notice') ) {
+        if ( ! $(element).hasClass('statichtmloutput-notice') ) {
             $(element).hide();
         }
     });
@@ -955,7 +955,7 @@ jQuery(document).ready(function($){
     }
   });
 
-  $('#wp2static-footer').on('click', '.resetDefaultSettingsButton', function(event) {
+  $('#statichtmloutput-footer').on('click', '.resetDefaultSettingsButton', function(event) {
       event.preventDefault();
 
       $('.hiddenActionField').val('wp_static_html_output_ajax');
@@ -982,7 +982,7 @@ jQuery(document).ready(function($){
       });
   });
 
-  $('#wp2static-footer').on('click', '.saveSettingsButton', function(event) {
+  $('#statichtmloutput-footer').on('click', '.saveSettingsButton', function(event) {
       event.preventDefault();
       saveOptions();
   });

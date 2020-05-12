@@ -125,7 +125,7 @@ p.submit{
 }
 
 /* 86% when full sidebar, needs to grow otherwise */
-#wp2static-footer {
+#statichtmloutput-footer {
   background: rgba(255, 255, 255, 0.9);
   width: 100%;
   position: fixed;
@@ -137,7 +137,7 @@ p.submit{
 
 }
 
-.wrap.wp2static {
+.wrap.statichtmloutput {
   padding-bottom: 100px;
 }
 

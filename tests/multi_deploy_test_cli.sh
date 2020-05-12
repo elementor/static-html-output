@@ -6,19 +6,19 @@ for deployer in bitbucket ftp github gitlab netlify s3
 do
   echo "$deployer" ;
   wp option update blogname "$deployer test"
-  wp wp2static options set selected_deployment_option "$deployer"
-  wp wp2static options set baseUrl $(wp wp2static options get "baseUrl-$deployer")
-  wp wp2static deploy
+  wp statichtmloutput options set selected_deployment_option "$deployer"
+  wp statichtmloutput options set baseUrl $(wp statichtmloutput options get "baseUrl-$deployer")
+  wp statichtmloutput deploy
 done
 
 exit
 
 # Example usage to get each Destination URL printed after deploy
 #
-# (or just get from wp2static options)
+# (or just get from statichtmloutput options)
 #
 # function printArchiveInfo( $archive ) {
 #     error_log( $archive->settings['baseUrl'] );
 # }
 #
-# add_filter( 'wp2static_post_deploy_trigger', 'printArchiveInfo' );
+# add_filter( 'statichtmloutput_post_deploy_trigger', 'printArchiveInfo' );

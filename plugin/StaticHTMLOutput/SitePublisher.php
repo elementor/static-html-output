@@ -100,7 +100,7 @@ class WP2Static_SitePublisher {
 
     public function getLocalFileToDeploy( $file_in_archive, $replace_path ) {
         // NOTE: untested fix for Windows filepaths
-        // https://github.com/leonstafford/wp2static/issues/221
+        // https://github.com/leonstafford/statichtmloutput/issues/221
         $original_filepath = str_replace(
             '\\',
             '\\\\',

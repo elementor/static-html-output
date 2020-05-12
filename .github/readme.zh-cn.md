@@ -32,12 +32,12 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 ## 扩展资源
 
  - [WordPress.org插件主页](https://wordpress.org/plugins/static-html-output-plugin)
- - [推广网站](https://wp2static.com)
- - [在线文档](https://docs.wp2static.com)
- - [论坛](https://forum.wp2static.com)
- - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)  
- - [Twitter](https://twitter.com/wp2static)  
- - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
+ - [推广网站](https://statichtmloutput.com)
+ - [在线文档](https://docs.statichtmloutput.com)
+ - [论坛](https://forum.statichtmloutput.com)
+ - [Slack](https://join.slack.com/t/statichtmloutput/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)  
+ - [Twitter](https://twitter.com/statichtmloutput)  
+ - [CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput) *master* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop)
 
 ## 软件态度
 
@@ -51,11 +51,11 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 
 ## WP-CLI命令行
 
- - `wp wp2static options --help`
+ - `wp statichtmloutput options --help`
 ```
 名称
 
-  wp wp2static options
+  wp statichtmloutput options
 
 描述
 
@@ -63,7 +63,7 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 
 概要
 
-  wp wp2static options
+  wp statichtmloutput options
 
 选项
 
@@ -84,38 +84,38 @@ WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 �
 
   显示所有选项
 
-    wp wp2static options list
+    wp statichtmloutput options list
 
   显示所有选项(展示敏感值)
 
-    wp wp2static options list --reveal_sensitive_values
+    wp statichtmloutput options list --reveal_sensitive_values
 
   获得某个选项值
 
-    wp wp2static options get selected_deployment_option
+    wp statichtmloutput options get selected_deployment_option
 
   设置选项内容
 
-    wp wp2static options set baseUrl 'https://mystaticsite.com'
+    wp statichtmloutput options set baseUrl 'https://mystaticsite.com'
 ```
- - `wp wp2static generate`
+ - `wp statichtmloutput generate`
 
 ```
 Generating static copy of WordPress site
 Success: Generated static site archive in 00:00:04
 ```
 
- - `wp wp2static deploy --test`
- - `wp wp2static deploy`
- - `wp wp2static generate`
+ - `wp statichtmloutput deploy --test`
+ - `wp statichtmloutput deploy`
+ - `wp statichtmloutput generate`
 
 ```
 Generating static copy of WordPress site
 Success: Generated static site archive in 00:00:04
 ```
 
- - `wp wp2static deploy --test`
- - `wp wp2static deploy`
+ - `wp statichtmloutput deploy --test`
+ - `wp statichtmloutput deploy`
 
 ```
 Deploying static site via: zip
@@ -127,13 +127,13 @@ Sending confirmation email...
 
 ### 修改需要抓取的初始化URL列表
 
- - `wp2static_modify_initial_crawl_list`
+ - `statichtmloutput_modify_initial_crawl_list`
  - Filter hook
 
 *signature*
 ```php
 apply_filters(
-    'wp2static_modify_initial_crawl_list',
+    'statichtmloutput_modify_initial_crawl_list',
     $url_queue
 );
 ```
@@ -154,17 +154,17 @@ function add_additional_urls( $url_queue ) {
     return $url_queue;
 }
 
-add_filter( 'wp2static_modify_initial_crawl_list', 'add_additional_urls' );
+add_filter( 'statichtmloutput_modify_initial_crawl_list', 'add_additional_urls' );
 ```
 ### 部署后钩子
 
- - `wp2static_post_deploy_trigger`
+ - `statichtmloutput_post_deploy_trigger`
  - Action hook
 
 *signature*
 ```php
 do_action(
-  'wp2static_post_deploy_trigger',
+  'statichtmloutput_post_deploy_trigger',
   $archive
 );
 ```
@@ -175,7 +175,7 @@ function printArchiveInfo( $archive ) {
     error_log( print_r( $archive, true ) );
 }
 
-add_filter( 'wp2static_post_deploy_trigger', 'printArchiveInfo' );
+add_filter( 'statichtmloutput_post_deploy_trigger', 'printArchiveInfo' );
 ```
 
 *example response*
@@ -225,9 +225,9 @@ Archive Object
 
 ## 支持
 
-请移步到GitHub[提交Issue](https://github.com/leonstafford/wp2static/issues/new) 或者访问本插件的[支持论坛](https://forum.wp2static.com).
+请移步到GitHub[提交Issue](https://github.com/leonstafford/statichtmloutput/issues/new) 或者访问本插件的[支持论坛](https://forum.statichtmloutput.com).
 
-这里还有一个[Slack群组](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk), 可以在社区里快速参与讨论.
+这里还有一个[Slack群组](https://join.slack.com/t/statichtmloutput/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk), 可以在社区里快速参与讨论.
 
 ## 说明
 
@@ -242,10 +242,10 @@ There is no big company behind this software, besides a sole proprietership in m
 Help keep me doing what I love: building and supporting this software. 
 协助让我坚持做我所热爱的————开发和支持这个软件
 
- - [购买商业许可](https://wp2static.com)
+ - [购买商业许可](https://statichtmloutput.com)
  - [在Patreon上资助我](https://www.patreon.com/leonstafford)
  - [在PayPal上资助我](https://www.paypal.me/leonjstafford)
 
 Leon
 
-leon@wp2static.com
+leon@statichtmloutput.com

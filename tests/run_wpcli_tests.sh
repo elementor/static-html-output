@@ -4,29 +4,29 @@
 wp plugin deactivate --uninstall wordpress-static-html-plugin
 
 # install latest development version
-wp plugin install https://github.com/leonstafford/wp2static/archive/master.zip
+wp plugin install https://github.com/leonstafford/statichtmloutput/archive/master.zip
 
 # rename folder for correct plugin slug
-mv wp-content/plugins/wp2static wp-content/plugins/wordpress-static-html-plugin
+mv wp-content/plugins/statichtmloutput wp-content/plugins/wordpress-static-html-plugin
 
 #activate the renamed plugin
 wp plugin activate wordpress-static-html-plugin
 
 #activate the renamed plugin
-wp wp2static diagnostics
+wp statichtmloutput diagnostics
 
 # install theme for running diagnostics
-wp theme install https://github.com/leonstafford/diagnostic-theme-for-wp2static/archive/master.zip --activate
+wp theme install https://github.com/leonstafford/diagnostic-theme-for-statichtmloutput/archive/master.zip --activate
 
 # generate an archive
-wp wp2static generate
+wp statichtmloutput generate
 
 # pipe generate time into a TXT file and have this loaded by the theme via JS...
 
 # this allows for some general benchmarking/comparison across hosts
 
 # test deploy
-wp wp2static deploy --test
+wp statichtmloutput deploy --test
 
 # deploy (to folder "/mystaticsite/" if no existing options set)
-wp wp2static deploy
+wp statichtmloutput deploy

@@ -191,6 +191,6 @@ class Deployer extends WP2Static {
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
-        do_action( 'wp2static_post_deploy_trigger', $this->archive );
+        do_action( 'statichtmloutput_post_deploy_trigger', $this->archive );
     }
 }

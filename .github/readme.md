@@ -33,10 +33,10 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
 ## External resources
 
  - [WordPress.org plugin page](https://wordpress.org/plugins/static-html-output-plugin)
- - [Marketing site](https://wp2static.com)
- - [Documentation](https://wp2static.com)
- - [Forum](https://forum.wp2static.com)
- - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
+ - [Marketing site](https://statichtmloutput.com)
+ - [Documentation](https://statichtmloutput.com)
+ - [Forum](https://forum.statichtmloutput.com)
+ - [CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput) *master* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop)
 
 ## Opinionated software
 
@@ -50,11 +50,11 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
 
 ## WP-CLI commands
 
- - `wp wp2static options --help`
+ - `wp statichtmloutput options --help`
 ```
 NAME
 
-  wp wp2static options
+  wp statichtmloutput options
 
 DESCRIPTION
 
@@ -62,7 +62,7 @@ DESCRIPTION
 
 SYNOPSIS
 
-  wp wp2static options
+  wp statichtmloutput options
 
 OPTIONS
 
@@ -83,38 +83,38 @@ EXAMPLES
 
   List all options
 
-    wp wp2static options list
+    wp statichtmloutput options list
 
   List all options (revealing sensitive values)
 
-    wp wp2static options list --reveal_sensitive_values
+    wp statichtmloutput options list --reveal_sensitive_values
 
   Get option
 
-    wp wp2static options get selected_deployment_option
+    wp statichtmloutput options get selected_deployment_option
 
   Set option
 
-    wp wp2static options set baseUrl 'https://mystaticsite.com'
+    wp statichtmloutput options set baseUrl 'https://mystaticsite.com'
 ```
- - `wp wp2static generate`
+ - `wp statichtmloutput generate`
 
 ```
 Generating static copy of WordPress site
 Success: Generated static site archive in 00:00:04
 ```
 
- - `wp wp2static deploy --test`
- - `wp wp2static deploy`
- - `wp wp2static generate`
+ - `wp statichtmloutput deploy --test`
+ - `wp statichtmloutput deploy`
+ - `wp statichtmloutput generate`
 
 ```
 Generating static copy of WordPress site
 Success: Generated static site archive in 00:00:04
 ```
 
- - `wp wp2static deploy --test`
- - `wp wp2static deploy`
+ - `wp statichtmloutput deploy --test`
+ - `wp statichtmloutput deploy`
 
 ```
 Deploying static site via: zip
@@ -126,13 +126,13 @@ Sending confirmation email...
 
 ### Modify the initial list of URLs to crawl
 
- - `wp2static_modify_initial_crawl_list`
+ - `statichtmloutput_modify_initial_crawl_list`
  - Filter hook
 
 *signature*
 ```php
 apply_filters(
-    'wp2static_modify_initial_crawl_list',
+    'statichtmloutput_modify_initial_crawl_list',
     $url_queue
 );
 ```
@@ -153,17 +153,17 @@ function add_additional_urls( $url_queue ) {
     return $url_queue;
 }
 
-add_filter( 'wp2static_modify_initial_crawl_list', 'add_additional_urls' );
+add_filter( 'statichtmloutput_modify_initial_crawl_list', 'add_additional_urls' );
 ```
 ### Post-deployment hook
 
- - `wp2static_post_deploy_trigger`
+ - `statichtmloutput_post_deploy_trigger`
  - Action hook
 
 *signature*
 ```php
 do_action(
-  'wp2static_post_deploy_trigger',
+  'statichtmloutput_post_deploy_trigger',
   $archive
 );
 ```
@@ -174,7 +174,7 @@ function printArchiveInfo( $archive ) {
     error_log( print_r( $archive, true ) );
 }
 
-add_filter( 'wp2static_post_deploy_trigger', 'printArchiveInfo' );
+add_filter( 'statichtmloutput_post_deploy_trigger', 'printArchiveInfo' );
 ```
 
 *example response*
@@ -224,7 +224,7 @@ Our official [translation page](https://translate.wordpress.org/projects/wp-plug
 
 ## Support
 
-Please [raise an issue](https://github.com/wp2static/wp2static-v6/issues/new) here on GitHub or on the plugin's [support forum](https://forum.wp2static.com).
+Please [raise an issue](https://github.com/statichtmloutput/statichtmloutput-v6/issues/new) here on GitHub or on the plugin's [support forum](https://forum.statichtmloutput.com).
 
 ## Notes
 
@@ -233,4 +233,4 @@ When cloning the repo for direct use, clone it into a dir named after the offici
 
 Leon
 
-leon@wp2static.com
+leon@statichtmloutput.com

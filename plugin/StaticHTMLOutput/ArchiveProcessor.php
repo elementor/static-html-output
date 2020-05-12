@@ -77,7 +77,7 @@ class ArchiveProcessor extends WP2Static {
             return false;
         }
 
-        $dotfiles = array( '.', '..', '/.wp2static_safety' );
+        $dotfiles = array( '.', '..', '/.statichtmloutput_safety' );
 
         foreach ( scandir( $dirname ) as $file ) {
             if ( ! in_array( $file, $dotfiles ) ) {
@@ -94,7 +94,7 @@ class ArchiveProcessor extends WP2Static {
         }
 
         foreach ( scandir( $dirname ) as $file ) {
-            if ( $file == '.wp2static_safety' ) {
+            if ( $file == '.statichtmloutput_safety' ) {
                  return true;
             }
         }
@@ -107,8 +107,8 @@ class ArchiveProcessor extends WP2Static {
             return false;
         }
 
-        $safety_file = $dirname . '/.wp2static_safety';
-        $result = file_put_contents( $safety_file, 'wp2static' );
+        $safety_file = $dirname . '/.statichtmloutput_safety';
+        $result = file_put_contents( $safety_file, 'statichtmloutput' );
 
         chmod( $safety_file, 0664 );
 

@@ -16,8 +16,8 @@ cp -r $EXEC_DIR/languages $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/plugin $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/wp2static.php $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/wp2static.css $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/statichtmloutput.php $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/statichtmloutput.css $TMP_DIR/static-html-output-plugin/
 
 cd $TMP_DIR
 
@@ -30,7 +30,7 @@ find . -type f -exec chmod 644 {} \;
 # strip comments and whitespace from each PHP file
 
 if [ -z "$2" ]; then
-  find .  ! -name 'wp2static.php' -name \*.php -exec $EXEC_DIR/tools/compress_php_file {} \;
+  find .  ! -name 'statichtmloutput.php' -name \*.php -exec $EXEC_DIR/tools/compress_php_file {} \;
 fi
 
 zip -r -9 ./$1.zip ./static-html-output-plugin

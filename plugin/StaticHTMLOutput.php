@@ -2,8 +2,8 @@
 
 class WP2Static_Controller {
     const VERSION = '6.6.8';
-    const OPTIONS_KEY = 'wp2static-options';
-    const HOOK = 'wp2static';
+    const OPTIONS_KEY = 'statichtmloutput-options';
+    const HOOK = 'statichtmloutput';
 
     protected static $instance = null;
 
@@ -55,7 +55,7 @@ class WP2Static_Controller {
 
         $order = array(
             'index.php',
-            'wp2static',
+            'statichtmloutput',
         );
 
         return $order;
@@ -131,7 +131,7 @@ class WP2Static_Controller {
 
         wp_enqueue_style(
             self::HOOK . '-admin',
-            $plugins_url . 'wp2static.css?sdf=sdfd',
+            $plugins_url . 'statichtmloutput.css?sdf=sdfd',
             null,
             $this::VERSION
         );
@@ -169,7 +169,7 @@ class WP2Static_Controller {
                 WPSHO_PostSettings::get( $target_settings );
         }
 
-        $plugin_hook = 'wp2static';
+        $plugin_hook = 'statichtmloutput';
 
         $initial_file_list_count =
             WP2Static_FilesHelper::buildInitialFileList(
@@ -245,7 +245,7 @@ class WP2Static_Controller {
     }
 
     public function reset_default_settings() {
-        if ( ! delete_option( 'wp2static-options' ) ) {
+        if ( ! delete_option( 'statichtmloutput-options' ) ) {
             error_log( "Couldn't reset plugin to default settings" );
         }
 

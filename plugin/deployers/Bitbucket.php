@@ -84,8 +84,8 @@ class WP2Static_BitBucket extends WP2Static_SitePublisher {
             $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';
 
             $post_options = array(
-                '.tmp_wp2static.txt' => 'Test WP2Static connectivity',
-                '.tmp_wp2static.txt' => 'Test WP2Static connectivity #2',
+                '.tmp_statichtmloutput.txt' => 'Test WP2Static connectivity',
+                '.tmp_statichtmloutput.txt' => 'Test WP2Static connectivity #2',
                 'message' => 'WP2Static deployment test',
             );
 

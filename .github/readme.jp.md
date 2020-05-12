@@ -38,12 +38,12 @@ WordPressで静的HTMLを生成して、色んな可能性を開きます。
 ## External resources
 
  - [WordPress.org plugin page](https://wordpress.org/plugins/static-html-output-plugin)
- - [Marketing site](https://wp2static.com)
- - [Documentation](https://docs.wp2static.com)
- - [Forum](https://forum.wp2static.com)
- - [Slack](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)
- - [Twitter](https://twitter.com/wp2static)
- - [CircleCI](https://circleci.com/gh/leonstafford/wp2static) *master* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/wp2static/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/wp2static/tree/develop)
+ - [Marketing site](https://statichtmloutput.com)
+ - [Documentation](https://docs.statichtmloutput.com)
+ - [Forum](https://forum.statichtmloutput.com)
+ - [Slack](https://join.slack.com/t/statichtmloutput/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk)
+ - [Twitter](https://twitter.com/statichtmloutput)
+ - [CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput) *master* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop)
 
 ## Opinionated software
 
@@ -57,11 +57,11 @@ WordPressで静的HTMLを生成して、色んな可能性を開きます。
 
 ## WP-CLI commands
 
- - `wp wp2static options --help`
+ - `wp statichtmloutput options --help`
 ```
 NAME
 
-  wp wp2static options
+  wp statichtmloutput options
 
 DESCRIPTION
 
@@ -69,7 +69,7 @@ DESCRIPTION
 
 SYNOPSIS
 
-  wp wp2static options
+  wp statichtmloutput options
 
 OPTIONS
 
@@ -90,38 +90,38 @@ EXAMPLES
 
   List all options
 
-    wp wp2static options list
+    wp statichtmloutput options list
 
   List all options (revealing sensitive values)
 
-    wp wp2static options list --reveal_sensitive_values
+    wp statichtmloutput options list --reveal_sensitive_values
 
   Get option
 
-    wp wp2static options get selected_deployment_option
+    wp statichtmloutput options get selected_deployment_option
 
   Set option
 
-    wp wp2static options set baseUrl 'https://mystaticsite.com'
+    wp statichtmloutput options set baseUrl 'https://mystaticsite.com'
 ```
- - `wp wp2static generate`
+ - `wp statichtmloutput generate`
 
 ```
 Generating static copy of WordPress site
 Success: Generated static site archive in 00:00:04
 ```
 
- - `wp wp2static deploy --test`
- - `wp wp2static deploy`
- - `wp wp2static generate`
+ - `wp statichtmloutput deploy --test`
+ - `wp statichtmloutput deploy`
+ - `wp statichtmloutput generate`
 
 ```
 Generating static copy of WordPress site
 Success: Generated static site archive in 00:00:04
 ```
 
- - `wp wp2static deploy --test`
- - `wp wp2static deploy`
+ - `wp statichtmloutput deploy --test`
+ - `wp statichtmloutput deploy`
 
 ```
 Deploying static site via: zip
@@ -133,13 +133,13 @@ Sending confirmation email...
 
 ### Modify the initial list of URLs to crawl
 
- - `wp2static_modify_initial_crawl_list`
+ - `statichtmloutput_modify_initial_crawl_list`
  - Filter hook
 
 *signature*
 ```php
 apply_filters(
-    'wp2static_modify_initial_crawl_list',
+    'statichtmloutput_modify_initial_crawl_list',
     $url_queue
 );
 ```
@@ -160,17 +160,17 @@ function add_additional_urls( $url_queue ) {
     return $url_queue;
 }
 
-add_filter( 'wp2static_modify_initial_crawl_list', 'add_additional_urls' );
+add_filter( 'statichtmloutput_modify_initial_crawl_list', 'add_additional_urls' );
 ```
 ### Post-deployment hook
 
- - `wp2static_post_deploy_trigger`
+ - `statichtmloutput_post_deploy_trigger`
  - Action hook
 
 *signature*
 ```php
 do_action(
-  'wp2static_post_deploy_trigger',
+  'statichtmloutput_post_deploy_trigger',
   $archive
 );
 ```
@@ -181,7 +181,7 @@ function printArchiveInfo( $archive ) {
     error_log( print_r( $archive, true ) );
 }
 
-add_filter( 'wp2static_post_deploy_trigger', 'printArchiveInfo' );
+add_filter( 'statichtmloutput_post_deploy_trigger', 'printArchiveInfo' );
 ```
 
 *example response*
@@ -215,17 +215,17 @@ Archive Object
 
 ## Development
 
-このレポの「`develop`」ブランチには最新コードがあります。安定したコードは[リリース](https://github.com/leonstafford/wp2static/releases)または[wordpress.org](https://wordpress.org/plugins/static-html-output-plugin/)の方からダウンロードして下さい。
+このレポの「`develop`」ブランチには最新コードがあります。安定したコードは[リリース](https://github.com/leonstafford/statichtmloutput/releases)または[wordpress.org](https://wordpress.org/plugins/static-html-output-plugin/)の方からダウンロードして下さい。
 
 プラグインに協力したいの方には普通のGitHubの方法で：
 
- - [Issue](https://github.com/leonstafford/wp2static/issues)を作って
+ - [Issue](https://github.com/leonstafford/statichtmloutput/issues)を作って
  - レポをフォークして
  - PRを送信する
 
 何かの不明所がありましたら、是非開発者に連絡して下さい：
 
-[スタフォード・レオン](mailto:leon@wp2static.com)　（英語・日本語）
+[スタフォード・レオン](mailto:leon@statichtmloutput.com)　（英語・日本語）
 
 In trying to make development/contributing easier, we'll keep requirements to a minimum. If you prefer Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac, they're all fine. This is a WordPress plugin, so anywhere you can run WordPress, you can do development on this :)
 
@@ -239,9 +239,9 @@ Our official [translation page](https://translate.wordpress.org/projects/wp-plug
 
 ## Support
 
-Please [raise an issue](https://github.com/leonstafford/wp2static/issues/new) here on GitHub or on the plugin's [support forum](https://forum.wp2static.com).
+Please [raise an issue](https://github.com/leonstafford/statichtmloutput/issues/new) here on GitHub or on the plugin's [support forum](https://forum.statichtmloutput.com).
 
-There is also a [Slack group](https://join.slack.com/t/wp2static/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk), for quick discussions among the user community.
+There is also a [Slack group](https://join.slack.com/t/statichtmloutput/shared_invite/enQtNDQ4MDM4MjkwNjEwLTVmN2I2MmU4ODI2MWRkNzM4ZGU3YWU4ZGVhMzgwZTc1MDE2OGNmYTFhOGMwM2U0ZTVlYTljYmM2Yjk2ODJlOTk), for quick discussions among the user community.
 
 ## Notes
 
@@ -255,10 +255,10 @@ There is no big company behind this software, besides a sole proprietership in m
 
 Help keep me doing what I love: building and supporting this software. 
 
- - [Buy the Plugin](https://wp2static.com)
+ - [Buy the Plugin](https://statichtmloutput.com)
  - [Back me on Patreon](https://www.patreon.com/leonstafford)
  - [Fund my PayPal](https://www.paypal.me/leonjstafford)
 
 Leon
 
-leon@wp2static.com
+leon@statichtmloutput.com

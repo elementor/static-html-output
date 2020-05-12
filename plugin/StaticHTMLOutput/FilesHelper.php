@@ -409,7 +409,7 @@ class WP2Static_FilesHelper {
         $url_queue = self::cleanDetectedURLs( $url_queue );
 
         $url_queue = apply_filters(
-            'wp2static_modify_initial_crawl_list',
+            'statichtmloutput_modify_initial_crawl_list',
             $url_queue
         );
 

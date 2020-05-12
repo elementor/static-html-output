@@ -131,7 +131,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
     public function test_s3() {
         try {
             $this->put_s3_object(
-                '.tmp_wp2static.txt',
+                '.tmp_statichtmloutput.txt',
                 'Test WP2Static connectivity',
                 'text/plain'
             );
