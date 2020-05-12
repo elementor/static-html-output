@@ -4,7 +4,7 @@
     <tbody>
       <tr>
         <th scope="row">
-          <label for="useBasicAuth"><?php echo __('Use basic authentication', 'static-html-output-plugin');?></label>
+          <label for="useBasicAuth">Use basic authentication</label>
         </th>
         <td>
           <?php $tpl->displayCheckbox($this, 'useBasicAuth', 'My WP site requires Basic Auth to access'); ?>
@@ -12,7 +12,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="basicAuthUser"><?php echo __('Basic auth user', 'static-html-output-plugin');?></label>
+          <label for="basicAuthUser">Basic auth user</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'basicAuthUser', 'Basic Auth user', '', ''); ?>
@@ -20,7 +20,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="basicAuthPassword"><?php echo __('Basic auth password', 'static-html-output-plugin');?></label>
+          <label for="basicAuthPassword">Basic auth password</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'basicAuthPassword', 'Basic Auth password', '', 'password'); ?>
@@ -28,7 +28,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="crawlPort"><?php echo __('Custom crawling port', 'static-html-output-plugin');?></label>
+          <label for="crawlPort">Custom crawling port></label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'crawlPort', 'Custom crawling port', ''); ?>
@@ -36,7 +36,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label><?php echo __('Initial crawl list', 'static-html-output-plugin');?></label>
+          <label>Initial crawl list</label>
         </th>
         <td>
           <p>Before it starts to export your site, the plugin first generates a list of all WordPress URLs it thinks it should include. It takes these from what it knows about your posts, pages, tags, archives and media.</p>
@@ -55,7 +55,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="detection_level"><?php echo __('Detection level', 'static-html-output-plugin');?></label>
+          <label for="detection_level">Detection level</label>
         </th>
         <td>
             <select name="detection_level" id="detection_level">
@@ -79,7 +79,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label><?php echo __('Exclude certain URLs', 'static-html-output-plugin');?></label>
+          <label>Exclude certain URLs</label>
         </th>
         <td>
         <p>Where the plugin has detected too many files and you want to exclude certain URLs from being crawled, please specify these URLs here.</p> <br>
@@ -97,7 +97,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label><?php echo __('Include additional URLs', 'static-html-output-plugin');?></label>
+          <label>Include additional URLs</label>
         </th>
         <td>
   <p>Where the plugin fails to detect certain URLs that you know you want to include, please add these here. This will be applied after any exclusions, in case you want to exclude a whole directory, then include just one file from it.</p> <br>
@@ -115,7 +115,7 @@
       </tr>
     <tr>
       <th scope="row">
-        <label for="crawl_delay"><?php echo __('Crawl Delay', 'static-html-output-plugin');?></label>
+        <label for="crawl_delay">Crawl Delay</label>
       </th>
       <td>
         <select name="crawl_delay" id="crawl_delay">

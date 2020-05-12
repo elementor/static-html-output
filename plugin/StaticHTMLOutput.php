@@ -110,8 +110,8 @@ class StaticHTMLOutput_Controller {
     public function registerOptionsPage() {
         $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
         $page = add_menu_page(
-            __( 'Static HTML', 'statichtmloutput' ),
-            __( 'Static HTML', 'statichtmloutput' ),
+            'Static HTML',
+            'Static HTML',
             'manage_options',
             self::HOOK,
             array( self::$instance, 'renderOptionsPage' ),

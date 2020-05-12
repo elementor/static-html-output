@@ -318,6 +318,8 @@ class StaticHTMLOutput_FilesHelper {
             'package.json',
             'pb_backupbuddy',
             'previous-export',
+            'wp2static-processed-site',
+            'wp2static-crawled-site',
             'thumbs.db',
             'vendor',
             'wp-static-html-output', // exclude earlier version exports

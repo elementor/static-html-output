@@ -154,7 +154,7 @@ class WPSHO_DBSettings {
         $settings['crawl_increment'] =
             isset( $plugin->options->crawl_increment ) ?
             (int) $plugin->options->crawl_increment :
-            1;
+            10;
 
         // NOTE: any baseUrl required if creating an offline ZIP
         $settings['baseUrl'] = rtrim( $plugin->options->baseUrl, '/' ) . '/';

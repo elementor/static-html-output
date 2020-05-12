@@ -11,7 +11,7 @@ class TemplateHelper {
       <fieldset>
         <label for='{$field_name}'>
           <input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $tpl_vars->options->{$field_name} === '1' ? 'checked' : '' ) . ' />
-          <span>' . __( $field_label, 'static-html-output-plugin' ) . '</span>
+          <span>' . $field_label . '</span>
         </label>
       </fieldset>
     ';
@@ -19,7 +19,7 @@ class TemplateHelper {
 
     public function displayTextfield( $tpl_vars, $field_name, $field_label, $description, $type = 'text' ) {
         echo "
-      <input name='{$field_name}' class='regular-text' id='{$field_name}' type='{$type}' value='" . esc_attr( $tpl_vars->options->{$field_name} ) . "' placeholder='" . __( $field_label, 'static-html-output-plugin' ) . "' />
+      <input name='{$field_name}' class='regular-text' id='{$field_name}' type='{$type}' value='" . esc_attr( $tpl_vars->options->{$field_name} ) . "' placeholder='" . $field_label . "' />
       <span class='description'>$description</span>
       <br>
     ";

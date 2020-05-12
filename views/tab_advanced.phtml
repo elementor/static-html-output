@@ -4,13 +4,13 @@
   <tbody>
     <tr>
       <th scope="row">
-        <label for="crawl_increment"><?php echo __('Crawl Increment', 'static-html-output-plugin');?></label>
+        <label for="crawl_increment">Crawl Increment</label>
       </th>
       <td>
         <select name="crawl_increment" id="crawl_increment">
 <?php 
   // TODO: shift this into helper function for select
-  $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
+  $increments = array(5, 10, 25, 50, 100, 500, 1000, 999999);
 
   foreach($increments as $increment) :
      if ($increment == 999999): ?>
@@ -28,7 +28,7 @@
     </tr>
       <tr>
         <th scope="row">
-          <label for="deployBatchSize"><?php echo __('Deployment Batch Size', 'static-html-output-plugin');?></label>
+          <label for="deployBatchSize">Deployment Batch Size</label>
         </th>
         <td>
           <select name="deployBatchSize" id="deployBatchSize">
@@ -52,7 +52,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="delayBetweenAPICalls"><?php echo __('API Request Delay', 'static-html-output-plugin');?></label>
+          <label for="delayBetweenAPICalls">API Request Delay</label>
         </th>
         <td>
           <select name="delayBetweenAPICalls" id="delayBetweenAPICalls">
@@ -71,7 +71,7 @@
       </tr>
     <tr>
       <th scope="row">
-        <label for="wp_cli"><?php echo __('WP-CLI', 'static-html-output-plugin');?></label>
+        <label for="wp_cli">WP-CLI</label>
       </th>
       <td>
           <p>Replacing the former, limited support for scheduled deploys via WP-Cron, StaticHTMLOutput now integrates with the great <a href="https://wp-cli.org/" target="_blank">WP-CLI</a> for programmatic access to deploying your WordPress site statically. Control settings and trigger deployments to better suit your development workflow.</p>
@@ -84,15 +84,7 @@
     </tr>
     <tr>
       <th scope="row">
-          <label><?php echo __('Redirect this domain to your static site?', 'static-html-output-plugin');?></label>
-      </th>
-      <td>
-          <p>If you're happy with how your site is looking after exporting to a subdirectory, you can choose to start serving this content to your visitors, instead of your current WordPress site. To do this, you will need to adjust your <code>.htaccess</code> file. This <a href="" target="_blank">community guide</a> may be able to help you.
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        <label for="completionEmail"><?php echo __('Email upon completion', 'static-html-output-plugin');?></label>
+        <label for="completionEmail">Email upon completion</label>
       </th>
       <td>
         <?php
@@ -108,7 +100,7 @@
     </tr>
       <tr>
         <th scope="row">
-          <label for="delete_deploy_cache_button"><?php echo __('Delete deploy cache', 'static-html-output-plugin');?></label>
+          <label for="delete_deploy_cache_button">Delete deploy cache</label>
         </th>
         <td>
           <button id="delete_deploy_cache_button" type="button" class="btn-primary button">Delete deploy cache</button>
@@ -118,7 +110,7 @@
       </tr>
     <tr>
       <th scope="row">
-        <label for="debug_mode"><?php echo __('Enable Debug Mode', 'static-html-output-plugin');?></label>
+        <label for="debug_mode">Enable Debug Mode</label>
       </th>
       <td>
         <?php $tpl->displayCheckbox($this, 'debug_mode', ''); ?>

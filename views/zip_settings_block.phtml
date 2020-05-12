@@ -25,7 +25,7 @@
     <tbody>
       <tr>
         <th scope="row">
-          <strong><?php echo __('Allow offline usage', 'static-html-output-plugin');?></strong>
+          <strong>Allow offline usage</strong>
         </th>
         <td>
           <?php $tpl->displayCheckbox($this, 'allowOfflineUsage', "Check this if you're going to run your site locally, ie on a USB drive given to a client. All links will be made relative and no Destination URL will be used."); ?>
@@ -33,12 +33,12 @@
       </tr>
       <tr>
         <th scope="row">
-					  <label for="baseUrl"><?php echo __('Destination URL', 'static-html-output-plugin');?></label>
+					  <label for="baseUrl">Destination URL</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'baseUrl-zip', 'http://mystaticsite.com', '', ''); ?>
 
-          <p> <i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i> </p> 
+          <p> <i>Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.</i> </p> 
         </td>
       </tr>
     </tbody>

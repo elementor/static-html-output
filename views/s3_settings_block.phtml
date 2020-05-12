@@ -4,7 +4,7 @@
     <tbody>
       <tr>
         <th scope="row">
-          <label for="baseUrl-s3"><?php echo __('Destination URL', 'static-html-output-plugin');?></label>
+          <label for="baseUrl-s3">Destination URL</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'baseUrl-s3', 'http://mystaticsite.com', '', ''); ?><br>
@@ -15,7 +15,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="s3Key"><?php echo __('Access Key ID', 'static-html-output-plugin');?></label>
+          <label for="s3Key">Access Key ID</label>
         </th>
         <td>
          <?php $tpl->displayTextfield($this, 's3Key', 'Access Key ID', 'ie, AKIAIOSFODNN7EXAMPLE'); ?><br>
@@ -25,7 +25,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="s3Key"><?php echo __('Secret Access Key', 'static-html-output-plugin');?></label>
+          <label for="s3Key">Secret Access Key</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 's3Secret', 'Secret Access Key', 'ie, wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY', 'password'); ?>
@@ -33,7 +33,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="s3Region"><?php echo __('Region', 'static-html-output-plugin');?></label>
+          <label for="s3Region">Region</label>
         </th>
         <td>
         <?php 
@@ -69,7 +69,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="s3Bucket"><?php echo __('Bucket', 'static-html-output-plugin');?></label>
+          <label for="s3Bucket">Bucket</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 's3Bucket', 'S3 Bucket', 'ie, my-static-site'); ?><br>
@@ -79,7 +79,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="s3RemotePath"><?php echo __('Subdirectory', 'static-html-output-plugin');?></label>
+          <label for="s3RemotePath">Subdirectory</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 's3RemotePath', 'Subfolder in your bucket', 'ie, static-website'); ?><br>
@@ -89,7 +89,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="cfDistributionId"><?php echo __('CloudFront Cache Invalidation', 'static-html-output-plugin');?></label>
+          <label for="cfDistributionId">CloudFront Cache Invalidation</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'cfDistributionId', 'CloudFront Distribution ID', 'ie, ABC123DEFX'); ?><br>
@@ -99,7 +99,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="s3_test"><?php echo __('Test S3 Settings', 'static-html-output-plugin');?></label>
+          <label for="s3_test">Test S3 Settings</label>
         </th>
         <td>
           <button id="s3-test-button" type="button" class="btn-primary button">Test S3 Settings</button>

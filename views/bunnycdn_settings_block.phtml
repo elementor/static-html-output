@@ -3,17 +3,17 @@
     <tbody>
       <tr>
         <th scope="row">
-          <label for="baseUrl-bunnycdn"><?php echo __('Destination URL', 'static-html-output-plugin');?></label>
+          <label for="baseUrl-bunnycdn">Destination URL</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'baseUrl-bunnycdn', 'http://mystaticsite.com', '', ''); ?><br>
 
-          <p><i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i></p> 
+          <p><i>Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.</i></p> 
         </td>
       </tr>
       <tr>
         <th scope="row">
-          <label for="bunnycdnStorageZoneName"><?php echo __('Storage Zone', 'static-html-output-plugin');?></label>
+          <label for="bunnycdnStorageZoneName">Storage Zone</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'bunnycdnStorageZoneName', 'Storage Zone Name', 'ie, mybunnystoragezone. This is where the files will be uploaded to. '); ?>
@@ -21,7 +21,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="bunnycdnStorageZoneAccessKey"><?php echo __('Storage Zone Access Key', 'static-html-output-plugin');?></label>
+          <label for="bunnycdnStorageZoneAccessKey">Storage Zone Access Key</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'bunnycdnStorageZoneAccessKey', 'Storage Zone Access Key', 'Find in your Storage Zone settings', 'password'); ?>
@@ -29,7 +29,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="bunnycdnPullZoneID"><?php echo __('Pull Zone ID', 'static-html-output-plugin');?></label>
+          <label for="bunnycdnPullZoneID">Pull Zone ID</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'bunnycdnPullZoneID', 'Pull Zone ID', 'Numeric. ie, 1234. This will do a cache purge once all files are transferred', 'number'); ?>
@@ -37,7 +37,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="bunnycdnPullZoneAccessKey"><?php echo __('Pull Zone Access Key', 'static-html-output-plugin');?></label>
+          <label for="bunnycdnPullZoneAccessKey">Pull Zone Access Key</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'bunnycdnPullZoneAccessKey', 'Pull Zone Access Key', 'Find in your Account settings', 'password'); ?>
@@ -45,7 +45,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="bunnycdnRemotePath"><?php echo __('Subdirectory', 'static-html-output-plugin');?></label>
+          <label for="bunnycdnRemotePath">Subdirectory</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'bunnycdnRemotePath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
@@ -53,7 +53,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="bunny_test"><?php echo __('Test BunnyCDN Settings', 'static-html-output-plugin');?></label>
+          <label for="bunny_test">Test BunnyCDN Settings</label>
         </th>
         <td>
           <button id="bunny-test-button" type="button" class="btn-primary button">Test BunnyCDN Settings</button>

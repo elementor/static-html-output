@@ -25,17 +25,17 @@
     <tbody>
       <tr>
         <th scope="row">
-          <label for="baseUrl-netlify"><?php echo __('Destination URL', 'static-html-output-plugin');?></label>
+          <label for="baseUrl-netlify">Destination URL</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'baseUrl-netlify', 'http://mystaticsite.com', '', ''); ?><br>
 
-          <p><i><?php echo __("Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.", 'static-html-output-plugin');?></i></p> 
+          <p><i>Set this to the URL you intend to host your static exported site on, ie http://mystaticsite.com. Do not set this to the same URL as the WordPress site you're currently using (the address in your browser above). This plugin will rewrite all URLs in the exported static html from your current WordPress URL to what you set here. Supports http, https and protocol relative URLs.</i></p> 
         </td>
       </tr>
       <tr>
         <th scope="row">
-          <label for="netlifyPersonalAccessToken"><?php echo __('Personal Access Token', 'static-html-output-plugin');?></label>
+          <label for="netlifyPersonalAccessToken">Personal Access Token</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'netlifyPersonalAccessToken', 'Netlify Personal Access Token', '<a href="https://app.netlify.com/account/applications/personal" target="_blank">How do I get this?</a>', 'password'); ?>
@@ -43,7 +43,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="netlifySiteID"><?php echo __('Site ID', 'static-html-output-plugin');?></label>
+          <label for="netlifySiteID">Site ID</label>
         </th>
         <td>
           <?php $tpl->displayTextfield($this, 'netlifySiteID', 'Netlify Site ID', 'supports: mystaticsite, mystaticsite.netlify.com, mydomain.com, 3970e0fe-8564-4903-9a55-c5f8de49fb8b'); ?>
@@ -51,7 +51,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="netlifyRedirects"><?php echo __('Redirects File', 'static-html-output-plugin');?></label>
+          <label for="netlifyRedirects">Redirects File</label>
           <p><a href="https://www.netlify.com/docs/redirects/" target="_blank">more info</a></p>
         </th>
         <td>
@@ -60,7 +60,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="netlifyHeaders"><?php echo __('Headers File', 'static-html-output-plugin');?></label>
+          <label for="netlifyHeaders">Headers File</label>
           <p><a href="https://www.netlify.com/docs/headers-and-basic-auth/" target="_blank">more info</a></p>
         </th>
         <td>
@@ -69,7 +69,7 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="netlify_test"><?php echo __('Test Netlify Settings', 'static-html-output-plugin');?></label>
+          <label for="netlify_test">Test Netlify Settings</label>
         </th>
         <td>
           <button id="netlify-test-button" type="button" class="btn-primary button">Test Netlify Settings</button>
