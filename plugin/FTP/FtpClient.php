@@ -2,7 +2,7 @@
 /**
  * FtpClient
  *
- * @package WP2Static
+ * @package StaticHTMLOutput
  */
 
 namespace FtpClient;

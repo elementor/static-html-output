@@ -1,6 +1,6 @@
 <?php
 
-class TXTProcessor extends WP2Static {
+class TXTProcessor extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(

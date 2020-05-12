@@ -3,7 +3,7 @@
 class WPSHO_DBSettings {
 
     public static function get( $sets = array() ) {
-        $plugin = WP2Static_Controller::getInstance();
+        $plugin = StaticHTMLOutput_Controller::getInstance();
 
         $settings = array();
         $key_sets = array();
@@ -144,7 +144,7 @@ class WPSHO_DBSettings {
             $settings[ $key ] = $plugin->options->{ $key };
         }
 
-        require_once dirname( __FILE__ ) . '/../WP2Static/WPSite.php';
+        require_once dirname( __FILE__ ) . '/../StaticHTMLOutput/WPSite.php';
         $wp_site = new WPSite();
 
         foreach ( $key_sets['wpenv'] as $key ) {

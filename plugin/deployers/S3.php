@@ -1,6 +1,6 @@
 <?php
 
-class WP2Static_S3 extends WP2Static_SitePublisher {
+class StaticHTMLOutput_S3 extends StaticHTMLOutput_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 's3' );
@@ -52,7 +52,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
         $this->openPreviousHashesFile();
 
         require_once dirname( __FILE__ ) .
-            '/../WP2Static/MimeTypes.php';
+            '/../StaticHTMLOutput/MimeTypes.php';
 
         foreach ( $lines as $line ) {
             list($local_file, $this->target_path) = explode( ',', $line );
@@ -132,7 +132,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
         try {
             $this->put_s3_object(
                 '.tmp_statichtmloutput.txt',
-                'Test WP2Static connectivity',
+                'Test StaticHTMLOutput connectivity',
                 'text/plain'
             );
 
@@ -141,7 +141,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
             }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../WP2Static/WsLog.php';
+                '/../StaticHTMLOutput/WsLog.php';
 
             WsLog::l( 'S3 ERROR RETURNED: ' . $e );
             echo "There was an error testing S3.\n";
@@ -255,7 +255,7 @@ class WP2Static_S3 extends WP2Static_SitePublisher {
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
         curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+        curl_setopt( $ch, CURLOPT_USERAGENT, 'StaticHTMLOutput.com' );
         curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 0 );
         curl_setopt( $ch, CURLOPT_TIMEOUT, 600 );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $content );
@@ -322,7 +322,7 @@ EOD;
 
         if ( ! $fp ) {
             require_once dirname( __FILE__ ) .
-                '/../WP2Static/WsLog.php';
+                '/../StaticHTMLOutput/WsLog.php';
             WsLog::l( "CLOUDFRONT CONNECTION ERROR: {$errno} {$errstr}" );
             die( "Connection failed: {$errno} {$errstr}\n" );
         }
@@ -344,4 +344,4 @@ EOD;
     }
 }
 
-$s3 = new WP2Static_S3();
+$s3 = new StaticHTMLOutput_S3();

@@ -2,7 +2,7 @@
 /**
  * AtRuleSet
  *
- * @package WP2Static
+ * @package StaticHTMLOutput
  */
 
 namespace Sabberworm\CSS\RuleSet;

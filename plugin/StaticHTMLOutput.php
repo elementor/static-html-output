@@ -1,6 +1,6 @@
 <?php
 
-class WP2Static_Controller {
+class StaticHTMLOutput_Controller {
     const VERSION = '6.6.8';
     const OPTIONS_KEY = 'statichtmloutput-options';
     const HOOK = 'statichtmloutput';
@@ -12,10 +12,10 @@ class WP2Static_Controller {
     public static function getInstance() {
         if ( null === self::$instance ) {
             self::$instance = new self();
-            self::$instance->options = new WP2Static_Options(
+            self::$instance->options = new StaticHTMLOutput_Options(
                 self::OPTIONS_KEY
             );
-            self::$instance->view = new WP2Static_View();
+            self::$instance->view = new StaticHTMLOutput_View();
         }
 
         return self::$instance;
@@ -55,6 +55,7 @@ class WP2Static_Controller {
 
         $order = array(
             'index.php',
+            'wp2static',
             'statichtmloutput',
         );
 
@@ -109,12 +110,12 @@ class WP2Static_Controller {
     public function registerOptionsPage() {
         $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
         $page = add_menu_page(
-            __( 'WP2Static', 'static-html-output-plugin' ),
-            __( 'WP2Static', 'static-html-output-plugin' ),
+            __( 'Static HTML', 'statichtmloutput' ),
+            __( 'Static HTML', 'statichtmloutput' ),
             'manage_options',
             self::HOOK,
             array( self::$instance, 'renderOptionsPage' ),
-            'dashicons-shield-alt'
+            'dashicons-arrow-right-alt'
         );
 
         add_action(
@@ -138,7 +139,7 @@ class WP2Static_Controller {
     }
 
     public function finalize_deployment() {
-        require_once dirname( __FILE__ ) . '/WP2Static/Deployer.php';
+        require_once dirname( __FILE__ ) . '/StaticHTMLOutput/Deployer.php';
 
         $deployer = new Deployer();
         $deployer->finalizeDeployment();
@@ -147,7 +148,7 @@ class WP2Static_Controller {
     }
 
     public function generate_filelist_preview() {
-        require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
+        require_once dirname( __FILE__ ) . '/StaticHTMLOutput/WPSite.php';
         $this->wp_site = new WPSite();
 
         $target_settings = array(
@@ -157,13 +158,13 @@ class WP2Static_Controller {
 
         if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
-                '/WP2Static/DBSettings.php';
+                '/StaticHTMLOutput/DBSettings.php';
 
             $this->settings =
                 WPSHO_DBSettings::get( $target_settings );
         } else {
             require_once dirname( __FILE__ ) .
-                '/WP2Static/PostSettings.php';
+                '/StaticHTMLOutput/PostSettings.php';
 
             $this->settings =
                 WPSHO_PostSettings::get( $target_settings );
@@ -172,7 +173,7 @@ class WP2Static_Controller {
         $plugin_hook = 'statichtmloutput';
 
         $initial_file_list_count =
-            WP2Static_FilesHelper::buildInitialFileList(
+            StaticHTMLOutput_FilesHelper::buildInitialFileList(
                 true,
                 $this->wp_site->wp_uploads_path,
                 $this->wp_site->uploads_url,
@@ -185,7 +186,7 @@ class WP2Static_Controller {
     }
 
     public function renderOptionsPage() {
-        require_once dirname( __FILE__ ) . '/WP2Static/WPSite.php';
+        require_once dirname( __FILE__ ) . '/StaticHTMLOutput/WPSite.php';
 
         $this->wp_site = new WPSite();
         $this->current_archive = '';
@@ -222,7 +223,7 @@ class WP2Static_Controller {
 
     public function prepare_for_export() {
         require_once dirname( __FILE__ ) .
-            '/WP2Static/Exporter.php';
+            '/StaticHTMLOutput/Exporter.php';
 
         $this->exporter = new Exporter();
 
@@ -230,7 +231,7 @@ class WP2Static_Controller {
         $this->exporter->cleanup_leftover_archives();
         $this->exporter->initialize_cache_files();
 
-        require_once dirname( __FILE__ ) . '/WP2Static/Archive.php';
+        require_once dirname( __FILE__ ) . '/StaticHTMLOutput/Archive.php';
 
         $archive = new Archive();
         $archive->create();
@@ -249,7 +250,7 @@ class WP2Static_Controller {
             error_log( "Couldn't reset plugin to default settings" );
         }
 
-        $this->options = new WP2Static_Options( self::OPTIONS_KEY );
+        $this->options = new StaticHTMLOutput_Options( self::OPTIONS_KEY );
         $this->setDefaultOptions();
 
         echo 'SUCCESS';
@@ -257,7 +258,7 @@ class WP2Static_Controller {
 
     public function post_process_archive_dir() {
         require_once dirname( __FILE__ ) .
-            '/WP2Static/ArchiveProcessor.php';
+            '/StaticHTMLOutput/ArchiveProcessor.php';
         $processor = new ArchiveProcessor();
 
         $processor->createNetlifySpecialFiles();
@@ -279,13 +280,13 @@ class WP2Static_Controller {
 
         if ( defined( 'WP_CLI' ) ) {
             require_once dirname( __FILE__ ) .
-                '/WP2Static/DBSettings.php';
+                '/StaticHTMLOutput/DBSettings.php';
 
             $this->settings =
                 WPSHO_DBSettings::get( $target_settings );
         } else {
             require_once dirname( __FILE__ ) .
-                '/WP2Static/PostSettings.php';
+                '/StaticHTMLOutput/PostSettings.php';
 
             $this->settings =
                 WPSHO_PostSettings::get( $target_settings );

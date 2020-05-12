@@ -1,6 +1,6 @@
 <?php
 
-class HTMLProcessor extends WP2Static {
+class HTMLProcessor extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
@@ -117,7 +117,7 @@ class HTMLProcessor extends WP2Static {
                 );
             } else {
                 require_once dirname( __FILE__ ) .
-                    '/../WP2Static/WsLog.php';
+                    '/../StaticHTMLOutput/WsLog.php';
                 WsLog::l(
                     'WARNING: no valid head elemnent to attach base to: ' .
                         $this->page_url
@@ -1035,7 +1035,7 @@ class HTMLProcessor extends WP2Static {
         }
 
         require_once dirname( __FILE__ ) .
-            '/../WP2Static/WsLog.php';
+            '/../StaticHTMLOutput/WsLog.php';
         WsLog::l( $action );
     }
 }

@@ -1,6 +1,6 @@
-# WP2Static
+# StaticHTMLOutput
 
-WP2Static是一个用来将您的网站静态化，并存储到Github Pages、 亚马逊S3、Netlify等平台的Wordpress插件，以此增强网站的安全性、页面加载速度以及托管环境的兼容性。更可以以此将Wordpress纳入到您的CI/CD工作流中。
+StaticHTMLOutput是一个用来将您的网站静态化，并存储到Github Pages、 亚马逊S3、Netlify等平台的Wordpress插件，以此增强网站的安全性、页面加载速度以及托管环境的兼容性。更可以以此将Wordpress纳入到您的CI/CD工作流中。
 
 [English ![English](docs/images/flags/greatbritain.png)](readme.md) |
 [日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |

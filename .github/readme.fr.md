@@ -1,4 +1,4 @@
-# WP2Static
+# StaticHTMLOutput
 
 Plugin WordPress pour générer une copie statique de votre site et la déployer sur GitHub Pages, S3, Netlify, etc. Améliore la sécurité, offre un meilleur temps de chargement des pages et propose plusieurs options d'hébergement. Connectez WordPress à votre chaîne d'intégration et de déploiement continu.
 

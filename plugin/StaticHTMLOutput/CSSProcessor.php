@@ -1,6 +1,6 @@
 <?php
 
-class CSSProcessor extends WP2Static {
+class CSSProcessor extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(

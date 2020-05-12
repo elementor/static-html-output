@@ -1,5 +1,5 @@
 <?php
-class WP2Static_View {
+class StaticHTMLOutput_View {
 
     protected $variables = array();
     protected $path = null;

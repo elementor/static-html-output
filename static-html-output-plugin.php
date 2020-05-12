@@ -14,20 +14,20 @@
 
 // intercept low latency dependent actions and avoid boostrapping whole plugin
 require_once dirname( __FILE__ ) .
-    '/plugin/WP2Static/Dispatcher.php';
+    '/plugin/StaticHTMLOutput/Dispatcher.php';
 
-require_once 'plugin/WP2Static/WP2Static.php';
-require_once 'plugin/WP2Static/Options.php';
-require_once 'plugin/WP2Static/TemplateHelper.php';
-require_once 'plugin/WP2Static/View.php';
-require_once 'plugin/WP2Static/WsLog.php';
-require_once 'plugin/WP2Static/FilesHelper.php';
-require_once 'plugin/WP2Static.php';
+require_once 'plugin/StaticHTMLOutput/StaticHTMLOutput.php';
+require_once 'plugin/StaticHTMLOutput/Options.php';
+require_once 'plugin/StaticHTMLOutput/TemplateHelper.php';
+require_once 'plugin/StaticHTMLOutput/View.php';
+require_once 'plugin/StaticHTMLOutput/WsLog.php';
+require_once 'plugin/StaticHTMLOutput/FilesHelper.php';
+require_once 'plugin/StaticHTMLOutput.php';
 require_once 'plugin/URL2/URL2.php';
 
-WP2Static_Controller::init( __FILE__ );
+StaticHTMLOutput_Controller::init( __FILE__ );
 
-function plugin_action_links( $links ) {
+function wp_static_html_output_plugin_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=statichtmloutput">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
     array_unshift( $links, $settings_link );
 
@@ -36,7 +36,7 @@ function plugin_action_links( $links ) {
 
 
 function wp_static_html_output_server_side_export() {
-    $plugin = WP2Static_Controller::getInstance();
+    $plugin = StaticHTMLOutput_Controller::getInstance();
     $plugin->doExportWithoutGUI();
     wp_die();
     return null;
@@ -50,7 +50,7 @@ function plugins_have_been_loaded() {
       return null;
 }
 
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'plugin_action_links' );
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wp_static_html_output_plugin_action_links' );
 add_action( 'plugins_loaded', 'plugins_have_been_loaded' );
 add_action( 'wp_ajax_wp_static_html_output_ajax', 'wp_static_html_output_ajax' );
 
@@ -59,7 +59,7 @@ function wp_static_html_output_ajax() {
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
-        $plugin_instance = WP2Static_Controller::getInstance();
+        $plugin_instance = StaticHTMLOutput_Controller::getInstance();
         call_user_func( array( $plugin_instance, $instance_method ) );
     }
 

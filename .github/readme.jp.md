@@ -1,4 +1,4 @@
-# WP2Static
+# StaticHTMLOutput
 
 WordPressで静的HTMLを生成して、色んな可能性を開きます。
 

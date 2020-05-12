@@ -4,7 +4,7 @@ function filter_arr_empty_vals( $url ) {
     return ( strpos( $url, ' ' ) === false );
 }
 
-class WP2Static_FilesHelper {
+class StaticHTMLOutput_FilesHelper {
 
     public static function delete_dir_with_files( $dir ) {
         if ( is_dir( $dir ) ) {

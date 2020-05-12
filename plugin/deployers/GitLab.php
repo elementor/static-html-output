@@ -1,6 +1,6 @@
 <?php
 
-class WP2Static_GitLab extends WP2Static_SitePublisher {
+class StaticHTMLOutput_GitLab extends StaticHTMLOutput_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'gitlab' );
@@ -132,12 +132,12 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
 
         try {
             require_once dirname( __FILE__ ) .
-                '/../WP2Static/Request.php';
-            $client = new WP2Static_Request();
+                '/../StaticHTMLOutput/Request.php';
+            $client = new StaticHTMLOutput_Request();
 
             $post_options = array(
                 'branch' => 'master',
-                'commit_message' => 'WP2Static Deployment',
+                'commit_message' => 'StaticHTMLOutput Deployment',
                 'actions' => $files_data,
             );
 
@@ -196,8 +196,8 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
             '/repository/tree?recursive=true&per_page=100&page=' . $page;
 
         require_once dirname( __FILE__ ) .
-            '/../WP2Static/Request.php';
-        $client = new WP2Static_Request();
+            '/../StaticHTMLOutput/Request.php';
+        $client = new StaticHTMLOutput_Request();
 
         $headers = array(
             'PRIVATE-TOKEN: ' . $this->settings['glToken'],
@@ -213,7 +213,7 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
 
         if ( ! in_array( $client->status_code, $good_response_codes ) ) {
             require_once dirname( __FILE__ ) .
-                '/../WP2Static/WsLog.php';
+                '/../StaticHTMLOutput/WsLog.php';
             WsLog::l( 'BAD RESPONSE STATUS (' . $client->status_code . '): ' );
 
             throw new Exception( 'GitLab API bad response status' );
@@ -244,8 +244,8 @@ class WP2Static_GitLab extends WP2Static_SitePublisher {
 
         try {
             require_once dirname( __FILE__ ) .
-                '/../WP2Static/Request.php';
-            $client = new WP2Static_Request();
+                '/../StaticHTMLOutput/Request.php';
+            $client = new StaticHTMLOutput_Request();
 
             $post_options = array(
                 'branch' => 'master',
@@ -318,4 +318,4 @@ EOD;
     }
 }
 
-$gitlab = new WP2Static_GitLab();
+$gitlab = new StaticHTMLOutput_GitLab();

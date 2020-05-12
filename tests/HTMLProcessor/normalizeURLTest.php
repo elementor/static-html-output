@@ -4,8 +4,8 @@ chdir( dirname(__FILE__) . '/../../plugin' );
 
 $plugin_dir = getcwd();
 
-require_once $plugin_dir . '/WP2Static/WP2Static.php';
-require_once $plugin_dir . '/WP2Static/HTMLProcessor.php';
+require_once $plugin_dir . '/StaticHTMLOutput/StaticHTMLOutput.php';
+require_once $plugin_dir . '/StaticHTMLOutput/HTMLProcessor.php';
 require_once $plugin_dir . '/URL2/URL2.php';
 
 use PHPUnit\Framework\TestCase;

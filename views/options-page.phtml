@@ -1,13 +1,13 @@
 <?php
 /**
- * @package WP2Static
+ * @package StaticHTMLOutput
  *
  * Copyright (c) 2011 Leon Stafford
  */
 
 $ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
 
-require_once(__DIR__ . '/../plugin/WP2Static/TemplateHelper.php');
+require_once(__DIR__ . '/../plugin/StaticHTMLOutput/TemplateHelper.php');
 
 $tpl = new TemplateHelper();
 
@@ -54,7 +54,7 @@ $tpl = new TemplateHelper();
 
    <div class="notice notice-error inline statichtmloutput-notice">
       <h2 class="title">You're missing a required PHP library (DOMDocument)</h2>
-        <p> This is a library that is used to parse the HTML documents when WP2Static crawls your site. It's usually an easy fix to get this working. You can try Googling "DOMDocument missing", along with the name of the environment you are using to run your WordPress site. This may be something like DigitalOcean, GoDaddy or LAMP, MAMP, WAMP for your webserver on your local computer. If you're still having trouble, the developer of this plugin is easger to help you get up and running. Please ask for help on our <a href="https://forum.statichtmloutput.com">forum</a>.</p>
+        <p> This is a library that is used to parse the HTML documents when StaticHTMLOutput crawls your site. It's usually an easy fix to get this working. You can try Googling "DOMDocument missing", along with the name of the environment you are using to run your WordPress site. This may be something like DigitalOcean, GoDaddy or LAMP, MAMP, WAMP for your webserver on your local computer. If you're still having trouble, the developer of this plugin is easger to help you get up and running. Please ask for help on our <a href="https://forum.statichtmloutput.com">forum</a>.</p>
     </div>
 
   <?php endif; ?>

@@ -3,19 +3,19 @@
 /**
  * Generate a static copy of your website & publish remotely
  */
-class WP2Static_CLI {
+class StaticHTMLOutput_CLI {
     /**
      * Display system information and health check
      */
     public function diagnostics() {
         WP_CLI::line(
-            PHP_EOL . 'WP2Static' . PHP_EOL
+            PHP_EOL . 'StaticHTMLOutput' . PHP_EOL
         );
 
         $environmental_info = array(
             array(
                 'key' => 'PLUGIN VERSION',
-                'value' => WP2Static_Controller::VERSION,
+                'value' => StaticHTMLOutput_Controller::VERSION,
             ),
             array(
                 'key' => 'PHP_VERSION',
@@ -94,14 +94,14 @@ class WP2Static_CLI {
     public function generate() {
         $start_time = microtime();
 
-        $plugin = WP2Static_Controller::getInstance();
+        $plugin = StaticHTMLOutput_Controller::getInstance();
         $plugin->generate_filelist_preview();
         $plugin->prepare_for_export();
 
         require_once dirname( __FILE__ ) .
-            '/WP2Static/WP2Static.php';
+            '/StaticHTMLOutput/StaticHTMLOutput.php';
         require_once dirname( __FILE__ ) .
-            '/WP2Static/SiteCrawler.php';
+            '/StaticHTMLOutput/SiteCrawler.php';
 
         $site_crawler->crawl_site();
         $site_crawler->crawl_discovered_links();
@@ -140,7 +140,7 @@ class WP2Static_CLI {
             }
         }
 
-        require_once dirname( __FILE__ ) . '/WP2Static/Deployer.php';
+        require_once dirname( __FILE__ ) . '/StaticHTMLOutput/Deployer.php';
 
         $deployer = new Deployer();
 
@@ -194,7 +194,7 @@ function statichtmloutput_options( $args, $assoc_args ) {
         WP_CLI::error( 'Missing required argument: <get|set|list>' );
     }
 
-    $plugin = WP2Static_Controller::getInstance();
+    $plugin = StaticHTMLOutput_Controller::getInstance();
 
     if ( $action === 'get' ) {
         if ( empty( $option_name ) ) {

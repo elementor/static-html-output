@@ -1,6 +1,6 @@
 <?php
 
-class WP2Static_GitHub extends WP2Static_SitePublisher {
+class StaticHTMLOutput_GitHub extends StaticHTMLOutput_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'github' );
@@ -124,9 +124,9 @@ class WP2Static_GitHub extends WP2Static_SitePublisher {
     public function test_upload() {
         try {
             $this->remote_path = $this->api_base . $this->settings['ghRepo'] .
-                '/contents/' . '.WP2Static/' . uniqid();
+                '/contents/' . '.StaticHTMLOutput/' . uniqid();
 
-            $b64_file_contents = base64_encode( 'WP2Static test upload' );
+            $b64_file_contents = base64_encode( 'StaticHTMLOutput test upload' );
 
             $ch = curl_init();
 
@@ -137,11 +137,11 @@ class WP2Static_GitHub extends WP2Static_SitePublisher {
             curl_setopt( $ch, CURLOPT_HEADER, 0 );
             curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
             curl_setopt( $ch, CURLOPT_POST, 1 );
-            curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+            curl_setopt( $ch, CURLOPT_USERAGENT, 'StaticHTMLOutput.com' );
             curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
 
             $post_options = array(
-                'message' => 'Test WP2Static connectivity',
+                'message' => 'Test StaticHTMLOutput connectivity',
                 'content' => $b64_file_contents,
                 'branch' => $this->settings['ghBranch'],
             );
@@ -170,7 +170,7 @@ class WP2Static_GitHub extends WP2Static_SitePublisher {
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
                 require_once dirname( __FILE__ ) .
-                    '/../WP2Static/WsLog.php';
+                    '/../StaticHTMLOutput/WsLog.php';
                 WsLog::l(
                     'BAD RESPONSE STATUS (' . $status_code . '): '
                 );
@@ -179,7 +179,7 @@ class WP2Static_GitHub extends WP2Static_SitePublisher {
             }
         } catch ( Exception $e ) {
             require_once dirname( __FILE__ ) .
-                '/../WP2Static/WsLog.php';
+                '/../StaticHTMLOutput/WsLog.php';
             WsLog::l( 'GITHUB EXPORT: error encountered' );
             WsLog::l( $e );
             throw new Exception( $e );
@@ -208,8 +208,8 @@ query{
 }
 JSON;
         require_once dirname( __FILE__ ) .
-            '/../WP2Static/Request.php';
-        $this->client = new WP2Static_Request();
+            '/../StaticHTMLOutput/Request.php';
+        $this->client = new StaticHTMLOutput_Request();
 
         $post_options = array(
             'query' => $this->query,
@@ -275,7 +275,7 @@ JSON;
                 $this->settings['ghCommitMessage']
             );
         } else {
-            $commit_message = 'WP2Static ' .
+            $commit_message = 'StaticHTMLOutput ' .
                 $action . ' ' .
                 $this->target_path;
         }
@@ -336,7 +336,7 @@ JSON;
                 $this->settings['ghCommitMessage']
             );
         } else {
-            $commit_message = 'WP2Static ' .
+            $commit_message = 'StaticHTMLOutput ' .
                 $action . ' ' .
                 $this->target_path;
         }
@@ -378,4 +378,4 @@ JSON;
     }
 }
 
-$github = new WP2Static_GitHub();
+$github = new StaticHTMLOutput_GitHub();

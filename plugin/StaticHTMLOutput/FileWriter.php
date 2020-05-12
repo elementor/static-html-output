@@ -1,6 +1,6 @@
 <?php
 
-class FileWriter extends WP2Static {
+class FileWriter extends StaticHTMLOutput {
     public function __construct( $url, $content, $file_type, $content_type ) {
         $this->url = $url;
         $this->content = $content;

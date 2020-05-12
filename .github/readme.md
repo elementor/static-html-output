@@ -1,8 +1,8 @@
-# WP2Static
+# StaticHTMLOutput
 
 WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify, etc.  Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
 
-**Note: This is a forked version from WP2Static V6. To use the V7 version, see [https://github.com/WP2Static/WP2Static](https://github.com/WP2Static/WP2Static)
+**Note: This is a forked version from StaticHTMLOutput V6. To use the V7 version, see [https://github.com/StaticHTMLOutput/StaticHTMLOutput](https://github.com/StaticHTMLOutput/StaticHTMLOutput)
 
 [English ![English](docs/images/flags/greatbritain.png)](readme.md) |
 [日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |

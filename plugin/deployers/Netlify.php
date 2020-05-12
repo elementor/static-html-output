@@ -1,6 +1,6 @@
 <?php
 
-class WP2Static_Netlify extends WP2Static_SitePublisher {
+class StaticHTMLOutput_Netlify extends StaticHTMLOutput_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'netlify' );
@@ -56,8 +56,8 @@ class WP2Static_Netlify extends WP2Static_SitePublisher {
             );
 
             require_once dirname( __FILE__ ) .
-                '/../WP2Static/Request.php';
-            $this->client = new WP2Static_Request();
+                '/../StaticHTMLOutput/Request.php';
+            $this->client = new StaticHTMLOutput_Request();
 
             $this->client->postWithFileStreamAndHeaders(
                 $zip_deploy_endpoint,
@@ -91,8 +91,8 @@ class WP2Static_Netlify extends WP2Static_SitePublisher {
             );
 
             require_once dirname( __FILE__ ) .
-                '/../WP2Static/Request.php';
-            $this->client = new WP2Static_Request();
+                '/../StaticHTMLOutput/Request.php';
+            $this->client = new StaticHTMLOutput_Request();
 
             $this->client->getWithCustomHeaders(
                 $site_info_endpoint,
@@ -108,7 +108,7 @@ class WP2Static_Netlify extends WP2Static_SitePublisher {
                 $code = 404;
 
                 require_once dirname( __FILE__ ) .
-                    '/../WP2Static/WsLog.php';
+                    '/../StaticHTMLOutput/WsLog.php';
                 WsLog::l(
                     'BAD RESPONSE STATUS FROM API (' . $code . ')'
                 );
@@ -123,4 +123,4 @@ class WP2Static_Netlify extends WP2Static_SitePublisher {
     }
 }
 
-$netlify = new WP2Static_Netlify();
+$netlify = new StaticHTMLOutput_Netlify();

@@ -1,6 +1,6 @@
 <?php
 
-class WP2Static {
+class StaticHTMLOutput {
 
     public function loadSettings( $target_settings ) {
         $general_settings = array(

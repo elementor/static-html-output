@@ -1,6 +1,6 @@
 <?php
 
-class Archive extends WP2Static {
+class Archive extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
@@ -47,7 +47,7 @@ class Archive extends WP2Static {
 
             if ( ! $result ) {
                 require_once dirname( __FILE__ ) .
-                    '/../WP2Static/WsLog.php';
+                    '/../StaticHTMLOutput/WsLog.php';
                 WsLog::l( 'USER WORKING DIRECTORY NOT WRITABLE' );
             }
 

@@ -1,6 +1,6 @@
 <?php
 
-class WP2Static_BitBucket extends WP2Static_SitePublisher {
+class StaticHTMLOutput_BitBucket extends StaticHTMLOutput_SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'bitbucket' );
@@ -77,16 +77,16 @@ class WP2Static_BitBucket extends WP2Static_SitePublisher {
 
     public function test_upload() {
         require_once dirname( __FILE__ ) .
-            '/../WP2Static/Request.php';
-        $this->client = new WP2Static_Request();
+            '/../StaticHTMLOutput/Request.php';
+        $this->client = new StaticHTMLOutput_Request();
 
         try {
             $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';
 
             $post_options = array(
-                '.tmp_statichtmloutput.txt' => 'Test WP2Static connectivity',
-                '.tmp_statichtmloutput.txt' => 'Test WP2Static connectivity #2',
-                'message' => 'WP2Static deployment test',
+                '.tmp_statichtmloutput.txt' => 'Test StaticHTMLOutput connectivity',
+                '.tmp_statichtmloutput.txt' => 'Test StaticHTMLOutput connectivity #2',
+                'message' => 'StaticHTMLOutput deployment test',
             );
 
             $this->client->postWithArray(
@@ -114,7 +114,7 @@ class WP2Static_BitBucket extends WP2Static_SitePublisher {
 
         $local_file = $this->archive->path . $local_file;
 
-        $this->files_data['message'] = 'WP2Static deployment';
+        $this->files_data['message'] = 'StaticHTMLOutput deployment';
 
         if ( ! is_file( $local_file ) ) {
             return; }
@@ -153,8 +153,8 @@ class WP2Static_BitBucket extends WP2Static_SitePublisher {
 
     public function sendBatchToBitbucket() {
         require_once dirname( __FILE__ ) .
-            '/../WP2Static/Request.php';
-        $this->client = new WP2Static_Request();
+            '/../StaticHTMLOutput/Request.php';
+        $this->client = new StaticHTMLOutput_Request();
 
         $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';
 
@@ -181,4 +181,4 @@ class WP2Static_BitBucket extends WP2Static_SitePublisher {
     }
 }
 
-$bitbucket = new WP2Static_BitBucket();
+$bitbucket = new StaticHTMLOutput_BitBucket();

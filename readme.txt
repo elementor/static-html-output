@@ -71,7 +71,7 @@ That said, you can install the plugin and do an easy test without any other conf
 As WordPress allows infinite customization and configurations, I don't think any plugin author would be willing to guarantee complete compatibility with every theme, plugin and custom coding on every site. But my aim is to get as high a % of people as possible able to take advantage of static hosting with their WP site.
 
 
-Developed by [**Leon Stafford**](http://ljs.dev). If you have any questions about this plugin's usage, installation or development, please use the: [GitHub Issues](https://github.com/WP2Static/static-html-output-plugin/issues)
+Developed by [**Leon Stafford**](http://ljs.dev). If you have any questions about this plugin's usage, installation or development, please use the: [GitHub Issues](https://github.com/StaticHTMLOutput/static-html-output-plugin/issues)
 
 == Installation ==
 
@@ -143,7 +143,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
 = 6.6.6 =
 
- * Enhancement: prevent vendor notices distorting WP2Static UI
+ * Enhancement: prevent vendor notices distorting StaticHTMLOutput UI
  * Enhancement: warn when DOMDocument not available
  * Enhancement: warn when ZIP extension not available for Netlify deploy
  * Enhancement: set outdated PHP detection version to < 5.6
@@ -282,7 +282,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * Bugfix: Ignore certificate errors when crawling
  * Drop feature: diff-based deploys (now possible via WP-CLI)
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
- * Plugin name change to WP2Static
+ * Plugin name change to StaticHTMLOutput
 
 = 5.8 =
 
@@ -599,7 +599,7 @@ Initial release to Wordpress community
 
 = 6.6.6 =
 
- * Enhancement: prevent vendor notices distorting WP2Static UI
+ * Enhancement: prevent vendor notices distorting StaticHTMLOutput UI
  * Enhancement: warn when DOMDocument not available
  * Enhancement: warn when ZIP extension not available for Netlify deploy
  * Enhancement: set outdated PHP detection version to < 5.6
@@ -738,7 +738,7 @@ Initial release to Wordpress community
  * Bugfix: Ignore certificate errors when crawling
  * Drop feature: diff-based deploys (now possible via WP-CLI)
  * Drop feature: deploy to Dropbox (they don't love static sites anymore)
- * Plugin name change to WP2Static
+ * Plugin name change to StaticHTMLOutput
 
 = 5.8 =
 

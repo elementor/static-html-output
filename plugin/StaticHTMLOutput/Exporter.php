@@ -1,6 +1,6 @@
 <?php
 
-class Exporter extends WP2Static {
+class Exporter extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
@@ -98,7 +98,7 @@ class Exporter extends WP2Static {
                 $deletion_target = $this->settings['wp_uploads_path'] .
                     '/' . $filename;
                 if ( is_dir( $deletion_target ) ) {
-                    WP2Static_FilesHelper::delete_dir_with_files(
+                    StaticHTMLOutput_FilesHelper::delete_dir_with_files(
                         $deletion_target
                     );
                 } else {
@@ -220,7 +220,7 @@ class Exporter extends WP2Static {
         }
 
         require_once dirname( __FILE__ ) .
-            '/../WP2Static/WsLog.php';
+            '/../StaticHTMLOutput/WsLog.php';
         WsLog::l( $action );
     }
 }

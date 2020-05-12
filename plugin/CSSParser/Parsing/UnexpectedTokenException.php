@@ -2,7 +2,7 @@
 /**
  * UnexpectedTokenException
  *
- * @package WP2Static
+ * @package StaticHTMLOutput
  */
 
 namespace Sabberworm\CSS\Parsing;

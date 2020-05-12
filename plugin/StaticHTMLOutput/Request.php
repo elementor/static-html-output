@@ -1,10 +1,10 @@
 <?php
 
-class WP2Static_Request {
+class StaticHTMLOutput_Request {
 
     public function __construct() {
         $this->default_options = array(
-            CURLOPT_USERAGENT => 'WP2Static.com',
+            CURLOPT_USERAGENT => 'StaticHTMLOutput.com',
             CURLOPT_CONNECTTIMEOUT => 0,
             CURLOPT_TIMEOUT => 600,
         );
@@ -138,7 +138,7 @@ class WP2Static_Request {
             $headers
         );
 
-        curl_setopt( $ch, CURLOPT_USERAGENT, 'WP2Static.com' );
+        curl_setopt( $ch, CURLOPT_USERAGENT, 'StaticHTMLOutput.com' );
 
         $this->body = curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
@@ -256,5 +256,5 @@ class WP2Static_Request {
     }
 }
 
-$statichtmloutput_request = new WP2Static_Request();
+$statichtmloutput_request = new StaticHTMLOutput_Request();
 
