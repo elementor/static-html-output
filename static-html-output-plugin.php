@@ -28,7 +28,7 @@ require_once 'plugin/URL2/URL2.php';
 StaticHTMLOutput_Controller::init( __FILE__ );
 
 function wp_static_html_output_plugin_action_links( $links ) {
-    $settings_link = '<a href="admin.php?page=statichtmloutput">' . __( 'Settings', 'static-html-output-plugin' ) . '</a>';
+    $settings_link = '<a href="admin.php?page=statichtmloutput">Settings</a>';
     array_unshift( $links, $settings_link );
 
     return $links;
@@ -44,14 +44,7 @@ function wp_static_html_output_server_side_export() {
 
 add_action( 'wp_static_html_output_server_side_export_hook', 'wp_static_html_output_server_side_export', 10, 0 );
 
-
-function plugins_have_been_loaded() {
-      load_plugin_textdomain( 'static-html-output-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-      return null;
-}
-
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wp_static_html_output_plugin_action_links' );
-add_action( 'plugins_loaded', 'plugins_have_been_loaded' );
 add_action( 'wp_ajax_wp_static_html_output_ajax', 'wp_static_html_output_ajax' );
 
 function wp_static_html_output_ajax() {
