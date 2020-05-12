@@ -2,12 +2,8 @@
 
 WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify, etc.  Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
 
-**Note: This is a forked version from StaticHTMLOutput V6. To use the V7 version, see [https://github.com/StaticHTMLOutput/StaticHTMLOutput](https://github.com/StaticHTMLOutput/StaticHTMLOutput)
+**Note: This is the continuation of what was originally named "WP Static HTML Output Plugin". A new approach is available in [WP2Static](https://github.com/WP2Static/wp2static)
 
-[English ![English](docs/images/flags/greatbritain.png)](readme.md) |
-[日本語 ![日本語](docs/images/flags/japan.png)](readme.jp.md) |
-[Français ![Français](docs/images/flags/france.png)](readme.fr.md)
-[简体中文 ![Simplified Chinese](docs/images/flags/prchina.png)](readme.zh-cn.md)
 
 ## WordPress as a Static Site Generator
 
@@ -206,7 +202,7 @@ Archive Object
 
 ```
 
-## Development 
+## Development
 
 This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
 
@@ -217,20 +213,13 @@ In trying to make development/contributing easier, we'll keep requirements to a 
 
 ### Localisation / translations
 
-Localisation has fallen behind on this project. I welcome anyone who can contribute some expertise in this area / help me get the project easier to translate.
-
-Our official [translation page](https://translate.wordpress.org/projects/wp-plugins/static-html-output-plugin) on wordpress.org.
-
+Localisation within the plugin isn't supported. Rather, it's recommended to use a browser extension if you need help translating the UI or you can run our documentation pages through any translation service.
 
 ## Support
 
-Please [raise an issue](https://github.com/statichtmloutput/statichtmloutput-v6/issues/new) here on GitHub or on the plugin's [support forum](https://forum.statichtmloutput.com).
+Please [raise an issue](https://github.com/WP2Static/static-html-output-plugin/issues/new) here on GitHub or on the plugin's [support forum](https://forum.statichtmloutput.com).
 
 ## Notes
 
 When cloning the repo for direct use, clone it into a dir named after the official WP plugin's slug, `static-html-output-plugin`, this will make life easier.
 
-
-Leon
-
-leon@statichtmloutput.com
