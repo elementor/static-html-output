@@ -87,5 +87,5 @@ remove_action( 'wp_head', 'wlwmanifest_link' );
 
 // WP CLI support
 if ( defined( 'WP_CLI' ) ) {
-    require_once dirname( __FILE__ ) . '/plugin/statichtmloutput-wp-cli-commands.php';
+    require_once dirname( __FILE__ ) . '/plugin/static-html-output-wp-cli-commands.php';
 }
