@@ -211,6 +211,8 @@ class StaticHTMLOutput_FilesHelper {
                         FILE_APPEND | LOCK_EX
                     );
 
+                    // TODO: check into permissions we should be trying to set vs
+                    // rely on server setup. Test against UI & CLI. Log error if call fails
                     chmod( $list_path, 0664 );
                 }
             }

@@ -13,8 +13,6 @@ class Deployer extends StaticHTMLOutput {
     public function deploy( $test = false ) {
         $method = $this->settings['selected_deployment_option'];
 
-        WP_CLI::log( 'Deploying static site via: ' . $method );
-
         $start_time = microtime( true );
 
         $deployers_dir = dirname( __FILE__ ) . '/../deployers';
@@ -153,36 +151,15 @@ class Deployer extends StaticHTMLOutput {
 
         $duration = $end_time - $start_time;
 
-        WP_CLI::success(
-            'Deployed to: ' . $method . ' in ' .
-            date( 'H:i:s', $duration )
-        );
+        $deploy_result = 'Deployed to: ' . $method . ' in ' .  date( 'H:i:s', $duration );
 
-        $this->finalizeDeployment();
+        $this->finalizeDeployment( $deploy_result );
     }
 
-    public function finalizeDeployment() {
-        $this->emailDeployNotification();
+    public function finalizeDeployment( string $deploy_result ) : string {
         $this->triggerPostDeployHooks();
-    }
 
-    public function emailDeployNotification() {
-        if ( ! isset( $this->settings['completionEmail'] ) ) {
-            return;
-        }
-
-        if ( defined( 'WP_CLI' ) ) {
-            WP_CLI::line( 'Sending confirmation email...' );
-        }
-
-        $current_user = wp_get_current_user();
-        $to = $current_user->user_email;
-        $subject = 'Static site deployment: ' .
-            $site_title = get_bloginfo( 'name' );
-        $body = 'Your WordPress site has been automatically deployed.';
-        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
-
-        wp_mail( $to, $subject, $body, $headers );
+        return $deploy_result;
     }
 
     public function triggerPostDeployHooks() {

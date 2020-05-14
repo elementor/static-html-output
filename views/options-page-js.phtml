@@ -237,7 +237,6 @@ jQuery(document).ready(function($){
       $('.saveSettingsButton').prop('disabled', false);
       $('.resetDefaultSettingsButton').prop('disabled', false);
       $('.cancelExportButton').hide();
-      notifyMe();
     }
   }
 
@@ -713,27 +712,6 @@ jQuery(document).ready(function($){
     $('.' + selected_deployment_method  + '_settings_block').show();
   }
 
-  function notifyMe() {
-    if (!Notification) {
-      alert('All exports are complete!.'); 
-      return;
-    }
-
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission();
-    } else {
-      var notification = new Notification('WP Static HTML Export', {
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Wordpress_Shiny_Icon.svg/768px-Wordpress_Shiny_Icon.svg.png',
-        body: "Exports have finished!",
-      });
-
-      notification.onclick = function () {
-        parent.focus();
-        window.focus();
-        this.close();
-      };
-    }
-  }
 
   function reloadLogFile() {
     // get current log selection

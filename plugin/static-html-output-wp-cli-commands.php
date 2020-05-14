@@ -142,9 +142,13 @@ class StaticHTMLOutput_CLI {
 
         require_once dirname( __FILE__ ) . '/StaticHTMLOutput/Deployer.php';
 
+        WP_CLI::log( 'Deploying static site' );
+
         $deployer = new Deployer();
 
-        $deployer->deploy( $test );
+        $deploy_result = $deployer->deploy( $test );
+
+        WP_CLI::line( $deploy_result );
     }
 }
 
