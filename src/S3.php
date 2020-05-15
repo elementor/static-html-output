@@ -89,8 +89,8 @@ class S3 extends SitePublisher {
                 } else {
                     // count cache hits/missed
                     // WsLog::l(
-                    //     "Skipping {$this->hash_key} as identical " .
-                    //         'to deploy cache'
+                    // "Skipping {$this->hash_key} as identical " .
+                    // 'to deploy cache'
                     // );
                 }
             } else {

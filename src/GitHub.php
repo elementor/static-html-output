@@ -91,8 +91,8 @@ class GitHub extends SitePublisher {
                 } else {
                     // noisy
                     // WsLog::l(
-                    //     "Skipping {$this->target_path} as identical " .
-                    //         'to deploy cache'
+                    // "Skipping {$this->target_path} as identical " .
+                    // 'to deploy cache'
                     // );
                 }
             } else {

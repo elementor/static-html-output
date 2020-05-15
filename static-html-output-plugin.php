@@ -48,7 +48,7 @@ function static_html_output_ajax() {
     $valid_referer = check_ajax_referer( 'statichtmloutput', 'nonce' );
 
     if ( ! $valid_referer ) {
-        error_log('Invalid ajax referer');
+        error_log( 'Invalid ajax referer' );
     }
 
     $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
@@ -90,9 +90,9 @@ function static_html_output_ajax() {
     } elseif ( strpos( $ajax_method, 'bunny' ) !== false ) {
         $class = new StaticHTMLOutput\BunnyCDN();
     } else {
-        error_log('trying to execute unknown function via AJAX');
-        error_log($class);
-        error_log($ajax_method);
+        error_log( 'trying to execute unknown function via AJAX' );
+        error_log( $class );
+        error_log( $ajax_method );
         wp_die();
         return null;
     }
