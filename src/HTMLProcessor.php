@@ -3,10 +3,53 @@
 namespace StaticHTMLOutput;
 
 use DOMDocument;
+use DOMComment;
 use Net_URL2;
 use DOMXPath;
+use DOMElement;
 
 class HTMLProcessor extends StaticHTMLOutput {
+
+    /**
+     * @var string
+     */
+    public $raw_html;
+    /**
+     * @var bool
+     */
+    public $harvest_new_urls;
+    /**
+     * @var bool
+     */
+    public $base_tag_exists;
+    /**
+     * @var string
+     */
+    public $destination_protocol;
+    /**
+     * @var string
+     */
+    public $destination_protocol_relative_url;
+    /**
+     * @var string
+     */
+    public $placeholder_url;
+    /**
+     * @var Net_URL2
+     */
+    public $page_url;
+    /**
+     * @var DOMDocument
+     */
+    public $xml_doc;
+    /**
+     * @var string[]
+     */
+    public $discovered_urls;
+    /**
+     * @var string[]
+     */
+    public $processed_urls;
 
     public function __construct() {
         $this->loadSettings(
@@ -21,7 +64,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->processed_urls = [];
     }
 
-    public function processHTML( $html_document, $page_url ) {
+    public function processHTML( string $html_document, Net_URL2 $page_url ) : bool {
         if ( $html_document == '' ) {
             return false;
         }
@@ -46,7 +89,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         // use in later base href creation to decide: append or create
         $this->base_tag_exists = false;
 
-        $this->page_url = new Net_url2( $page_url );
+        $this->page_url = new Net_URL2( $page_url );
 
         $this->detectIfURLsShouldBeHarvested();
 
@@ -98,13 +141,20 @@ class HTMLProcessor extends StaticHTMLOutput {
             $base_element =
                 $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
 
-            if ( $this->shouldCreateBaseHREF() ) {
-                $base_element->setAttribute(
-                    'href',
-                    $this->settings['baseHREF']
-                );
-            } else {
-                $base_element->parentNode->removeChild( $base_element );
+            if ( $base_element ) {
+                if ( $this->shouldCreateBaseHREF() ) {
+                    $base_element->setAttribute(
+                        'href',
+                        $this->settings['baseHREF']
+                    );
+                } else {
+                    $element_parent = $base_element->parentNode;
+
+                    if ( $element_parent ) {
+                        $element_parent->removeChild( $base_element );
+                    }
+
+                }
             }
         } elseif ( $this->shouldCreateBaseHREF() ) {
             $base_element = $this->xml_doc->createElement( 'base' );
@@ -116,10 +166,13 @@ class HTMLProcessor extends StaticHTMLOutput {
                 $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
             if ( $head_element ) {
                 $first_head_child = $head_element->firstChild;
-                $head_element->insertBefore(
-                    $base_element,
-                    $first_head_child
-                );
+
+                if ( $first_head_child ) {
+                    $head_element->insertBefore(
+                        $base_element,
+                        $first_head_child
+                    );
+                }
             } else {
                 WsLog::l(
                     'WARNING: no valid head elemnent to attach base to: ' .
@@ -136,7 +189,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return true;
     }
 
-    public function detectIfURLsShouldBeHarvested() {
+    public function detectIfURLsShouldBeHarvested() : void {
         if ( ! defined( 'WP_CLI' ) ) {
             // @codingStandardsIgnoreStart
             $this->harvest_new_urls = (
@@ -153,7 +206,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function processLink( $element ) {
+    public function processLink( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'href' );
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
@@ -179,15 +232,21 @@ class HTMLProcessor extends StaticHTMLOutput {
 
             $link_rel = $element->getAttribute( 'rel' );
 
+            $element_parent = $element->parentNode;
+
+            if ( ! $element_parent ) {
+                return;
+            }
+
             if ( in_array( $link_rel, $relative_links_to_rm ) ) {
-                $element->parentNode->removeChild( $element );
+                $element_parent->removeChild( $element );
             } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
-                $element->parentNode->removeChild( $element );
+                $element_parent->removeChild( $element );
             }
         }
     }
 
-    public function isValidURL( $url ) {
+    public function isValidURL( string $url ) : bool {
         // NOTE: not using native URL filter as it won't accept
         // non-ASCII URLs, which we want to support
         $url = trim( $url );
@@ -211,32 +270,32 @@ class HTMLProcessor extends StaticHTMLOutput {
         return true;
     }
 
-    public function addDiscoveredURL( $url ) {
+    public function addDiscoveredURL( string $url ) : void {
         // trim any query strings or anchors
-        $url = strtok( $url, '#' );
-        $url = strtok( $url, '?' );
+        $url = strtok( (string) $url, '#' );
+        $url = strtok( (string) $url, '?' );
 
-        if ( in_array( $url, $this->processed_urls ) ) {
+        if ( in_array( (string) $url, $this->processed_urls ) ) {
             return;
         }
 
-        if ( trim( $url ) === '' ) {
+        if ( trim( (string) $url ) === '' ) {
             return;
         }
 
-        $this->processed_urls[] = $url;
+        $this->processed_urls[] = (string) $url;
 
-        if ( isset( $this->harvest_new_urls ) ) {
-            if ( ! $this->isValidURL( $url ) ) {
+        if ( $this->harvest_new_urls ) {
+            if ( ! $this->isValidURL( (string) $url ) ) {
                 return;
             }
 
-            if ( $this->isInternalLink( $url ) ) {
+            if ( $this->isInternalLink( (string) $url ) ) {
                 $discovered_url_without_site_url =
                     str_replace(
                         rtrim( $this->placeholder_url, '/' ),
                         '',
-                        $url
+                        (string) $url
                     );
 
                 $this->discovered_urls[] = $discovered_url_without_site_url;
@@ -244,7 +303,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function processImageSrcSet( $element ) {
+    public function processImageSrcSet( DOMElement $element ) : void {
         if ( ! $element->hasAttribute( 'srcset' ) ) {
             return;
         }
@@ -272,8 +331,8 @@ class HTMLProcessor extends StaticHTMLOutput {
 
                 // rm query string
                 $url = strtok( $url, '?' );
-                $this->addDiscoveredURL( $url );
-                $url = $this->rewriteWPPathsSrcSetURL( $url );
+                $this->addDiscoveredURL( (string) $url );
+                $url = $this->rewriteWPPathsSrcSetURL( (string) $url );
                 $url = $this->rewriteBaseURLSrcSetURL( $url );
                 $url = $this->convertToRelativeURLSrcSetURL( $url );
                 $url = $this->convertToOfflineURLSrcSetURL( $url );
@@ -285,7 +344,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $element->setAttribute( 'srcset', implode( ',', $new_src_set ) );
     }
 
-    public function processImage( $element ) {
+    public function processImage( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'src' );
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
@@ -295,17 +354,29 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->convertToOfflineURL( $element );
     }
 
-    public function stripHTMLComments() {
+    public function stripHTMLComments() : void {
         if ( isset( $this->settings['removeHTMLComments'] ) ) {
             $xpath = new DOMXPath( $this->xml_doc );
 
-            foreach ( $xpath->query( '//comment()' ) as $comment ) {
-                $comment->parentNode->removeChild( $comment );
+            $comments = $xpath->query( '//comment()' );
+
+            if ( ! $comments ) {
+                return;
+            }
+
+            foreach ( $comments as $comment ) {
+                $element_parent = $comment->parentNode;
+
+                if ( ! $element_parent ) {
+                    return;
+                }
+
+                $element_parent->removeChild( $comment );
             }
         }
     }
 
-    public function processHead( $element ) {
+    public function processHead( DOMElement $element ) : void {
         $head_elements = iterator_to_array(
             $element->childNodes
         );
@@ -315,7 +386,13 @@ class HTMLProcessor extends StaticHTMLOutput {
                 if (
                     isset( $this->settings['removeConditionalHeadComments'] )
                 ) {
-                    $node->parentNode->removeChild( $node );
+                    $element_parent = $node->parentNode;
+
+                    if ( ! $element_parent ) {
+                        return;
+                    }
+
+                    $element_parent->removeChild( $node );
                 }
             } elseif ( isset( $node->tagName ) ) {
                 if ( $node->tagName === 'base' ) {
@@ -327,7 +404,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function processScript( $element ) {
+    public function processScript( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'src' );
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
@@ -337,7 +414,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->convertToOfflineURL( $element );
     }
 
-    public function processAnchor( $element ) {
+    public function processAnchor( DOMElement $element ) : void {
         $url = $element->getAttribute( 'href' );
 
         // TODO: DRY this up/move to higher exec position
@@ -365,13 +442,19 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->convertToOfflineURL( $element );
     }
 
-    public function processMeta( $element ) {
+    public function processMeta( DOMElement $element ) : void {
         // TODO: detect meta redirects here + build list for rewriting
         if ( isset( $this->settings['removeWPMeta'] ) ) {
             $meta_name = $element->getAttribute( 'name' );
 
             if ( strpos( $meta_name, 'generator' ) !== false ) {
-                $element->parentNode->removeChild( $element );
+                $element_parent = $element->parentNode;
+
+                if ( ! $element_parent ) {
+                    return;
+                }
+
+                $element_parent->removeChild( $element );
 
                 return;
             }
@@ -380,7 +463,13 @@ class HTMLProcessor extends StaticHTMLOutput {
                 $content = $element->getAttribute( 'content' );
 
                 if ( strpos( $content, 'noindex' ) !== false ) {
-                    $element->parentNode->removeChild( $element );
+                    $element_parent = $element->parentNode;
+
+                    if ( ! $element_parent ) {
+                        return;
+                    }
+
+                    $element_parent->removeChild( $element );
                 }
             }
         }
@@ -395,7 +484,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->convertToOfflineURL( $element );
     }
 
-    public function writeDiscoveredURLs() {
+    public function writeDiscoveredURLs() : void {
         // @codingStandardsIgnoreStart
         if ( isset( $_POST['ajax_action'] ) &&
             $_POST['ajax_action'] === 'crawl_again' ) {
@@ -425,7 +514,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     // make link absolute, using current page to determine full path
-    public function normalizeURL( $element, $attribute ) {
+    public function normalizeURL( DOMElement $element, string $attribute ) : void {
         $original_link = $element->getAttribute( $attribute );
 
         if ( $this->isInternalLink( $original_link ) ) {
@@ -435,7 +524,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     }
 
-    public function isInternalLink( $link, $domain = false ) {
+    public function isInternalLink( string $link, string $domain = '' ) : bool {
         if ( ! $domain ) {
             $domain = $this->placeholder_url;
         }
@@ -451,7 +540,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $is_internal_link;
     }
 
-    public function removeQueryStringFromInternalLink( $element ) {
+    public function removeQueryStringFromInternalLink( DOMElement $element ) : void {
         $attribute_to_change = '';
         $url_to_change = '';
 
@@ -472,12 +561,12 @@ class HTMLProcessor extends StaticHTMLOutput {
             // https://stackoverflow.com/a/42476194/1668057
             $element->setAttribute(
                 $attribute_to_change,
-                strtok( $url_to_change, '?' )
+                (string) strtok( $url_to_change, '?' )
             );
         }
     }
 
-    public function detectEscapedSiteURLs( $processed_html ) {
+    public function detectEscapedSiteURLs( string $processed_html ) : string {
         // NOTE: this does return the expected http:\/\/172.18.0.3
         // but your error log may escape again and
         // show http:\\/\\/172.18.0.3
@@ -490,7 +579,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $processed_html;
     }
 
-    public function detectUnchangedPlaceholderURLs( $processed_html ) {
+    public function detectUnchangedPlaceholderURLs( string $processed_html ) : string {
         $placeholder_url = $this->placeholder_url;
 
         if ( strpos( $processed_html, $placeholder_url ) !== false ) {
@@ -502,7 +591,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $processed_html;
     }
 
-    public function rewriteUnchangedPlaceholderURLs( $processed_html ) {
+    public function rewriteUnchangedPlaceholderURLs( string $processed_html ) : string {
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             $this->settings['rewrite_rules'] = '';
         }
@@ -545,7 +634,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $rewritten_source;
     }
 
-    public function rewriteEscapedURLs( $processed_html ) {
+    public function rewriteEscapedURLs( string $processed_html ) : string {
         // NOTE: fix input HTML, which can have \ slashes modified to %5C
         $processed_html = str_replace(
             '%5C/',
@@ -600,7 +689,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     }
 
-    public function rewriteWPPathsSrcSetURL( $url_to_change ) {
+    public function rewriteWPPathsSrcSetURL( string $url_to_change ) : string {
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             return $url_to_change;
         }
@@ -629,7 +718,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $rewritten_url;
     }
 
-    public function rewriteWPPaths( $element ) {
+    public function rewriteWPPaths( DOMElement $element ) : void {
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             return;
         }
@@ -681,11 +770,11 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function getHTML() {
+    public function getHTML() : string {
         $processed_html = $this->xml_doc->saveHtml();
 
         // process the resulting HTML as text
-        $processed_html = $this->detectEscapedSiteURLs( $processed_html );
+        $processed_html = $this->detectEscapedSiteURLs( (string) $processed_html );
         $processed_html = $this->detectUnchangedPlaceholderURLs(
             $processed_html
         );
@@ -706,7 +795,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $processed_html;
     }
 
-    public function convertToRelativeURLSrcSetURL( $url_to_change ) {
+    public function convertToRelativeURLSrcSetURL( string $url_to_change ) : string {
         if ( ! $this->shouldUseRelativeURLs() ) {
             return $url_to_change;
         }
@@ -722,7 +811,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $relative_url;
     }
 
-    public function convertToRelativeURL( $element ) {
+    public function convertToRelativeURL( DOMElement $element ) : void {
         if ( ! $this->shouldUseRelativeURLs() ) {
             return;
         }
@@ -756,14 +845,14 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function convertToOfflineURLSrcSetURL( $url_to_change ) {
+    public function convertToOfflineURLSrcSetURL( string $url_to_change ) : string {
         if ( ! $this->shouldCreateOfflineURLs() ) {
             return $url_to_change;
         }
 
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
-        $number_of_segments_in_path = explode( '/', $current_page_path );
+        $number_of_segments_in_path = explode( '/', (string) $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
         for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
@@ -773,7 +862,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         if ( ! $this->isInternalLink(
             $url_to_change
         ) ) {
-            return false;
+            return $url_to_change;
         }
 
         $rewritten_url = str_replace(
@@ -793,7 +882,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $offline_url;
     }
 
-    public function convertToOfflineURL( $element ) {
+    public function convertToOfflineURL( DOMElement $element ) : void {
         if ( ! $this->shouldCreateOfflineURLs() ) {
             return;
         }
@@ -811,7 +900,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $url_to_change = $element->getAttribute( $attribute_to_change );
         $current_page_path_to_root = '';
         $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
-        $number_of_segments_in_path = explode( '/', $current_page_path );
+        $number_of_segments_in_path = explode( '/', (string) $current_page_path );
         $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
 
         for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
@@ -821,7 +910,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         if ( ! $this->isInternalLink(
             $url_to_change
         ) ) {
-            return false;
+            return;
         }
 
         $rewritten_url = str_replace(
@@ -842,7 +931,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     // TODO: move some of these URLs into settings to avoid extra calls
-    public function getProtocolRelativeURL( $url ) {
+    public function getProtocolRelativeURL( string $url ) : string {
         $this->destination_protocol_relative_url = str_replace(
             [
                 'https:',
@@ -858,7 +947,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $this->destination_protocol_relative_url;
     }
 
-    public function rewriteBaseURLSrcSetURL( $url_to_change ) {
+    public function rewriteBaseURLSrcSetURL( string $url_to_change ) : string {
         $rewritten_url = str_replace(
             $this->getBaseURLRewritePatterns(),
             $this->getBaseURLRewritePatterns(),
@@ -868,7 +957,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $rewritten_url;
     }
 
-    public function rewriteBaseURL( $element ) {
+    public function rewriteBaseURL( DOMElement $element ) : void {
         if ( $element->hasAttribute( 'href' ) ) {
             $attribute_to_change = 'href';
         } elseif ( $element->hasAttribute( 'src' ) ) {
@@ -893,7 +982,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function getTargetSiteProtocol( $url ) {
+    public function getTargetSiteProtocol( string $url ) : string {
         $this->destination_protocol = '//';
 
         if ( strpos( $url, 'https://' ) !== false ) {
@@ -907,7 +996,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $this->destination_protocol;
     }
 
-    public function rewriteSiteURLsToPlaceholder( $raw_html ) {
+    public function rewriteSiteURLsToPlaceholder( string $raw_html ) : string {
         $site_url = rtrim( $this->settings['wp_site_url'], '/' );
         $placeholder_url = rtrim( $this->placeholder_url, '/' );
 
@@ -948,7 +1037,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $rewritten_source;
     }
 
-    public function shouldUseRelativeURLs() {
+    public function shouldUseRelativeURLs() : bool {
         if ( ! isset( $this->settings['useRelativeURLs'] ) ) {
             return false;
         }
@@ -957,9 +1046,11 @@ class HTMLProcessor extends StaticHTMLOutput {
         if ( isset( $this->settings['allowOfflineUsage'] ) ) {
             return false;
         }
+
+        return true;
     }
 
-    public function shouldCreateBaseHREF() {
+    public function shouldCreateBaseHREF() : bool {
         if ( empty( $this->settings['baseHREF'] ) ) {
             return false;
         }
@@ -972,7 +1063,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return true;
     }
 
-    public function shouldCreateOfflineURLs() {
+    public function shouldCreateOfflineURLs() : bool {
         if ( ! isset( $this->settings['allowOfflineUsage'] ) ) {
             return false;
         }
@@ -984,8 +1075,10 @@ class HTMLProcessor extends StaticHTMLOutput {
         return true;
     }
 
-    // TODO: move this up to WPSite level or higher, log only once
-    public function getBaseURLRewritePatterns() {
+    /**
+     * @return mixed[] string replacement patterns
+     */
+    public function getBaseURLRewritePatterns() : array {
         $patterns = [
             $this->placeholder_url,
             addcslashes( $this->placeholder_url, '/' ),
@@ -1006,7 +1099,10 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $patterns;
     }
 
-    public function getBaseURLRewriteReplacements() {
+    /**
+     * @return mixed[] string replacement patterns
+     */
+    public function getBaseURLRewriteReplacements() : array {
         $replacements = [
             $this->settings['baseUrl'],
             addcslashes( $this->settings['baseUrl'], '/' ),
