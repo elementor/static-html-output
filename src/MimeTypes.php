@@ -4,7 +4,7 @@ namespace StaticHTMLOutput;
 
 class MimeTypes {
 
-    public static function guess_type( $file ) {
+    public static function guess_type( string $file ) : string {
         $mime_types = [
             '123' => 'application/vnd.lotus-1-2-3',
             '3dml' => 'text/vnd.in3d.3dml',
@@ -765,7 +765,6 @@ class MimeTypes {
             'stl' => 'application/vnd.ms-pki.stl',
             'str' => 'application/vnd.pg.format',
             'stw' => 'application/vnd.sun.xml.writer.template',
-            'sub' => 'image/vnd.dvb.subtitle',
             'sub' => 'text/vnd.dvb.subtitle',
             'sus' => 'application/vnd.sus-calendar',
             'susp' => 'application/vnd.sus-calendar',
@@ -909,7 +908,6 @@ class MimeTypes {
             'wmv' => 'video/x-ms-wmv',
             'wmx' => 'video/x-ms-wmx',
             'wmz' => 'application/x-ms-wmz',
-            'wmz' => 'application/x-msmetafile',
             'woff' => 'font/woff',
             'woff2' => 'font/woff2',
             'wpd' => 'application/vnd.wordperfect',

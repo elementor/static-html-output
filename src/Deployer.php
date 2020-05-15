@@ -4,6 +4,11 @@ namespace StaticHTMLOutput;
 
 class Deployer extends StaticHTMLOutput {
 
+    /**
+     * @var Archive
+     */
+    public $archive;
+
     public function __construct() {
         $this->loadSettings(
             [
@@ -12,12 +17,10 @@ class Deployer extends StaticHTMLOutput {
         );
     }
 
-    public function deploy( $test = false ) {
+    public function deploy( bool $test = false ) : void {
         $method = $this->settings['selected_deployment_option'];
 
         $start_time = microtime( true );
-
-        $deployers_dir = dirname( __FILE__ ) . '/../deployers';
 
         switch ( $this->settings['selected_deployment_option'] ) {
             case 'folder':
@@ -25,6 +28,8 @@ class Deployer extends StaticHTMLOutput {
             case 'zip':
                 break;
             case 's3':
+                $s3 = new S3();
+
                 if ( $test ) {
                     $s3->test_s3();
                     return;
@@ -37,6 +42,7 @@ class Deployer extends StaticHTMLOutput {
                 $s3->cloudfront_invalidate_all_items();
                 break;
             case 'bitbucket':
+                $bitbucket = new BitBucket();
                 if ( $test ) {
                     $bitbucket->test_upload();
                     return;
@@ -48,6 +54,7 @@ class Deployer extends StaticHTMLOutput {
                 $bitbucket->upload_files();
                 break;
             case 'bunnycdn':
+                $bunny = new BunnyCDN();
                 if ( $test ) {
                     $bunny->test_deploy();
                     return;
@@ -60,6 +67,8 @@ class Deployer extends StaticHTMLOutput {
                 $bunny->purge_all_cache();
                 break;
             case 'ftp':
+                $ftp = new FTP();
+
                 if ( $test ) {
                     $ftp->test_ftp();
                     return;
@@ -71,6 +80,8 @@ class Deployer extends StaticHTMLOutput {
                 $ftp->upload_files();
                 break;
             case 'github':
+                $github = new GitHub();
+
                 if ( $test ) {
                     $github->test_upload();
                     return;
@@ -82,6 +93,8 @@ class Deployer extends StaticHTMLOutput {
                 $github->upload_files();
                 break;
             case 'gitlab':
+                $gitlab = new GitLab();
+
                 if ( $test ) {
                     $gitlab->test_file_create();
                     return;
@@ -95,6 +108,8 @@ class Deployer extends StaticHTMLOutput {
                 $gitlab->upload_files();
                 break;
             case 'netlify':
+                $netlify = new Netlify();
+
                 if ( $test ) {
                     $netlify->test_netlify();
                     return;
@@ -110,7 +125,7 @@ class Deployer extends StaticHTMLOutput {
 
         $duration = $end_time - $start_time;
 
-        $deploy_result = 'Deployed to: ' . $method . ' in ' . gmdate( 'H:i:s', $duration );
+        $deploy_result = 'Deployed to: ' . $method . ' in ' . gmdate( 'H:i:s', (int) $duration );
 
         $this->finalizeDeployment( $deploy_result );
     }
@@ -121,7 +136,7 @@ class Deployer extends StaticHTMLOutput {
         return $deploy_result;
     }
 
-    public function triggerPostDeployHooks() {
+    public function triggerPostDeployHooks() : void {
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
 
