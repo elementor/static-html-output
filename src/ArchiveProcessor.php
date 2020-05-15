@@ -9,7 +9,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
         $this->archive->setToCurrentArchive();
 
         $this->loadSettings(
-            array(
+            [
                 'wpenv',
                 'crawling',
                 'advanced',
@@ -17,7 +17,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
                 'netlify',
                 'zip',
                 'folder',
-            )
+            ]
         );
     }
 
@@ -74,7 +74,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
             return false;
         }
 
-        $dotfiles = array( '.', '..', '/.statichtmloutput_safety' );
+        $dotfiles = [ '.', '..', '/.statichtmloutput_safety' ];
 
         foreach ( scandir( $dirname ) as $file ) {
             if ( ! in_array( $file, $dotfiles ) ) {
@@ -218,7 +218,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
     public function create_zip() {
         $deployer = $this->settings['selected_deployment_option'];
 
-        if ( ! in_array( $deployer, array( 'zip', 'netlify' ) ) ) {
+        if ( ! in_array( $deployer, [ 'zip', 'netlify' ] ) ) {
             return;
         }
 

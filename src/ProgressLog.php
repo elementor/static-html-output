@@ -9,9 +9,9 @@ class ProgressLog {
             return;
         }
 
-        $target_settings = array(
+        $target_settings = [
             'wpenv',
-        );
+        ];
 
         $wp_uploads_path = '';
 

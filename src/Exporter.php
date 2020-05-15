@@ -6,16 +6,16 @@ class Exporter extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
-            array(
+            [
                 'wpenv',
                 'crawling',
                 'advanced',
-            )
+            ]
         );
     }
 
     public function pre_export_cleanup() {
-        $files_to_clean = array(
+        $files_to_clean = [
             'WP-STATIC-2ND-CRAWL-LIST.txt',
             'WP-STATIC-404-LOG.txt',
             'WP-STATIC-CRAWLED-LINKS.txt',
@@ -26,7 +26,7 @@ class Exporter extends StaticHTMLOutput {
             'WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
             'WP-STATIC-FINAL-CRAWL-LIST.txt',
             'WP2STATIC-GITLAB-FILES-IN-REPO.txt',
-        );
+        ];
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
@@ -56,7 +56,7 @@ class Exporter extends StaticHTMLOutput {
             $this->settings['archive_dir'] = stream_get_line( $handle, 0 );
         }
 
-        $files_to_clean = array(
+        $files_to_clean = [
             '/WP-STATIC-2ND-CRAWL-LIST.txt',
             '/WP-STATIC-CRAWLED-LINKS.txt',
             '/WP-STATIC-DISCOVERED-URLS.txt',
@@ -64,7 +64,7 @@ class Exporter extends StaticHTMLOutput {
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
             '/WP-STATIC-FINAL-CRAWL-LIST.txt',
             '/WP2STATIC-GITLAB-FILES-IN-REPO.txt',
-        );
+        ];
 
         foreach ( $files_to_clean as $file_to_clean ) {
             if ( file_exists(
@@ -142,7 +142,7 @@ class Exporter extends StaticHTMLOutput {
             return;
         }
 
-        $modified_crawl_list = array();
+        $modified_crawl_list = [];
 
         // load crawl list into array
         $crawl_list = file(

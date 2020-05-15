@@ -10,7 +10,7 @@ class StaticHTMLOutput_FilesHelper {
 
     public static function delete_dir_with_files( $dir ) {
         if ( is_dir( $dir ) ) {
-            $files = array_diff( scandir( $dir ), array( '.', '..' ) );
+            $files = array_diff( scandir( $dir ), [ '.', '..' ] );
 
             foreach ( $files as $file ) {
                 ( is_dir( "$dir/$file" ) ) ?
@@ -25,7 +25,7 @@ class StaticHTMLOutput_FilesHelper {
     public static function getThemeFiles( $theme_type ) {
         $wp_site = new WPSite();
 
-        $files = array();
+        $files = [];
         $template_path = '';
         $template_url = '';
 
@@ -79,7 +79,7 @@ class StaticHTMLOutput_FilesHelper {
     public static function detectVendorFiles( $wp_site_url ) {
         $wp_site = new WPSite();
 
-        $vendor_files = array();
+        $vendor_files = [];
 
         if ( class_exists( '\\Elementor\Api' ) ) {
             $elementor_font_dir = WP_PLUGIN_DIR .
@@ -93,13 +93,13 @@ class StaticHTMLOutput_FilesHelper {
         }
 
         if ( defined( 'WPSEO_VERSION' ) ) {
-            $yoast_sitemaps = array(
+            $yoast_sitemaps = [
                 '/sitemap_index.xml',
                 '/post-sitemap.xml',
                 '/page-sitemap.xml',
                 '/category-sitemap.xml',
                 '/author-sitemap.xml',
-            );
+            ];
 
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
         }
@@ -144,7 +144,7 @@ class StaticHTMLOutput_FilesHelper {
                 WHERE meta_key = '%s'
                 ";
 
-            $custom_permalinks = array();
+            $custom_permalinks = [];
 
             $posts = $wpdb->get_results(
                 sprintf(
@@ -233,7 +233,7 @@ class StaticHTMLOutput_FilesHelper {
         $prefix
         ) {
 
-        $files = array();
+        $files = [];
 
         $directory = $cache_dir;
 
@@ -262,7 +262,7 @@ class StaticHTMLOutput_FilesHelper {
     }
 
     public static function getListOfLocalFilesByUrl( $url ) {
-        $files = array();
+        $files = [];
 
         $directory = str_replace( home_url( '/' ), ABSPATH, $url );
 
@@ -296,7 +296,7 @@ class StaticHTMLOutput_FilesHelper {
             return false;
         }
 
-        $filenames_to_ignore = array(
+        $filenames_to_ignore = [
             '.DS_Store',
             '.PHP',
             '.SQL',
@@ -325,7 +325,7 @@ class StaticHTMLOutput_FilesHelper {
             'thumbs.db',
             'vendor',
             'wp-static-html-output', // exclude earlier version exports
-        );
+        ];
 
         foreach ( $filenames_to_ignore as $ignorable ) {
             if ( strpos( $file_name, $ignorable ) !== false ) {
@@ -342,7 +342,7 @@ class StaticHTMLOutput_FilesHelper {
         }
 
         $extensions_to_ignore =
-            array(
+            [
                 'php',
                 'phtml',
                 'tpl',
@@ -359,7 +359,7 @@ class StaticHTMLOutput_FilesHelper {
                 'sh',
                 'mo',
                 'md',
-            );
+            ];
 
         if ( in_array( $path_info['extension'], $extensions_to_ignore ) ) {
             return false;
@@ -380,10 +380,10 @@ class StaticHTMLOutput_FilesHelper {
 
         // TODO: detect robots.txt, etc before adding
         $url_queue = array_merge(
-            array( trailingslashit( $base_url ) ),
-            array( '/robots.txt' ),
-            array( '/favicon.ico' ),
-            array( '/sitemap.xml' )
+            [ trailingslashit( $base_url ) ],
+            [ '/robots.txt' ],
+            [ '/favicon.ico' ],
+            [ '/sitemap.xml' ]
         );
 
         switch ( $settings['detection_level'] ) {
@@ -443,8 +443,8 @@ class StaticHTMLOutput_FilesHelper {
     public static function getAllWPPostURLs( $wp_site_url ) {
         global $wpdb;
 
-        $post_urls = array();
-        $unique_post_types = array();
+        $post_urls = [];
+        $unique_post_types = [];
 
         $query = "
             SELECT ID,post_type
@@ -525,20 +525,20 @@ class StaticHTMLOutput_FilesHelper {
         }
 
         // gets all category page links
-        $args = array(
+        $args = [
             'public'   => true,
-        );
+        ];
 
         $taxonomies = get_taxonomies( $args, 'objects' );
 
-        $category_links = array();
+        $category_links = [];
 
         foreach ( $taxonomies as $taxonomy ) {
             $terms = get_terms(
                 $taxonomy->name,
-                array(
+                [
                     'hide_empty' => true,
-                )
+                ]
             );
 
             foreach ( $terms as $term ) {
@@ -614,7 +614,7 @@ class StaticHTMLOutput_FilesHelper {
         $pagination_base = $wp_rewrite->pagination_base;
         $default_posts_per_page = get_option( 'posts_per_page' );
 
-        $urls_to_include = array();
+        $urls_to_include = [];
 
         foreach ( $post_types as $post_type ) {
             $query = "
@@ -657,7 +657,7 @@ class StaticHTMLOutput_FilesHelper {
     public static function getPaginationURLsForCategories( $categories ) {
         global $wp_rewrite;
 
-        $urls_to_include = array();
+        $urls_to_include = [];
         $pagination_base = $wp_rewrite->pagination_base;
         $default_posts_per_page = get_option( 'posts_per_page' );
 
@@ -676,7 +676,7 @@ class StaticHTMLOutput_FilesHelper {
     public static function getPaginationURLsForComments( $wp_site_url ) {
         global $wp_rewrite;
 
-        $urls_to_include = array();
+        $urls_to_include = [];
         $comments_pagination_base = $wp_rewrite->comments_pagination_base;
 
         foreach ( get_comments() as $comment ) {

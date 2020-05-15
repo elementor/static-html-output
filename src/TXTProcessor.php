@@ -6,12 +6,12 @@ class TXTProcessor extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
-            array(
+            [
                 'crawling',
                 'wpenv',
                 'processing',
                 'advanced',
-            )
+            ]
         );
 
     }
@@ -83,8 +83,8 @@ class TXTProcessor extends StaticHTMLOutput {
                 $this->getProtocolRelativeURL( $this->placeholder_url ) . ',' .
                 $this->getProtocolRelativeURL( $this->settings['baseUrl'] );
 
-        $rewrite_from = array();
-        $rewrite_to = array();
+        $rewrite_from = [];
+        $rewrite_to = [];
 
         $rewrite_rules = explode(
             "\n",
@@ -137,8 +137,8 @@ class TXTProcessor extends StaticHTMLOutput {
                 $site_url . ',' .
                 $destination_url;
 
-        $rewrite_from = array();
-        $rewrite_to = array();
+        $rewrite_from = [];
+        $rewrite_to = [];
 
         $rewrite_rules = explode(
             "\n",
@@ -164,7 +164,7 @@ class TXTProcessor extends StaticHTMLOutput {
     }
 
     public function rewriteSiteURLsToPlaceholder() {
-        $patterns = array(
+        $patterns = [
             $this->settings['wp_site_url'],
             $this->getProtocolRelativeURL(
                 $this->settings['wp_site_url']
@@ -178,9 +178,9 @@ class TXTProcessor extends StaticHTMLOutput {
             $this->getProtocolRelativeURL(
                 addcslashes( $this->settings['wp_site_url'], '/' )
             ),
-        );
+        ];
 
-        $replacements = array(
+        $replacements = [
             $this->placeholder_url,
             $this->getProtocolRelativeURL(
                 $this->placeholder_url
@@ -194,7 +194,7 @@ class TXTProcessor extends StaticHTMLOutput {
             $this->getProtocolRelativeURL(
                 addcslashes( $this->placeholder_url, '/' )
             ),
-        );
+        ];
 
         // catch any http links on an https WP site
         if ( $this->destination_protocol === 'https' ) {
@@ -232,14 +232,14 @@ class TXTProcessor extends StaticHTMLOutput {
 
     public function getProtocolRelativeURL( $url ) {
         $this->destination_protocol_relative_url = str_replace(
-            array(
+            [
                 'https:',
                 'http:',
-            ),
-            array(
+            ],
+            [
                 '',
                 '',
-            ),
+            ],
             $url
         );
 

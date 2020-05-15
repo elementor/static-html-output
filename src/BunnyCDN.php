@@ -130,12 +130,12 @@ class BunnyCDN extends SitePublisher {
             curl_setopt(
                 $ch,
                 CURLOPT_HTTPHEADER,
-                array(
+                [
                     'Content-Type: application/json',
                     'Content-Length: 0',
                     'AccessKey: ' .
                         $this->settings['bunnycdnPullZoneAccessKey'],
-                )
+                ]
             );
 
             $output = curl_exec( $ch );
@@ -143,7 +143,7 @@ class BunnyCDN extends SitePublisher {
 
             curl_close( $ch );
 
-            $good_response_codes = array( '200', '201' );
+            $good_response_codes = [ '200', '201' ];
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
                 WsLog::l(
@@ -186,15 +186,15 @@ class BunnyCDN extends SitePublisher {
             curl_setopt(
                 $ch,
                 CURLOPT_HTTPHEADER,
-                array(
+                [
                     'AccessKey: ' .
                         $this->settings['bunnycdnStorageZoneAccessKey'],
-                )
+                ]
             );
 
-            $post_options = array(
+            $post_options = [
                 'body' => 'Test StaticHTMLOutput connectivity',
-            );
+            ];
 
             curl_setopt(
                 $ch,
@@ -207,7 +207,7 @@ class BunnyCDN extends SitePublisher {
 
             curl_close( $ch );
 
-            $good_response_codes = array( '200', '201', '301', '302', '304' );
+            $good_response_codes = [ '200', '201', '301', '302', '304' ];
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
                 WsLog::l(
@@ -239,10 +239,10 @@ class BunnyCDN extends SitePublisher {
                 $this->settings['bunnycdnStorageZoneName'] .
                 '/' . $this->target_path;
 
-            $headers = array(
+            $headers = [
                 'AccessKey: ' .
                     $this->settings['bunnycdnStorageZoneAccessKey'],
-            );
+            ];
 
             $this->client->putWithFileStreamAndHeaders(
                 $remote_path,
@@ -252,7 +252,7 @@ class BunnyCDN extends SitePublisher {
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                [ '200', '201', '301', '302', '304' ]
             );
         } catch ( Exception $e ) {
             $this->handleException( $e );

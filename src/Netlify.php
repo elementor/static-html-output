@@ -49,11 +49,11 @@ class Netlify extends SitePublisher {
             $this->site_id . '/deploys';
 
         try {
-            $headers = array(
+            $headers = [
                 'Authorization: Bearer ' .
                     $this->settings['netlifyPersonalAccessToken'],
                 'Content-Type: application/zip',
-            );
+            ];
 
             $this->client = new StaticHTMLOutput_Request();
 
@@ -65,7 +65,7 @@ class Netlify extends SitePublisher {
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                [ '200', '201', '301', '302', '304' ]
             );
 
             $this->finalizeDeployment();
@@ -83,10 +83,10 @@ class Netlify extends SitePublisher {
 
         try {
 
-            $headers = array(
+            $headers = [
                 'Authorization: Bearer ' .
                     $this->settings['netlifyPersonalAccessToken'],
-            );
+            ];
 
             $this->client = new StaticHTMLOutput_Request();
 

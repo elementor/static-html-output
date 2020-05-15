@@ -6,12 +6,12 @@ class SiteCrawler extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
-            array(
+            [
                 'wpenv',
                 'crawling',
                 'processing',
                 'advanced',
-            )
+            ]
         );
 
         if ( isset( $this->settings['crawl_delay'] ) ) {
@@ -50,7 +50,7 @@ class SiteCrawler extends StaticHTMLOutput {
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
         );
 
-        $unique_discovered_links = array();
+        $unique_discovered_links = [];
 
         $discovered_links_file = $this->settings['wp_uploads_path'] .
             '/WP-STATIC-DISCOVERED-URLS.txt';
@@ -183,7 +183,7 @@ class SiteCrawler extends StaticHTMLOutput {
     }
 
     public function crawlABitMore() {
-        $batch_of_links_to_crawl = array();
+        $batch_of_links_to_crawl = [];
 
         $this->urls_to_crawl = file(
             $this->list_of_urls_to_crawl_path,
@@ -251,7 +251,7 @@ class SiteCrawler extends StaticHTMLOutput {
 
         $batch_index = 0;
 
-        $exclusions = array( 'wp-json' );
+        $exclusions = [ 'wp-json' ];
 
         if ( isset( $this->settings['excludeURLs'] ) ) {
             $user_exclusions = explode(
@@ -369,7 +369,7 @@ class SiteCrawler extends StaticHTMLOutput {
             $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-CRAWLED-LINKS.txt';
 
-        $good_response_codes = array( '200', '201', '301', '302', '304' );
+        $good_response_codes = [ '200', '201', '301', '302', '304' ];
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
             $this->logAction(

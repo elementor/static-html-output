@@ -51,7 +51,7 @@ function wp_static_html_output_ajax() {
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
         $plugin_instance = StaticHTMLOutput_Controller::getInstance();
-        call_user_func( array( $plugin_instance, $instance_method ) );
+        call_user_func( [ $plugin_instance, $instance_method ] );
     }
 
     wp_die();

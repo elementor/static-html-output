@@ -4,7 +4,7 @@ namespace StaticHTMLOutput;
 
 class View {
 
-    protected $variables = array();
+    protected $variables = [];
     protected $path = null;
     protected $directory = 'views';
     protected $extension = '.phtml';
@@ -15,14 +15,14 @@ class View {
         list($plugin_dir) = explode( '/', plugin_basename( __FILE__ ) );
 
         // making up an absolute path to views directory
-        $path_array = array( WP_PLUGIN_DIR, $plugin_dir, $this->directory );
+        $path_array = [ WP_PLUGIN_DIR, $plugin_dir, $this->directory ];
 
         $this->path = implode( '/', $path_array );
     }
 
     public function setTemplate( $tpl ) {
         $this->template = $tpl;
-        $this->variables = array();
+        $this->variables = [];
         return $this;
     }
 

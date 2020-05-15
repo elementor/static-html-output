@@ -4,11 +4,11 @@ namespace StaticHTMLOutput;
 
 class SitePublisher {
     public function loadSettings( $deploy_method ) {
-        $target_settings = array(
+        $target_settings = [
             'general',
             'wpenv',
             'advanced',
-        );
+        ];
 
         $target_settings[] = $deploy_method;
 
@@ -226,7 +226,7 @@ class SitePublisher {
     }
 
     public function getItemsToDeploy( $batch_size = 1 ) {
-        $lines = array();
+        $lines = [];
 
         $f = fopen( $this->export_file_list, 'r' );
 
@@ -304,7 +304,7 @@ class SitePublisher {
     }
 
     public function openPreviousHashesFile() {
-        $this->file_paths_and_hashes = array();
+        $this->file_paths_and_hashes = [];
 
         if ( is_file( $this->previous_hashes_path ) ) {
             $file = fopen( $this->previous_hashes_path, 'r' );

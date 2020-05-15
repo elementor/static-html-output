@@ -14,49 +14,49 @@ class CLI {
             PHP_EOL . 'StaticHTMLOutput' . PHP_EOL
         );
 
-        $environmental_info = array(
-            array(
+        $environmental_info = [
+            [
                 'key' => 'PLUGIN VERSION',
                 'value' => StaticHTMLOutput_Controller::VERSION,
-            ),
-            array(
+            ],
+            [
                 'key' => 'PHP_VERSION',
                 'value' => phpversion(),
-            ),
-            array(
+            ],
+            [
                 'key' => 'PHP MAX EXECUTION TIME',
                 'value' => ini_get( 'max_execution_time' ),
-            ),
-            array(
+            ],
+            [
                 'key' => 'OS VERSION',
                 'value' => php_uname(),
-            ),
-            array(
+            ],
+            [
                 'key' => 'WP VERSION',
                 'value' => get_bloginfo( 'version' ),
-            ),
-            array(
+            ],
+            [
                 'key' => 'WP URL',
                 'value' => get_bloginfo( 'url' ),
-            ),
-            array(
+            ],
+            [
                 'key' => 'WP SITEURL',
                 'value' => get_option( 'siteurl' ),
-            ),
-            array(
+            ],
+            [
                 'key' => 'WP HOME',
                 'value' => get_option( 'home' ),
-            ),
-            array(
+            ],
+            [
                 'key' => 'WP ADDRESS',
                 'value' => get_bloginfo( 'wpurl' ),
-            ),
-        );
+            ],
+        ];
 
         WP_CLI\Utils\format_items(
             'table',
             $environmental_info,
-            array( 'key', 'value' )
+            [ 'key', 'value' ]
         );
 
         $active_plugins = get_option( 'active_plugins' );
@@ -244,7 +244,7 @@ function statichtmloutput_options( $args, $assoc_args ) {
         WP_CLI\Utils\format_items(
             'table',
             $options,
-            array( 'Option name', 'Value' )
+            [ 'Option name', 'Value' ]
         );
     }
 }

@@ -142,11 +142,11 @@ class GitHub extends SitePublisher {
             curl_setopt( $ch, CURLOPT_USERAGENT, 'StaticHTMLOutput.com' );
             curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
 
-            $post_options = array(
+            $post_options = [
                 'message' => 'Test StaticHTMLOutput connectivity',
                 'content' => $b64_file_contents,
                 'branch' => $this->settings['ghBranch'],
-            );
+            ];
 
             curl_setopt(
                 $ch,
@@ -157,10 +157,10 @@ class GitHub extends SitePublisher {
             curl_setopt(
                 $ch,
                 CURLOPT_HTTPHEADER,
-                array(
+                [
                     'Authorization: ' .
                         'token ' . $this->settings['ghToken'],
-                )
+                ]
             );
 
             $output = curl_exec( $ch );
@@ -168,7 +168,7 @@ class GitHub extends SitePublisher {
 
             curl_close( $ch );
 
-            $good_response_codes = array( '200', '201', '301', '302', '304' );
+            $good_response_codes = [ '200', '201', '301', '302', '304' ];
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
                 WsLog::l(
@@ -207,23 +207,23 @@ query{
 JSON;
         $this->client = new StaticHTMLOutput_Request();
 
-        $post_options = array(
+        $post_options = [
             'query' => $this->query,
             'variables' => '',
-        );
+        ];
 
-        $headers = array(
+        $headers = [
             'Authorization: ' .
                     'token ' . $this->settings['ghToken'],
-        );
+        ];
 
         $this->client->postWithJSONPayloadCustomHeaders(
             'https://api.github.com/graphql',
             $post_options,
             $headers,
-            $curl_options = array(
+            $curl_options = [
                 CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-            )
+            ]
         );
 
         $this->logAction( "API response code {$this->client->status_code}" );
@@ -231,7 +231,7 @@ JSON;
 
         $this->checkForValidResponses(
             $this->client->status_code,
-            array( '200', '201', '301', '302', '304' )
+            [ '200', '201', '301', '302', '304' ]
         );
 
         $gh_file_info = json_decode( $this->client->body, true );
@@ -260,14 +260,14 @@ JSON;
 
         if ( isset( $this->settings['ghCommitMessage'] ) ) {
             $commit_message = str_replace(
-                array(
+                [
                     '%ACTION%',
                     '%FILENAME%',
-                ),
-                array(
+                ],
+                [
                     $action,
                     $this->target_path,
-                ),
+                ],
                 $this->settings['ghCommitMessage']
             );
         } else {
@@ -277,25 +277,25 @@ JSON;
         }
 
         try {
-            $post_options = array(
+            $post_options = [
                 'message' => $commit_message,
                 'content' => $b64_file_contents,
                 'branch' => $this->settings['ghBranch'],
                 'sha' => $existing_sha,
-            );
+            ];
 
-            $headers = array(
+            $headers = [
                 'Authorization: ' .
                         'token ' . $this->settings['ghToken'],
-            );
+            ];
 
             $this->client->putWithJSONPayloadCustomHeaders(
                 $this->remote_path,
                 $post_options,
                 $headers,
-                $curl_options = array(
+                $curl_options = [
                     CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                )
+                ]
             );
 
             $this->logAction(
@@ -305,7 +305,7 @@ JSON;
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                [ '200', '201', '301', '302', '304' ]
             );
         } catch ( Exception $e ) {
             $this->handleException( $e );
@@ -321,14 +321,14 @@ JSON;
 
         if ( isset( $this->settings['ghCommitMessage'] ) ) {
             $commit_message = str_replace(
-                array(
+                [
                     '%ACTION%',
                     '%FILENAME%',
-                ),
-                array(
+                ],
+                [
                     $action,
                     $this->target_path,
-                ),
+                ],
                 $this->settings['ghCommitMessage']
             );
         } else {
@@ -338,24 +338,24 @@ JSON;
         }
 
         try {
-            $post_options = array(
+            $post_options = [
                 'message' => $commit_message,
                 'content' => $b64_file_contents,
                 'branch' => $this->settings['ghBranch'],
-            );
+            ];
 
-            $headers = array(
+            $headers = [
                 'Authorization: ' .
                         'token ' . $this->settings['ghToken'],
-            );
+            ];
 
             $this->client->putWithJSONPayloadCustomHeaders(
                 $this->remote_path,
                 $post_options,
                 $headers,
-                $curl_options = array(
+                $curl_options = [
                     CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                )
+                ]
             );
 
             $this->logAction(
@@ -365,7 +365,7 @@ JSON;
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                [ '200', '201', '301', '302', '304' ]
             );
 
         } catch ( Exception $e ) {

@@ -5,11 +5,11 @@ namespace StaticHTMLOutput;
 class Request {
 
     public function __construct() {
-        $this->default_options = array(
+        $this->default_options = [
             CURLOPT_USERAGENT => 'StaticHTMLOutput.com',
             CURLOPT_CONNECTTIMEOUT => 0,
             CURLOPT_TIMEOUT => 600,
-        );
+        ];
     }
 
     public function applyDefaultOptions( $curl_handle ) {
@@ -26,7 +26,7 @@ class Request {
         $url,
         $data,
         $headers,
-        $curl_options = array()
+        $curl_options = []
         ) {
         $ch = curl_init();
 
@@ -102,7 +102,7 @@ class Request {
 
         unset( $raw_headers[0] );
 
-        $this->headers = array();
+        $this->headers = [];
 
         foreach ( $raw_headers as $line ) {
             list( $key, $val ) = explode( ':', $line, 2 );
@@ -221,7 +221,7 @@ class Request {
     public function postWithArray(
         $url,
         $data,
-        $curl_options = array()
+        $curl_options = []
         ) {
         $ch = curl_init();
 

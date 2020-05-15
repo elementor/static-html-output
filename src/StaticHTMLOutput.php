@@ -5,9 +5,9 @@ namespace StaticHTMLOutput;
 class StaticHTMLOutput {
 
     public function loadSettings( $target_settings ) {
-        $general_settings = array(
+        $general_settings = [
             'general',
-        );
+        ];
 
         $target_settings = array_merge(
             $general_settings,

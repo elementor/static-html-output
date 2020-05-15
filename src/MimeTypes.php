@@ -5,7 +5,7 @@ namespace StaticHTMLOutput;
 class MimeTypes {
 
     public static function guess_type( $file ) {
-        $mime_types = array(
+        $mime_types = [
             '123' => 'application/vnd.lotus-1-2-3',
             '3dml' => 'text/vnd.in3d.3dml',
             '3ds' => 'image/x-3ds',
@@ -999,7 +999,7 @@ class MimeTypes {
             'zir' => 'application/vnd.zul',
             'zirz' => 'application/vnd.zul',
             'zmm' => 'application/vnd.handheld-entertainment+xml',
-        );
+        ];
 
         $info = strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );
 

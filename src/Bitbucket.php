@@ -57,7 +57,7 @@ class BitBucket extends SitePublisher {
 
         $this->openPreviousHashesFile();
 
-        $this->files_data = array();
+        $this->files_data = [];
 
         foreach ( $lines as $line ) {
             $this->addFileToBatchForCommitting( $line );
@@ -83,24 +83,24 @@ class BitBucket extends SitePublisher {
         try {
             $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';
 
-            $post_options = array(
+            $post_options = [
                 '.tmp_statichtmloutput.txt' => 'Test StaticHTMLOutput connectivity',
                 '.tmp_statichtmloutput.txt' => 'Test StaticHTMLOutput connectivity #2',
                 'message' => 'StaticHTMLOutput deployment test',
-            );
+            ];
 
             $this->client->postWithArray(
                 $remote_path,
                 $post_options,
-                $curl_options = array(
+                $curl_options = [
                     CURLOPT_USERPWD => $this->user . ':' .
                         $this->settings['bbToken'],
-                )
+                ]
             );
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                [ '200', '201', '301', '302', '304' ]
             );
         } catch ( Exception $e ) {
             $this->handleException( $e );
@@ -163,15 +163,15 @@ class BitBucket extends SitePublisher {
             $this->client->postWithArray(
                 $remote_path,
                 $post_options,
-                $curl_options = array(
+                $curl_options = [
                     CURLOPT_USERPWD => $this->user . ':' .
                         $this->settings['bbToken'],
-                )
+                ]
             );
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                [ '200', '201', '301', '302', '304' ]
             );
         } catch ( Exception $e ) {
             $this->handleException( $e );

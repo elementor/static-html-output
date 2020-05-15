@@ -6,15 +6,15 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
-            array(
+            [
                 'github',
                 'wpenv',
                 'processing',
                 'advanced',
-            )
+            ]
         );
 
-        $this->processed_urls = array();
+        $this->processed_urls = [];
     }
 
     public function processHTML( $html_document, $page_url ) {
@@ -46,7 +46,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $this->detectIfURLsShouldBeHarvested();
 
-        $this->discovered_urls = array();
+        $this->discovered_urls = [];
 
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
@@ -159,7 +159,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->convertToOfflineURL( $element );
 
         if ( isset( $this->settings['removeWPLinks'] ) ) {
-            $relative_links_to_rm = array(
+            $relative_links_to_rm = [
                 'shortlink',
                 'canonical',
                 'pingback',
@@ -171,7 +171,7 @@ class HTMLProcessor extends StaticHTMLOutput {
                 'prev',
                 'next',
                 'wlwmanifest',
-            );
+            ];
 
             $link_rel = $element->getAttribute( 'rel' );
 
@@ -250,7 +250,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             return;
         }
 
-        $new_src_set = array();
+        $new_src_set = [];
 
         $src_set = $element->getAttribute( 'srcset' );
 
@@ -520,8 +520,8 @@ class HTMLProcessor extends StaticHTMLOutput {
                 $placeholder_url . ',' .
                 $destination_url;
 
-        $rewrite_from = array();
-        $rewrite_to = array();
+        $rewrite_from = [];
+        $rewrite_to = [];
 
         $rewrite_rules = explode(
             "\n",
@@ -574,8 +574,8 @@ class HTMLProcessor extends StaticHTMLOutput {
                 $site_url . ',' .
                 $destination_url;
 
-        $rewrite_from = array();
-        $rewrite_to = array();
+        $rewrite_from = [];
+        $rewrite_to = [];
 
         $rewrite_rules = explode(
             "\n",
@@ -606,8 +606,8 @@ class HTMLProcessor extends StaticHTMLOutput {
             return $url_to_change;
         }
 
-        $rewrite_from = array();
-        $rewrite_to = array();
+        $rewrite_from = [];
+        $rewrite_to = [];
 
         $rewrite_rules = explode(
             "\n",
@@ -635,8 +635,8 @@ class HTMLProcessor extends StaticHTMLOutput {
             return;
         }
 
-        $rewrite_from = array();
-        $rewrite_to = array();
+        $rewrite_from = [];
+        $rewrite_to = [];
 
         $rewrite_rules = explode(
             "\n",
@@ -845,14 +845,14 @@ class HTMLProcessor extends StaticHTMLOutput {
     // TODO: move some of these URLs into settings to avoid extra calls
     public function getProtocolRelativeURL( $url ) {
         $this->destination_protocol_relative_url = str_replace(
-            array(
+            [
                 'https:',
                 'http:',
-            ),
-            array(
+            ],
+            [
                 '',
                 '',
-            ),
+            ],
             $url
         );
 
@@ -912,7 +912,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $site_url = rtrim( $this->settings['wp_site_url'], '/' );
         $placeholder_url = rtrim( $this->placeholder_url, '/' );
 
-        $patterns = array(
+        $patterns = [
             $site_url,
             addcslashes( $site_url, '/' ),
             $this->getProtocolRelativeURL(
@@ -924,9 +924,9 @@ class HTMLProcessor extends StaticHTMLOutput {
             $this->getProtocolRelativeURL(
                 addcslashes( $site_url, '/' )
             ),
-        );
+        ];
 
-        $replacements = array(
+        $replacements = [
             $placeholder_url,
             addcslashes( $placeholder_url, '/' ),
             $this->getProtocolRelativeURL(
@@ -938,7 +938,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             $this->getProtocolRelativeURL(
                 addcslashes( $placeholder_url, '/' )
             ),
-        );
+        ];
 
         $rewritten_source = str_replace(
             $patterns,
@@ -987,7 +987,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     // TODO: move this up to WPSite level or higher, log only once
     public function getBaseURLRewritePatterns() {
-        $patterns = array(
+        $patterns = [
             $this->placeholder_url,
             addcslashes( $this->placeholder_url, '/' ),
             $this->getProtocolRelativeURL(
@@ -1002,13 +1002,13 @@ class HTMLProcessor extends StaticHTMLOutput {
             $this->getProtocolRelativeURL(
                 addcslashes( $this->placeholder_url, '/' )
             ),
-        );
+        ];
 
         return $patterns;
     }
 
     public function getBaseURLRewriteReplacements() {
-        $replacements = array(
+        $replacements = [
             $this->settings['baseUrl'],
             addcslashes( $this->settings['baseUrl'], '/' ),
             $this->getProtocolRelativeURL(
@@ -1023,7 +1023,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             $this->getProtocolRelativeURL(
                 addcslashes( $this->settings['baseUrl'], '/' )
             ),
-        );
+        ];
 
         return $replacements;
     }

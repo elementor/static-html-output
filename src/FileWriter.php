@@ -10,15 +10,15 @@ class FileWriter extends StaticHTMLOutput {
         $this->content_type = $content_type;
 
         $this->loadSettings(
-            array(
+            [
                 'wpenv',
-            )
+            ]
         );
     }
 
     public function saveFile( $archive_dir ) {
         $url_info = parse_url( $this->url );
-        $path_info = array();
+        $path_info = [];
 
         if ( ! isset( $url_info['path'] ) ) {
             return false;

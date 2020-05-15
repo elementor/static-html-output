@@ -4,19 +4,19 @@ namespace StaticHTMLOutput;
 
 class PostSettings {
 
-    public static function get( $sets = array() ) {
+    public static function get( $sets = [] ) {
 
-        $settings = array();
-        $key_sets = array();
-        $target_keys = array();
+        $settings = [];
+        $key_sets = [];
+        $target_keys = [];
 
-        $key_sets['general'] = array(
+        $key_sets['general'] = [
             'baseUrl',
             'debug_mode',
             'selected_deployment_option',
-        );
+        ];
 
-        $key_sets['crawling'] = array(
+        $key_sets['crawling'] = [
             'additionalUrls',
             'excludeURLs',
             'useBasicAuth',
@@ -25,9 +25,9 @@ class PostSettings {
             'detection_level',
             'crawl_delay',
             'crawlPort',
-        );
+        ];
 
-        $key_sets['processing'] = array(
+        $key_sets['processing'] = [
             'removeConditionalHeadComments',
             'allowOfflineUsage',
             'baseHREF',
@@ -41,51 +41,51 @@ class PostSettings {
             'removeWPMeta',
             'removeWPLinks',
             'removeHTMLComments',
-        );
+        ];
 
-        $key_sets['advanced'] = array(
+        $key_sets['advanced'] = [
             'crawl_increment',
             'completionEmail',
             'delayBetweenAPICalls',
             'deployBatchSize',
-        );
+        ];
 
-        $key_sets['folder'] = array(
+        $key_sets['folder'] = [
             'baseUrl-folder',
             'targetFolder',
-        );
+        ];
 
-        $key_sets['zip'] = array(
+        $key_sets['zip'] = [
             'baseUrl-zip',
             'allowOfflineUsage',
-        );
+        ];
 
-        $key_sets['github'] = array(
+        $key_sets['github'] = [
             'baseUrl-github',
             'ghBranch',
             'ghPath',
             'ghToken',
             'ghRepo',
             'ghCommitMessage',
-        );
+        ];
 
-        $key_sets['bitbucket'] = array(
+        $key_sets['bitbucket'] = [
             'baseUrl-bitbucket',
             'bbBranch',
             'bbPath',
             'bbToken',
             'bbRepo',
-        );
+        ];
 
-        $key_sets['gitlab'] = array(
+        $key_sets['gitlab'] = [
             'baseUrl-gitlab',
             'glBranch',
             'glPath',
             'glToken',
             'glProject',
-        );
+        ];
 
-        $key_sets['ftp'] = array(
+        $key_sets['ftp'] = [
             'baseUrl-ftp',
             'ftpPassword',
             'ftpRemotePath',
@@ -94,18 +94,18 @@ class PostSettings {
             'ftpTLS',
             'ftpUsername',
             'useActiveFTP',
-        );
+        ];
 
-        $key_sets['bunnycdn'] = array(
+        $key_sets['bunnycdn'] = [
             'baseUrl-bunnycdn',
             'bunnycdnStorageZoneAccessKey',
             'bunnycdnPullZoneAccessKey',
             'bunnycdnPullZoneID',
             'bunnycdnStorageZoneName',
             'bunnycdnRemotePath',
-        );
+        ];
 
-        $key_sets['s3'] = array(
+        $key_sets['s3'] = [
             'baseUrl-s3',
             'cfDistributionId',
             's3Bucket',
@@ -113,17 +113,17 @@ class PostSettings {
             's3Region',
             's3RemotePath',
             's3Secret',
-        );
+        ];
 
-        $key_sets['netlify'] = array(
+        $key_sets['netlify'] = [
             'baseUrl-netlify',
             'netlifyHeaders',
             'netlifyPersonalAccessToken',
             'netlifyRedirects',
             'netlifySiteID',
-        );
+        ];
 
-        $key_sets['wpenv'] = array(
+        $key_sets['wpenv'] = [
             'wp_site_url',
             'wp_site_path',
             'wp_site_subdir',
@@ -136,7 +136,7 @@ class PostSettings {
             'wp_plugins',
             'wp_content',
             'wp_inc',
-        );
+        ];
 
         foreach ( $sets as $set ) {
             $target_keys = array_merge( $target_keys, $key_sets[ $set ] );

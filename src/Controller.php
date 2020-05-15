@@ -28,26 +28,26 @@ class Controller {
 
         register_activation_hook(
             $bootstrap_file,
-            array( $instance, 'activate' )
+            [ $instance, 'activate' ]
         );
 
         if ( is_admin() ) {
             add_action(
                 'admin_menu',
-                array(
+                [
                     $instance,
                     'registerOptionsPage',
-                )
+                ]
             );
             add_filter( 'custom_menu_order', '__return_true' );
-            add_filter( 'menu_order', array( $instance, 'set_menu_order' ) );
+            add_filter( 'menu_order', [ $instance, 'set_menu_order' ] );
         }
         return $instance;
     }
 
 
     public function set_menu_order( $menu_order ) {
-        $order = array();
+        $order = [];
         $file  = plugin_basename( __FILE__ );
         foreach ( $menu_order as $index => $item ) {
             if ( $item === 'index.php' ) {
@@ -55,11 +55,11 @@ class Controller {
             }
         }
 
-        $order = array(
+        $order = [
             'index.php',
             'wp2static',
             'statichtmloutput',
-        );
+        ];
 
         return $order;
     }
@@ -116,16 +116,16 @@ class Controller {
             'Static HTML',
             'manage_options',
             self::HOOK,
-            array( self::$instance, 'renderOptionsPage' ),
+            [ self::$instance, 'renderOptionsPage' ],
             'dashicons-arrow-right-alt'
         );
 
         add_action(
             'admin_print_styles-' . $page,
-            array(
+            [
                 $this,
                 'enqueueAdminStyles',
-            )
+            ]
         );
     }
 
@@ -150,10 +150,10 @@ class Controller {
     public function generate_filelist_preview() {
         $this->wp_site = new WPSite();
 
-        $target_settings = array(
+        $target_settings = [
             'general',
             'crawling',
-        );
+        ];
 
         if ( defined( 'WP_CLI' ) ) {
             $this->settings =
@@ -258,9 +258,9 @@ class Controller {
     }
 
     public function delete_deploy_cache() {
-        $target_settings = array(
+        $target_settings = [
             'wpenv',
-        );
+        ];
 
         if ( defined( 'WP_CLI' ) ) {
             $this->settings =
@@ -271,14 +271,14 @@ class Controller {
         }
         $uploads_dir = $this->settings['wp_uploads_path'];
 
-        $cache_files = array(
+        $cache_files = [
             '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt',
             '/WP2STATIC-GITHUB-PREVIOUS-HASHES.txt',
             '/WP2STATIC-S3-PREVIOUS-HASHES.txt',
             '/WP2STATIC-BUNNYCDN-PREVIOUS-HASHES.txt',
             '/WP2STATIC-BITBUCKET-PREVIOUS-HASHES.txt',
             '/WP2STATIC-FTP-PREVIOUS-HASHES.txt',
-        );
+        ];
 
         foreach ( $cache_files as $cache_file ) {
             if ( is_file( $uploads_dir . $cache_file ) ) {
@@ -292,7 +292,7 @@ class Controller {
     }
 
     public function logEnvironmentalInfo() {
-        $info = array(
+        $info = [
             '' . date( 'Y-m-d h:i:s' ),
             'PHP VERSION ' . phpversion(),
             'OS VERSION ' . php_uname(),
@@ -305,7 +305,7 @@ class Controller {
             'VIA WP-CLI? ' . defined( 'WP_CLI' ),
             'STATIC EXPORT URL ' . $this->exporter->settings['baseUrl'],
             'PERMALINK STRUCTURE ' . get_option( 'permalink_structure' ),
-        );
+        ];
 
         if ( isset( $_SERVER['SERVER_SOFTWARE'] ) ) {
             $info[] = 'SERVER SOFTWARE ' . $_SERVER['SERVER_SOFTWARE'];

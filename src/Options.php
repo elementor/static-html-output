@@ -3,9 +3,9 @@
 namespace StaticHTMLOutput;
 
 class Options {
-    protected $statichtmloutput_options = array();
+    protected $statichtmloutput_options = [];
     protected $statichtmloutput_option_key = null;
-    protected $statichtmloutput_options_keys = array(
+    protected $statichtmloutput_options_keys = [
         'additionalUrls',
         'allowOfflineUsage',
         'baseHREF',
@@ -77,9 +77,9 @@ class Options {
         'useBaseHref',
         'useBasicAuth',
         'useRelativeURLs',
-    );
+    ];
 
-    protected $whitelisted_keys = array(
+    protected $whitelisted_keys = [
         'additionalUrls',
         'allowOfflineUsage',
         'baseHREF',
@@ -142,13 +142,13 @@ class Options {
         'useBaseHref',
         'useBasicAuth',
         'useRelativeURLs',
-    );
+    ];
 
     public function __construct( $option_key ) {
         $options = get_option( $option_key );
 
         if ( false === $options ) {
-            $options = array();
+            $options = [];
         }
 
         $this->statichtmloutput_options = $options;
@@ -178,7 +178,7 @@ class Options {
     }
 
     public function getAllOptions( $reveal_sensitive_values = false ) {
-        $options_array = array();
+        $options_array = [];
 
         foreach ( $this->statichtmloutput_options_keys as $key ) {
 
@@ -190,10 +190,10 @@ class Options {
                 $value = $this->__get( $key );
             }
 
-            $options_array[] = array(
+            $options_array[] = [
                 'Option name' => $key,
                 'Value' => $value,
-            );
+            ];
         }
 
         return $options_array;

@@ -162,7 +162,7 @@ class S3 extends SitePublisher {
         $date = gmdate( 'Ymd' );
 
         // HTTP request headers as key & value
-        $request_headers = array();
+        $request_headers = [];
         $request_headers['Content-Type'] = $content_type;
         $request_headers['Date'] = $timestamp;
         $request_headers['Host'] = $host_name;
@@ -172,7 +172,7 @@ class S3 extends SitePublisher {
         // Sort it in ascending order
         ksort( $request_headers );
 
-        $canonical_headers = array();
+        $canonical_headers = [];
 
         foreach ( $request_headers as $key => $value ) {
             $canonical_headers[] = strtolower( $key ) . ':' . $value;
@@ -180,7 +180,7 @@ class S3 extends SitePublisher {
 
         $canonical_headers = implode( "\n", $canonical_headers );
 
-        $signed_headers = array();
+        $signed_headers = [];
 
         foreach ( $request_headers as $key => $value ) {
             $signed_headers[] = strtolower( $key );
@@ -188,7 +188,7 @@ class S3 extends SitePublisher {
 
         $signed_headers = implode( ';', $signed_headers );
 
-        $canonical_request = array();
+        $canonical_request = [];
         $canonical_request[] = 'PUT';
         $canonical_request[] = '/' . $content_title;
         $canonical_request[] = '';
@@ -199,13 +199,13 @@ class S3 extends SitePublisher {
         $canonical_request = implode( "\n", $canonical_request );
         $hashed_canonical_request = hash( 'sha256', $canonical_request );
 
-        $scope = array();
+        $scope = [];
         $scope[] = $date;
         $scope[] = $this->settings['s3Region'];
         $scope[] = $aws_service_name;
         $scope[] = 'aws4_request';
 
-        $string_to_sign = array();
+        $string_to_sign = [];
         $string_to_sign[] = 'AWS4-HMAC-SHA256';
         $string_to_sign[] = $timestamp;
         $string_to_sign[] = implode( '/', $scope );
@@ -264,7 +264,7 @@ class S3 extends SitePublisher {
 
         $this->checkForValidResponses(
             $http_code,
-            array( '200' )
+            [ '200' ]
         );
 
         curl_close( $ch );

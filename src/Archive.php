@@ -6,7 +6,7 @@ class Archive extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
-            array( 'wpenv' )
+            [ 'wpenv' ]
         );
 
         $this->path = '';

@@ -6,9 +6,9 @@ class Deployer extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
-            array(
+            [
                 'advanced',
-            )
+            ]
         );
     }
 
@@ -118,7 +118,7 @@ class Deployer extends StaticHTMLOutput {
 
         $duration = $end_time - $start_time;
 
-        $deploy_result = 'Deployed to: ' . $method . ' in ' .  date( 'H:i:s', $duration );
+        $deploy_result = 'Deployed to: ' . $method . ' in ' . date( 'H:i:s', $duration );
 
         $this->finalizeDeployment( $deploy_result );
     }

@@ -6,12 +6,12 @@ class CSSProcessor extends StaticHTMLOutput {
 
     public function __construct() {
         $this->loadSettings(
-            array(
+            [
                 'crawling',
                 'wpenv',
                 'processing',
                 'advanced',
-            )
+            ]
         );
     }
 
@@ -35,7 +35,7 @@ class CSSProcessor extends StaticHTMLOutput {
 
         $this->detectIfURLsShouldBeHarvested();
 
-        $this->discovered_urls = array();
+        $this->discovered_urls = [];
 
         foreach ( $this->css_doc->getAllValues() as $node_value ) {
             if ( $node_value instanceof Sabberworm\CSS\Value\URL ) {
@@ -63,8 +63,8 @@ class CSSProcessor extends StaticHTMLOutput {
                             $this->placeholder_url . ',' .
                             $this->settings['baseUrl'];
 
-                    $rewrite_from = array();
-                    $rewrite_to = array();
+                    $rewrite_from = [];
+                    $rewrite_to = [];
 
                     $rewrite_rules = explode(
                         "\n",
@@ -124,14 +124,14 @@ class CSSProcessor extends StaticHTMLOutput {
 
     public function rewriteSiteURLsToPlaceholder() {
         $rewritten_source = str_replace(
-            array(
+            [
                 $this->settings['wp_site_url'],
                 addcslashes( $this->settings['wp_site_url'], '/' ),
-            ),
-            array(
+            ],
+            [
                 $this->placeholder_url,
                 addcslashes( $this->placeholder_url, '/' ),
-            ),
+            ],
             $this->raw_css
         );
 

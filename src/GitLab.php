@@ -62,7 +62,7 @@ class GitLab extends SitePublisher {
         $files_in_tree = array_filter( $files_in_tree );
         $files_in_tree = array_unique( $files_in_tree );
 
-        $files_data = array();
+        $files_data = [];
 
         $this->openPreviousHashesFile();
 
@@ -86,34 +86,34 @@ class GitLab extends SitePublisher {
                     $current = crc32( $local_file_contents );
 
                     if ( $prev != $current ) {
-                        $files_data[] = array(
+                        $files_data[] = [
                             'action' => 'update',
                             'file_path' => $target_path,
                             'content' => base64_encode(
                                 $local_file_contents
                             ),
                             'encoding' => 'base64',
-                        );
+                        ];
                     }
                 } else {
-                    $files_data[] = array(
+                    $files_data[] = [
                         'action' => 'update',
                         'file_path' => $target_path,
                         'content' => base64_encode(
                             $local_file_contents
                         ),
                         'encoding' => 'base64',
-                    );
+                    ];
                 }
             } else {
-                $files_data[] = array(
+                $files_data[] = [
                     'action' => 'create',
                     'file_path' => $target_path,
                     'content' => base64_encode(
                         $local_file_contents
                     ),
                     'encoding' => 'base64',
-                );
+                ];
             }
 
             $this->recordFilePathAndHashInMemory(
@@ -135,16 +135,16 @@ class GitLab extends SitePublisher {
         try {
             $client = new StaticHTMLOutput_Request();
 
-            $post_options = array(
+            $post_options = [
                 'branch' => 'master',
                 'commit_message' => 'StaticHTMLOutput Deployment',
                 'actions' => $files_data,
-            );
+            ];
 
-            $headers = array(
+            $headers = [
                 'PRIVATE-TOKEN: ' . $this->settings['glToken'],
                 'Content-Type: application/json',
-            );
+            ];
 
             $client->postWithJSONPayloadCustomHeaders(
                 $commits_endpoint,
@@ -154,7 +154,7 @@ class GitLab extends SitePublisher {
 
             $this->checkForValidResponses(
                 $client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                [ '200', '201', '301', '302', '304' ]
             );
 
             $this->writeFilePathAndHashesToFile();
@@ -179,7 +179,7 @@ class GitLab extends SitePublisher {
     public function getFilePathsFromTree( $json_response ) {
         $partial_tree_array = json_decode( (string) $json_response, true );
 
-        $formatted_elements = array();
+        $formatted_elements = [];
 
         foreach ( $partial_tree_array as $object ) {
             if ( $object['type'] === 'blob' ) {
@@ -197,17 +197,17 @@ class GitLab extends SitePublisher {
 
         $client = new StaticHTMLOutput_Request();
 
-        $headers = array(
+        $headers = [
             'PRIVATE-TOKEN: ' . $this->settings['glToken'],
             'Content-Type: application/json',
-        );
+        ];
 
         $client->getWithCustomHeaders(
             $tree_endpoint,
             $headers
         );
 
-        $good_response_codes = array( '200', '201', '301', '302', '304' );
+        $good_response_codes = [ '200', '201', '301', '302', '304' ];
 
         if ( ! in_array( $client->status_code, $good_response_codes ) ) {
             WsLog::l( 'BAD RESPONSE STATUS (' . $client->status_code . '): ' );
@@ -241,27 +241,27 @@ class GitLab extends SitePublisher {
         try {
             $client = new StaticHTMLOutput_Request();
 
-            $post_options = array(
+            $post_options = [
                 'branch' => 'master',
                 'commit_message' => 'test deploy from plugin',
-                'actions' => array(
-                    array(
+                'actions' => [
+                    [
                         'action' => 'create',
                         'file_path' => '.wpsho_' . time(),
                         'content' => 'test file',
-                    ),
-                    array(
+                    ],
+                    [
                         'action' => 'create',
                         'file_path' => '.wpsho2_' . time(),
                         'content' => 'test file 2',
-                    ),
-                ),
-            );
+                    ],
+                ],
+            ];
 
-            $headers = array(
+            $headers = [
                 'PRIVATE-TOKEN: ' . $this->settings['glToken'],
                 'Content-Type: application/json',
-            );
+            ];
 
             $client->postWithJSONPayloadCustomHeaders(
                 $remote_path,
@@ -271,7 +271,7 @@ class GitLab extends SitePublisher {
 
             $this->checkForValidResponses(
                 $client->status_code,
-                array( '200', '201', '301', '302', '304' )
+                [ '200', '201', '301', '302', '304' ]
             );
         } catch ( Exception $e ) {
             $this->handleException( $e );

@@ -33,7 +33,7 @@ class FileCopier {
 
     public function copyFile( $archive_dir ) {
         $url_info = parse_url( $this->url );
-        $path_info = array();
+        $path_info = [];
 
         $local_file = $this->getLocalFileForURL();
 
