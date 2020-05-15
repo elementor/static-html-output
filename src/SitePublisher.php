@@ -2,8 +2,48 @@
 
 namespace StaticHTMLOutput;
 
-class SitePublisher {
-    public function loadSettings( $deploy_method ) {
+abstract class SitePublisher {
+
+    /**
+     * @var mixed[]
+     */
+    public $settings;
+    /**
+     * @var string
+     */
+    public $export_file_list;
+    /**
+     * @var string
+     */
+    public $archive_dir;
+    /**
+     * @var int
+     */
+    public $batch_index;
+    /**
+     * @var int
+     */
+    public $total_urls_to_crawl;
+    /**
+     * @var int
+     */
+    public $files_remaining;
+    /**
+     * @var string
+     */
+    public $deploy_count_path;
+    /**
+     * @var mixed[]
+     */
+    public $file_paths_and_hashes;
+    /**
+     * @var string
+     */
+    public $previous_hashes_path;
+
+    abstract function upload_files();
+
+    public function loadSettings( string $deploy_method ) : void {
         $target_settings = [
             'general',
             'wpenv',
@@ -19,12 +59,12 @@ class SitePublisher {
         }
     }
 
-    public function loadArchive() {
+    public function loadArchive() : void {
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
     }
 
-    public function bootstrap() {
+    public function bootstrap() : void {
         $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-FILES-TO-DEPLOY.txt';
@@ -34,14 +74,14 @@ class SitePublisher {
         );
     }
 
-    public function pauseBetweenAPICalls() {
+    public function pauseBetweenAPICalls() : void {
         if ( isset( $this->settings['delayBetweenAPICalls'] ) &&
             $this->settings['delayBetweenAPICalls'] > 0 ) {
             sleep( $this->settings['delayBetweenAPICalls'] );
         }
     }
 
-    public function updateProgress() {
+    public function updateProgress() : void {
         $this->batch_index++;
 
         $completed_urls =
@@ -52,7 +92,7 @@ class SitePublisher {
         ProgressLog::l( $completed_urls, $this->total_urls_to_crawl );
     }
 
-    public function initiateProgressIndicator() {
+    public function initiateProgressIndicator() : void {
         $this->deploy_count_path = $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
         $this->total_urls_to_crawl =
@@ -62,9 +102,14 @@ class SitePublisher {
     }
 
 
-    public function clearFileList() {
+    public function clearFileList() : void {
         if ( is_file( $this->export_file_list ) ) {
             $f = fopen( $this->export_file_list, 'r+' );
+
+            if ( ! is_resource( $f ) ) {
+                return;
+            }
+
             if ( $f !== false ) {
                 ftruncate( $f, 0 );
                 fclose( $f );
@@ -74,6 +119,11 @@ class SitePublisher {
         if ( isset( $this->glob_hash_path_list ) ) {
             if ( is_file( $this->glob_hash_path_list ) ) {
                 $f = fopen( $this->glob_hash_path_list, 'r+' );
+
+                if ( ! is_resource( $f ) ) {
+                    return;
+                }
+
                 if ( $f !== false ) {
                     ftruncate( $f, 0 );
                     fclose( $f );
@@ -82,13 +132,15 @@ class SitePublisher {
         }
     }
 
-    public function isSkippableFile( $file ) {
+    public function isSkippableFile( $file ) : bool {
         if ( $file == '.' || $file == '..' || $file == '.git' ) {
             return true;
         }
+
+        return false;
     }
 
-    public function getLocalFileToDeploy( $file_in_archive, $replace_path ) {
+    public function getLocalFileToDeploy( string $file_in_archive, string $replace_path ) : string {
         // NOTE: untested fix for Windows filepaths
         // https://github.com/leonstafford/statichtmloutput/issues/221
         $original_filepath = str_replace(
@@ -111,7 +163,7 @@ class SitePublisher {
         return $original_file_without_archive;
     }
 
-    public function getArchivePathForReplacement( $archive_path ) {
+    public function getArchivePathForReplacement( string $archive_path ) : string {
         $local_path_to_strip = $archive_path;
         $local_path_to_strip = rtrim( $local_path_to_strip, '/' );
 
@@ -125,8 +177,11 @@ class SitePublisher {
     }
 
     public function getRemoteDeploymentPath(
-        $dir, $file_in_archive, $archive_path_to_replace, $basename_in_target
-        ) {
+        string $dir,
+        string $file_in_archive,
+        string $archive_path_to_replace,
+        string $basename_in_target
+        ) : string {
         $deploy_path = str_replace(
             $archive_path_to_replace,
             '',
@@ -147,7 +202,7 @@ class SitePublisher {
         return $deploy_path;
     }
 
-    public function createDeploymentList( $dir, $basename_in_target ) {
+    public function createDeploymentList( string $dir, string $basename_in_target ) : void {
         $archive_path_to_replace =
             $this->getArchivePathForReplacement( $this->archive->path );
 
@@ -189,7 +244,7 @@ class SitePublisher {
         }
     }
 
-    public function prepareDeploy( $basename_in_target = false ) {
+    public function prepareDeploy( bool $basename_in_target = false ) : void {
         $this->clearFileList();
 
         $this->createDeploymentList(
@@ -201,6 +256,10 @@ class SitePublisher {
         // TODO: detect and use `cat | wc -l` if available
         $linecount = 0;
         $handle = fopen( $this->export_file_list, 'r' );
+
+        if ( ! is_resource( $handle ) ) {
+            return;
+        }
 
         while ( ! feof( $handle ) ) {
             $line = fgets( $handle );
@@ -225,10 +284,17 @@ class SitePublisher {
         }
     }
 
-    public function getItemsToDeploy( $batch_size = 1 ) {
+    /**
+     * @return string[] list of files to deploy
+     */
+    public function getItemsToDeploy( int $batch_size = 1 ) : array {
         $lines = [];
 
         $f = fopen( $this->export_file_list, 'r' );
+
+        if ( ! is_resource( $f ) ) {
+            return [];
+        }
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
             $lines[] = rtrim( fgets( $f ) );
@@ -254,7 +320,7 @@ class SitePublisher {
         return $lines;
     }
 
-    public function getRemainingItemsCount() {
+    public function getRemainingItemsCount() : int {
         $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
         // return the amount left if another item is taken
@@ -264,7 +330,7 @@ class SitePublisher {
 
     // TODO: rename to signalSuccessfulAction or such
     // as is used in deployment tests/not just finalizing deploys
-    public function finalizeDeployment() {
+    public function finalizeDeployment() : void {
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS'; }
     }
@@ -280,16 +346,25 @@ class SitePublisher {
             } else {
                 echo $this->files_remaining;
             }
+
+            return false;
         }
     }
 
-    public function handleException( $e ) {
+    /**
+     * @throws StaticHTMLOutputException
+     */
+    public function handleException( string $e ) : void {
         WsLog::l( 'Deployment: error encountered' );
         WsLog::l( $e );
-        throw new Exception( $e );
+        throw new StaticHTMLOutputException( $e );
     }
 
-    public function checkForValidResponses( $code, $good_codes ) {
+    /**
+     * @param int[] $good_codes valid HTTP response codes
+     * @throws StaticHTMLOutputException
+     */
+    public function checkForValidResponses( int $code, array $good_codes ) : void {
         if ( ! in_array( $code, $good_codes ) ) {
             WsLog::l(
                 'BAD RESPONSE STATUS FROM API (' . $code . ')'
@@ -297,17 +372,21 @@ class SitePublisher {
 
             http_response_code( $code );
 
-            throw new Exception(
+            throw new StaticHTMLOutputException(
                 'BAD RESPONSE STATUS FROM API (' . $code . ')'
             );
         }
     }
 
-    public function openPreviousHashesFile() {
+    public function openPreviousHashesFile() : void {
         $this->file_paths_and_hashes = [];
 
         if ( is_file( $this->previous_hashes_path ) ) {
             $file = fopen( $this->previous_hashes_path, 'r' );
+
+            if ( ! is_resource( $file ) ) {
+                return;
+            }
 
             while ( ( $line = fgetcsv( $file ) ) !== false ) {
                 if ( isset( $line[0] ) && isset( $line[1] ) ) {
@@ -320,15 +399,19 @@ class SitePublisher {
     }
 
     public function recordFilePathAndHashInMemory(
-        $target_path,
-        $local_file_contents
-        ) {
+        string $target_path,
+        string $local_file_contents
+        ) : void {
         $this->file_paths_and_hashes[ $target_path ] =
             crc32( $local_file_contents );
     }
 
-    public function writeFilePathAndHashesToFile() {
+    public function writeFilePathAndHashesToFile() : void {
         $fp = fopen( $this->previous_hashes_path, 'w' );
+
+        if ( ! is_resource( $fp ) ) {
+            return;
+        }
 
         foreach ( $this->file_paths_and_hashes as $key => $value ) {
             fwrite( $fp, $key . ',' . $value . PHP_EOL );

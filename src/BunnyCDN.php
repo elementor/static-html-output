@@ -152,7 +152,7 @@ class BunnyCDN extends SitePublisher {
 
                 echo 'FAIL';
 
-                throw new Exception( 'BunnyCDN API bad response status' );
+                throw new StaticHTMLOutputException( 'BunnyCDN API bad response status' );
             }
 
             if ( ! defined( 'WP_CLI' ) ) {
@@ -161,7 +161,7 @@ class BunnyCDN extends SitePublisher {
         } catch ( Exception $e ) {
             WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
             WsLog::l( $e );
-            throw new Exception( $e );
+            throw new StaticHTMLOutputException( $e );
         }
     }
 
@@ -214,12 +214,12 @@ class BunnyCDN extends SitePublisher {
                     'BAD RESPONSE STATUS (' . $status_code . '): '
                 );
 
-                throw new Exception( 'BunnyCDN API bad response status' );
+                throw new StaticHTMLOutputException( 'BunnyCDN API bad response status' );
             }
         } catch ( Exception $e ) {
             WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
             WsLog::l( $e );
-            throw new Exception( $e );
+            throw new StaticHTMLOutputException( $e );
         }
 
         if ( ! defined( 'WP_CLI' ) ) {

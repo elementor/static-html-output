@@ -4,6 +4,31 @@ namespace StaticHTMLOutput;
 
 class TXTProcessor extends StaticHTMLOutput {
 
+    /**
+     * @var string
+     */
+    public $txt_document;
+    /**
+     * @var string
+     */
+    public $destination_protocol;
+    /**
+     * @var string
+     */
+    public $destination_protocol_relative_url;
+    /**
+     * @var string
+     */
+    public $placeholder_url;
+    /**
+     * @var mixed[]
+     */
+    public $settings;
+    /**
+     * @var string
+     */
+    public $txt_doc;
+
     public function __construct() {
         $this->loadSettings(
             [
@@ -16,7 +41,7 @@ class TXTProcessor extends StaticHTMLOutput {
 
     }
 
-    public function processTXT( $txt_document, $page_url ) {
+    public function processTXT( string $txt_document, string $page_url ) : bool {
         if ( $txt_document == '' ) {
             return false;
         }
@@ -34,7 +59,7 @@ class TXTProcessor extends StaticHTMLOutput {
         return true;
     }
 
-    public function getTXT() {
+    public function getTXT() : string {
         $processed_txt = $this->txt_doc;
 
         $processed_txt = $this->detectEscapedSiteURLs( $processed_txt );
@@ -43,7 +68,7 @@ class TXTProcessor extends StaticHTMLOutput {
         return $processed_txt;
     }
 
-    public function detectEscapedSiteURLs( $processed_txt ) {
+    public function detectEscapedSiteURLs( string $processed_txt ) : string {
         // NOTE: this does return the expected http:\/\/172.18.0.3
         // but your error log may escape again and
         // show http:\\/\\/172.18.0.3
@@ -56,7 +81,7 @@ class TXTProcessor extends StaticHTMLOutput {
         return $processed_txt;
     }
 
-    public function detectUnchangedURLs( $processed_txt ) {
+    public function detectUnchangedURLs( string $processed_txt ) : string {
         $site_url = $this->placeholder_url;
 
         if ( strpos( $processed_txt, $site_url ) !== false ) {
@@ -66,7 +91,7 @@ class TXTProcessor extends StaticHTMLOutput {
         return $processed_txt;
     }
 
-    public function rewriteUnchangedURLs( $processed_txt ) {
+    public function rewriteUnchangedURLs( string $processed_txt ) : string {
         if ( ! isset( $this->settings['rewrite_rules'] ) ) {
             $this->settings['rewrite_rules'] = '';
         }
@@ -109,7 +134,7 @@ class TXTProcessor extends StaticHTMLOutput {
         return $rewritten_source;
     }
 
-    public function rewriteEscapedURLs( $processed_txt ) {
+    public function rewriteEscapedURLs( string $processed_txt ) : string {
         // NOTE: fix input TXT, which can have \ slashes modified to %5C
         $processed_txt = str_replace(
             '%5C/',
@@ -163,7 +188,7 @@ class TXTProcessor extends StaticHTMLOutput {
         return $rewritten_source;
     }
 
-    public function rewriteSiteURLsToPlaceholder() {
+    public function rewriteSiteURLsToPlaceholder() : void {
         $patterns = [
             $this->settings['wp_site_url'],
             $this->getProtocolRelativeURL(
@@ -216,7 +241,7 @@ class TXTProcessor extends StaticHTMLOutput {
         $this->txt_doc = $rewritten_source;
     }
 
-    public function getTargetSiteProtocol( $url ) {
+    public function getTargetSiteProtocol( string $url ) : string {
         $protocol = '//';
 
         if ( strpos( $url, 'https://' ) !== false ) {
@@ -230,7 +255,7 @@ class TXTProcessor extends StaticHTMLOutput {
         return $protocol;
     }
 
-    public function getProtocolRelativeURL( $url ) {
+    public function getProtocolRelativeURL( string $url ) : string {
         $this->destination_protocol_relative_url = str_replace(
             [
                 'https:',

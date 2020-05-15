@@ -4,7 +4,15 @@ namespace StaticHTMLOutput;
 
 class StaticHTMLOutput {
 
-    public function loadSettings( $target_settings ) {
+    /**
+     * @var mixed[]
+     */
+    public $settings;
+
+    /**
+     * @param mixed[] $target_settings group of settings we want to load
+     */
+    public function loadSettings( array $target_settings ) : void {
         $general_settings = [
             'general',
         ];

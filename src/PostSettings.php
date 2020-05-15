@@ -4,7 +4,7 @@ namespace StaticHTMLOutput;
 
 class PostSettings {
 
-    public static function get( $sets = [] ) {
+    public static function get( $sets = [] ) : array {
 
         $settings = [];
         $key_sets = [];
