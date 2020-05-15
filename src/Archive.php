@@ -3,6 +3,14 @@
 namespace StaticHTMLOutput;
 
 class Archive extends StaticHTMLOutput {
+    /**
+     * @var string
+     */
+    public $name;
+    /**
+     * @var string
+     */
+    public $path;
 
     public function __construct() {
         $this->loadSettings(

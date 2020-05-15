@@ -40,8 +40,12 @@ abstract class SitePublisher {
      * @var string
      */
     public $previous_hashes_path;
+    /**
+     * @var Archive
+     */
+    public $archive;
 
-    abstract function upload_files();
+    abstract function upload_files() : void;
 
     public function loadSettings( string $deploy_method ) : void {
         $target_settings = [
@@ -68,7 +72,8 @@ abstract class SitePublisher {
         $this->export_file_list =
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-FILES-TO-DEPLOY.txt';
-        $this->archive_dir = file_get_contents(
+
+        $this->archive_dir = (string) file_get_contents(
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-CURRENT-ARCHIVE.txt'
         );
@@ -96,7 +101,7 @@ abstract class SitePublisher {
         $this->deploy_count_path = $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
         $this->total_urls_to_crawl =
-            file_get_contents( $this->deploy_count_path );
+            (int) file_get_contents( $this->deploy_count_path );
 
         $this->batch_index = 0;
     }
@@ -132,7 +137,7 @@ abstract class SitePublisher {
         }
     }
 
-    public function isSkippableFile( $file ) : bool {
+    public function isSkippableFile( string $file ) : bool {
         if ( $file == '.' || $file == '..' || $file == '.git' ) {
             return true;
         }
@@ -180,7 +185,7 @@ abstract class SitePublisher {
         string $dir,
         string $file_in_archive,
         string $archive_path_to_replace,
-        string $basename_in_target
+        bool $basename_in_target
         ) : string {
         $deploy_path = str_replace(
             $archive_path_to_replace,
@@ -202,11 +207,17 @@ abstract class SitePublisher {
         return $deploy_path;
     }
 
-    public function createDeploymentList( string $dir, string $basename_in_target ) : void {
+    public function createDeploymentList( string $dir, bool $basename_in_target ) : void {
+        $deployable_files = scandir( $dir );
+
+        if ( ! $deployable_files ) {
+            return;
+        }
+
         $archive_path_to_replace =
             $this->getArchivePathForReplacement( $this->archive->path );
 
-        foreach ( scandir( $dir ) as $item ) {
+        foreach ( $deployable_files as $item ) {
             if ( $this->isSkippableFile( $item ) ) {
                 continue;
             }
@@ -248,8 +259,7 @@ abstract class SitePublisher {
         $this->clearFileList();
 
         $this->createDeploymentList(
-            $this->settings['wp_uploads_path'] . '/' .
-                $this->archive->name,
+            $this->settings['wp_uploads_path'] . '/' .  $this->archive->name,
             $basename_in_target
         );
 
@@ -297,13 +307,23 @@ abstract class SitePublisher {
         }
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
-            $lines[] = rtrim( fgets( $f ) );
+            $file_list =  fgets( $f );
+
+            if ( ! $file_list ) {
+                return [];
+            }
+
+            $lines[] = rtrim( $file_list );
         }
 
         fclose( $f );
 
         // TODO: optimize this for just one read, one write within func
         $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
+
+        if ( ! $contents ) {
+            return [];
+        }
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
             // rewrite file minus the lines we took
@@ -323,8 +343,10 @@ abstract class SitePublisher {
     public function getRemainingItemsCount() : int {
         $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
 
-        // return the amount left if another item is taken
-        // return count($contents) - 1;
+        if ( ! is_array( $contents ) ) {
+            return 0;
+        }
+
         return count( $contents );
     }
 
@@ -335,7 +357,7 @@ abstract class SitePublisher {
             echo 'SUCCESS'; }
     }
 
-    public function uploadsCompleted() {
+    public function uploadsCompleted() : bool {
         $this->files_remaining = $this->getRemainingItemsCount();
 
         if ( $this->files_remaining <= 0 ) {
