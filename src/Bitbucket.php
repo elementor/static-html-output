@@ -2,7 +2,34 @@
 
 namespace StaticHTMLOutput;
 
+use CURLFile;
+
 class BitBucket extends SitePublisher {
+
+    /**
+     * @var string
+     */
+    public $api_base;
+    /**
+     * @var mixed[]
+     */
+    public $files_data;
+    /**
+     * @var Request
+     */
+    public $client;
+    /**
+     * @var string
+     */
+    public $user;
+    /**
+     * @var string
+     */
+    public $target_path;
+    /**
+     * @var string
+     */
+    public $local_file_contents;
 
     public function __construct() {
         $this->loadSettings( 'bitbucket' );
@@ -38,7 +65,7 @@ class BitBucket extends SitePublisher {
         }
     }
 
-    public function upload_files() {
+    public function upload_files() : void {
         $this->files_remaining = $this->getRemainingItemsCount();
 
         if ( $this->files_remaining < 0 ) {
@@ -77,13 +104,14 @@ class BitBucket extends SitePublisher {
         }
     }
 
-    public function test_upload() {
-        $this->client = new StaticHTMLOutput_Request();
+    public function test_upload() : void {
+        $this->client = new Request();
 
         try {
             $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';
 
             $post_options = [
+                // @phpstan-ignore-next-line
                 '.tmp_statichtmloutput.txt' => 'Test StaticHTMLOutput connectivity',
                 '.tmp_statichtmloutput.txt' => 'Test StaticHTMLOutput connectivity #2',
                 'message' => 'StaticHTMLOutput deployment test',
@@ -100,16 +128,16 @@ class BitBucket extends SitePublisher {
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                [ '200', '201', '301', '302', '304' ]
+                [ 200, 201, 301, 302, 304 ]
             );
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
 
         $this->finalizeDeployment();
     }
 
-    public function addFileToBatchForCommitting( $line ) {
+    public function addFileToBatchForCommitting( string $line ) : void {
         list($local_file, $this->target_path) = explode( ',', $line );
 
         $local_file = $this->archive->path . $local_file;
@@ -124,7 +152,11 @@ class BitBucket extends SitePublisher {
                 $this->settings['bbPath'] . '/' . $this->target_path;
         }
 
-        $this->local_file_contents = file_get_contents( $local_file );
+        $this->local_file_contents = (string) file_get_contents( $local_file );
+
+        if ( ! $this->local_file_contents ) {
+            return;
+        }
 
         if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
             $prev = $this->file_paths_and_hashes[ $this->target_path ];
@@ -151,8 +183,8 @@ class BitBucket extends SitePublisher {
 
     }
 
-    public function sendBatchToBitbucket() {
-        $this->client = new StaticHTMLOutput_Request();
+    public function sendBatchToBitbucket() : void {
+        $this->client = new Request();
 
         $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';
 
@@ -171,9 +203,9 @@ class BitBucket extends SitePublisher {
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                [ '200', '201', '301', '302', '304' ]
+                [ 200, 201, 301, 302, 304 ]
             );
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
     }

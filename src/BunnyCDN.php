@@ -4,6 +4,27 @@ namespace StaticHTMLOutput;
 
 class BunnyCDN extends SitePublisher {
 
+    /**
+     * @var string
+     */
+    public $api_base;
+    /**
+     * @var string
+     */
+    public $local_file;
+    /**
+     * @var string
+     */
+    public $target_path;
+    /**
+     * @var string
+     */
+    public $local_file_contents;
+    /**
+     * @var Request
+     */
+    public $client;
+
     public function __construct() {
         $this->loadSettings( 'bunnycdn' );
 
@@ -14,7 +35,8 @@ class BunnyCDN extends SitePublisher {
                 '/WP2STATIC-BUNNYCDN-PREVIOUS-HASHES.txt';
 
         if ( defined( 'WP_CLI' ) ) {
-            return; }
+            return;
+        }
 
         switch ( $_POST['ajax_action'] ) {
             case 'bunnycdn_prepare_export':
@@ -36,7 +58,7 @@ class BunnyCDN extends SitePublisher {
         }
     }
 
-    public function upload_files() {
+    public function upload_files() : void {
         $this->files_remaining = $this->getRemainingItemsCount();
 
         if ( $this->files_remaining < 0 ) {
@@ -69,18 +91,18 @@ class BunnyCDN extends SitePublisher {
                         $this->target_path;
             }
 
-            $this->local_file_contents = file_get_contents( $this->local_file );
+            $this->local_file_contents = (string) file_get_contents( $this->local_file );
+
+            if ( ! $this->local_file_contents ) {
+                continue;
+            }
 
             if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
                 $prev = $this->file_paths_and_hashes[ $this->target_path ];
                 $current = crc32( $this->local_file_contents );
 
                 if ( $prev != $current ) {
-                    if ( $this->fileExistsInBunnyCDN() ) {
-                        $this->updateFileInBunnyCDN();
-                    } else {
-                        $this->createFileInBunnyCDN();
-                    }
+                    $this->createFileInBunnyCDN();
 
                     $this->recordFilePathAndHashInMemory(
                         $this->target_path,
@@ -88,11 +110,7 @@ class BunnyCDN extends SitePublisher {
                     );
                 }
             } else {
-                if ( $this->fileExistsInBunnyCDN() ) {
-                    $this->updateFileInBunnyCDN();
-                } else {
-                    $this->createFileInBunnyCDN();
-                }
+                $this->createFileInBunnyCDN();
 
                 $this->recordFilePathAndHashInMemory(
                     $this->target_path,
@@ -112,7 +130,7 @@ class BunnyCDN extends SitePublisher {
         }
     }
 
-    public function purge_all_cache() {
+    public function purge_all_cache() : void {
         try {
             $endpoint = 'https://bunnycdn.com/api/pullzone/' .
                 $this->settings['bunnycdnPullZoneID'] . '/purgeCache';
@@ -158,14 +176,14 @@ class BunnyCDN extends SitePublisher {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             }
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
             WsLog::l( $e );
             throw new StaticHTMLOutputException( $e );
         }
     }
 
-    public function test_deploy() {
+    public function test_deploy() : void {
 
         try {
             $remote_path = $this->api_base . '/' .
@@ -207,16 +225,14 @@ class BunnyCDN extends SitePublisher {
 
             curl_close( $ch );
 
-            $good_response_codes = [ '200', '201', '301', '302', '304' ];
+            $good_response_codes = [ 200, 201, 301, 302, 304 ];
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
-                WsLog::l(
-                    'BAD RESPONSE STATUS (' . $status_code . '): '
-                );
+                WsLog::l( "BAD RESPONSE STATUS ($status_code)" );
 
                 throw new StaticHTMLOutputException( 'BunnyCDN API bad response status' );
             }
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
             WsLog::l( $e );
             throw new StaticHTMLOutputException( $e );
@@ -227,22 +243,13 @@ class BunnyCDN extends SitePublisher {
         }
     }
 
-    public function fileExistsInBunnyCDN() {
-        $this->client = new StaticHTMLOutput_Request();
-
-        return false;
-    }
-
-    public function createFileInBunnyCDN() {
+    public function createFileInBunnyCDN() : void {
         try {
             $remote_path = $this->api_base . '/' .
                 $this->settings['bunnycdnStorageZoneName'] .
                 '/' . $this->target_path;
 
-            $headers = [
-                'AccessKey: ' .
-                    $this->settings['bunnycdnStorageZoneAccessKey'],
-            ];
+            $headers = [ 'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'] ];
 
             $this->client->putWithFileStreamAndHeaders(
                 $remote_path,
@@ -252,9 +259,9 @@ class BunnyCDN extends SitePublisher {
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                [ '200', '201', '301', '302', '304' ]
+                [ 200, 201, 301, 302, 304 ]
             );
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
     }

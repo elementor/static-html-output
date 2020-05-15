@@ -4,6 +4,11 @@ namespace StaticHTMLOutput;
 
 class GitLab extends SitePublisher {
 
+    /**
+     * @var string
+     */
+    public $files_in_repo_list_path;
+
     public function __construct() {
         $this->loadSettings( 'gitlab' );
 
@@ -37,7 +42,7 @@ class GitLab extends SitePublisher {
         }
     }
 
-    public function upload_files() {
+    public function upload_files() : void {
         $this->files_remaining = $this->getRemainingItemsCount();
 
         if ( $this->files_remaining < 0 ) {
@@ -59,8 +64,12 @@ class GitLab extends SitePublisher {
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
         );
 
-        $files_in_tree = array_filter( $files_in_tree );
-        $files_in_tree = array_unique( $files_in_tree );
+        if ( is_array( $files_in_tree ) ) {
+            $files_in_tree = array_filter( $files_in_tree );
+            $files_in_tree = array_unique( $files_in_tree );
+        } else {
+            $files_in_tree = [];
+        }
 
         $files_data = [];
 
@@ -79,6 +88,10 @@ class GitLab extends SitePublisher {
             }
 
             $local_file_contents = file_get_contents( $local_file );
+
+            if ( ! $local_file_contents ) {
+                continue;
+            }
 
             if ( in_array( $target_path, $files_in_tree ) ) {
                 if ( isset( $this->file_paths_and_hashes[ $target_path ] ) ) {
@@ -133,7 +146,7 @@ class GitLab extends SitePublisher {
             $this->settings['glProject'] . '/repository/commits';
 
         try {
-            $client = new StaticHTMLOutput_Request();
+            $client = new Request();
 
             $post_options = [
                 'branch' => 'master',
@@ -154,11 +167,11 @@ class GitLab extends SitePublisher {
 
             $this->checkForValidResponses(
                 $client->status_code,
-                [ '200', '201', '301', '302', '304' ]
+                [ 200, 201, 301, 302, 304 ]
             );
 
             $this->writeFilePathAndHashesToFile();
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
 
@@ -168,7 +181,10 @@ class GitLab extends SitePublisher {
         }
     }
 
-    public function addToListOfFilesInRepos( $items ) {
+    /**
+     * @param mixed[] $items file objects
+     */
+    public function addToListOfFilesInRepos( array $items ) : void {
         file_put_contents(
             $this->files_in_repo_list_path,
             implode( PHP_EOL, $items ) . PHP_EOL,
@@ -176,7 +192,10 @@ class GitLab extends SitePublisher {
         );
     }
 
-    public function getFilePathsFromTree( $json_response ) {
+    /**
+     * @return mixed[] array of file objects
+     */
+    public function getFilePathsFromTree( string $json_response ) : array {
         $partial_tree_array = json_decode( (string) $json_response, true );
 
         $formatted_elements = [];
@@ -190,12 +209,12 @@ class GitLab extends SitePublisher {
         return $formatted_elements;
     }
 
-    public function getRepositoryTree( $page ) {
+    public function getRepositoryTree( int $page ) : void {
         $tree_endpoint = 'https://gitlab.com/api/v4/projects/' .
             $this->settings['glProject'] .
             '/repository/tree?recursive=true&per_page=100&page=' . $page;
 
-        $client = new StaticHTMLOutput_Request();
+        $client = new Request();
 
         $headers = [
             'PRIVATE-TOKEN: ' . $this->settings['glToken'],
@@ -212,7 +231,7 @@ class GitLab extends SitePublisher {
         if ( ! in_array( $client->status_code, $good_response_codes ) ) {
             WsLog::l( 'BAD RESPONSE STATUS (' . $client->status_code . '): ' );
 
-            throw new Exception( 'GitLab API bad response status' );
+            throw new StaticHTMLOutputException( 'GitLab API bad response status' );
         }
 
         $total_pages = $client->headers['x-total-pages'];
@@ -226,20 +245,20 @@ class GitLab extends SitePublisher {
         );
 
         if ( $current_page < $total_pages ) {
-            $this->getRepositoryTree( $next_page );
+            $this->getRepositoryTree( (int) $next_page );
         }
     }
 
-    public function getListOfFilesInRepo() {
+    public function getListOfFilesInRepo() : void {
         $this->getRepositoryTree( 1 );
     }
 
-    public function test_file_create() {
+    public function test_file_create() : void {
         $remote_path = 'https://gitlab.com/api/v4/projects/' .
             $this->settings['glProject'] . '/repository/commits';
 
         try {
-            $client = new StaticHTMLOutput_Request();
+            $client = new Request();
 
             $post_options = [
                 'branch' => 'master',
@@ -271,16 +290,16 @@ class GitLab extends SitePublisher {
 
             $this->checkForValidResponses(
                 $client->status_code,
-                [ '200', '201', '301', '302', '304' ]
+                [ 200, 201, 301, 302, 304 ]
             );
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
 
         $this->finalizeDeployment();
     }
 
-    public function createGitLabPagesConfig() {
+    public function createGitLabPagesConfig() : void {
         // NOTE: required for GitLab Pages to build static site
         $config_file = <<<EOD
 pages:

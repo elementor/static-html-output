@@ -55,7 +55,7 @@ class Netlify extends SitePublisher {
                 'Content-Type: application/zip',
             ];
 
-            $this->client = new StaticHTMLOutput_Request();
+            $this->client = new Request();
 
             $this->client->postWithFileStreamAndHeaders(
                 $zip_deploy_endpoint,
@@ -88,7 +88,7 @@ class Netlify extends SitePublisher {
                     $this->settings['netlifyPersonalAccessToken'],
             ];
 
-            $this->client = new StaticHTMLOutput_Request();
+            $this->client = new Request();
 
             $this->client->getWithCustomHeaders(
                 $site_info_endpoint,

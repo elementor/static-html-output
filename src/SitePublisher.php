@@ -45,7 +45,7 @@ abstract class SitePublisher {
      */
     public $archive;
 
-    abstract function upload_files() : void;
+    abstract public function upload_files() : void;
 
     public function loadSettings( string $deploy_method ) : void {
         $target_settings = [
@@ -259,7 +259,7 @@ abstract class SitePublisher {
         $this->clearFileList();
 
         $this->createDeploymentList(
-            $this->settings['wp_uploads_path'] . '/' .  $this->archive->name,
+            $this->settings['wp_uploads_path'] . '/' . $this->archive->name,
             $basename_in_target
         );
 
@@ -307,7 +307,7 @@ abstract class SitePublisher {
         }
 
         for ( $i = 0; $i < $batch_size; $i++ ) {
-            $file_list =  fgets( $f );
+            $file_list = fgets( $f );
 
             if ( ! $file_list ) {
                 return [];

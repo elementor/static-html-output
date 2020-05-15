@@ -168,7 +168,7 @@ class WPSite {
             return '';
         }
 
-        if ( array_key_exists('path', $parsed_site_url ) ) {
+        if ( array_key_exists( 'path', $parsed_site_url ) ) {
             return $parsed_site_url['path'];
         }
 

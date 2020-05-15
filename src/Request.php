@@ -4,6 +4,19 @@ namespace StaticHTMLOutput;
 
 class Request {
 
+    /**
+     * @var int
+     */
+    public $status_code;
+    /**
+     * @var string
+     */
+    public $body;
+    /**
+     * @var string[]
+     */
+    public $headers;
+
     public function __construct() {
         $this->default_options = [
             CURLOPT_USERAGENT => 'StaticHTMLOutput.com',

@@ -3,6 +3,42 @@
 namespace StaticHTMLOutput;
 
 class GitHub extends SitePublisher {
+    /**
+     * @var string
+     */
+    public $api_base;
+    /**
+     * @var string
+     */
+    public $user;
+    /**
+     * @var string
+     */
+    public $target_path;
+    /**
+     * @var string
+     */
+    public $local_file_contents;
+    /**
+     * @var string
+     */
+    public $remote_path;
+    /**
+     * @var string
+     */
+    public $repository;
+    /**
+     * @var string
+     */
+    public $query;
+    /**
+     * @var Request
+     */
+    public $client;
+    /**
+     * @var mixed
+     */
+    public $existing_file_object;
 
     public function __construct() {
         $this->loadSettings( 'github' );
@@ -38,7 +74,7 @@ class GitHub extends SitePublisher {
         }
     }
 
-    public function upload_files() {
+    public function upload_files() : void {
         $this->files_remaining = $this->getRemainingItemsCount();
 
         if ( $this->files_remaining < 0 ) {
@@ -71,7 +107,11 @@ class GitHub extends SitePublisher {
                     $this->settings['ghPath'] . '/' . $this->target_path;
             }
 
-            $this->local_file_contents = file_get_contents( $local_file );
+            $this->local_file_contents = (string) file_get_contents( $local_file );
+
+            if ( ! $this->local_file_contents ) {
+                continue;
+            }
 
             if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
                 $prev = $this->file_paths_and_hashes[ $this->target_path ];
@@ -114,7 +154,7 @@ class GitHub extends SitePublisher {
         }
     }
 
-    public function test_upload() {
+    public function test_upload() : void {
         try {
             $this->remote_path = $this->api_base . $this->settings['ghRepo'] .
                 '/contents/' . '.StaticHTMLOutput/' . uniqid();
@@ -148,10 +188,7 @@ class GitHub extends SitePublisher {
             curl_setopt(
                 $ch,
                 CURLOPT_HTTPHEADER,
-                [
-                    'Authorization: ' .
-                        'token ' . $this->settings['ghToken'],
-                ]
+                [ "Authorization: token {$this->settings['ghToken']}" ]
             );
 
             $output = curl_exec( $ch );
@@ -159,20 +196,17 @@ class GitHub extends SitePublisher {
 
             curl_close( $ch );
 
-            $good_response_codes = [ '200', '201', '301', '302', '304' ];
+            $good_response_codes = [ 200, 201, 301, 302, 304 ];
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
-                WsLog::l(
-                    'BAD RESPONSE STATUS (' . $status_code . '): '
-                );
+                WsLog::l( "BAD RESPONSE STATUS ($status_code)" );
 
-                throw new Exception( 'GitHub API bad response status' );
+                throw new StaticHTMLOutputException( 'GitHub API bad response status' );
             }
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             WsLog::l( 'GITHUB EXPORT: error encountered' );
             WsLog::l( $e );
-            throw new Exception( $e );
-            return;
+            throw new StaticHTMLOutputException( $e );
         }
 
         if ( ! defined( 'WP_CLI' ) ) {
@@ -180,7 +214,7 @@ class GitHub extends SitePublisher {
         }
     }
 
-    public function fileExistsInGitHub() {
+    public function fileExistsInGitHub() : bool {
         $this->remote_path = $this->api_base . $this->settings['ghRepo'] .
             '/contents/' . $this->target_path;
         // GraphQL query to get sha of existing file
@@ -196,7 +230,7 @@ query{
   }
 }
 JSON;
-        $this->client = new StaticHTMLOutput_Request();
+        $this->client = new Request();
 
         $post_options = [
             'query' => $this->query,
@@ -219,7 +253,7 @@ JSON;
 
         $this->checkForValidResponses(
             $this->client->status_code,
-            [ '200', '201', '301', '302', '304' ]
+            [ 200, 201, 301, 302, 304 ]
         );
 
         $gh_file_info = json_decode( $this->client->body, true );
@@ -235,9 +269,11 @@ JSON;
 
             return true;
         }
+
+        return false;
     }
 
-    public function updateFileInGitHub() {
+    public function updateFileInGitHub() : void {
         $action = 'UPDATE';
         $existing_sha = $this->existing_file_object['oid'];
         $existing_bytesize = $this->existing_file_object['byteSize'];
@@ -278,22 +314,22 @@ JSON;
             $this->client->putWithJSONPayloadCustomHeaders(
                 $this->remote_path,
                 $post_options,
-                $headers,
-                $curl_options = [
-                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                ]
+                $headers
             );
+
+            // note, this was never being used, check if required
+            // CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                [ '200', '201', '301', '302', '304' ]
+                [ 200, 201, 301, 302, 304 ]
             );
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
     }
 
-    public function createFileInGitHub() {
+    public function createFileInGitHub() : void {
         $action = 'CREATE';
 
         $b64_file_contents = base64_encode( $this->local_file_contents );
@@ -328,17 +364,17 @@ JSON;
             $this->client->putWithJSONPayloadCustomHeaders(
                 $this->remote_path,
                 $post_options,
-                $headers,
-                $curl_options = [
-                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                ]
+                $headers
             );
+
+            // note, this was never being used, check if required
+            // CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                [ '200', '201', '301', '302', '304' ]
+                [ 200, 201, 301, 302, 304 ]
             );
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
     }

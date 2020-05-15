@@ -2,7 +2,30 @@
 
 namespace StaticHTMLOutput;
 
+use FtpClient;
+
 class FTP extends SitePublisher {
+
+    /**
+     * @var FtpClient\FtpClient
+     */
+    public $ftp;
+    /**
+     * @var string
+     */
+    public $local_file;
+    /**
+     * @var string
+     */
+    public $target_path;
+    /**
+     * @var string
+     */
+    public $local_file_contents;
+    /**
+     * @var string
+     */
+    public $hash_key;
 
     public function __construct() {
         $this->loadSettings( 'ftp' );
@@ -31,7 +54,7 @@ class FTP extends SitePublisher {
         }
     }
 
-    public function upload_files() {
+    public function upload_files() : void {
         $this->files_remaining = $this->getRemainingItemsCount();
 
         if ( $this->files_remaining < 0 ) {
@@ -50,7 +73,7 @@ class FTP extends SitePublisher {
 
         $this->openPreviousHashesFile();
 
-        $this->ftp = new \FtpClient\FtpClient();
+        $this->ftp = new FtpClient\FtpClient();
 
         $port = isset( $this->settings['ftpPort'] ) ?
             $this->settings['ftpPort'] : 21;
@@ -87,7 +110,11 @@ class FTP extends SitePublisher {
                     $this->settings['ftpRemotePath'] . '/' . $this->target_path;
             }
 
-            $this->local_file_contents = file_get_contents( $this->local_file );
+            $this->local_file_contents = (string) file_get_contents( $this->local_file );
+
+            if ( ! $this->local_file_contents ) {
+                continue;
+            }
 
             $this->hash_key =
                 $this->target_path . basename( $this->local_file );
@@ -122,8 +149,8 @@ class FTP extends SitePublisher {
         }
     }
 
-    public function test_ftp() {
-        $this->ftp = new \FtpClient\FtpClient();
+    public function test_ftp() : void {
+        $this->ftp = new FtpClient\FtpClient();
 
         $port = isset( $this->settings['ftpPort'] ) ?
             $this->settings['ftpPort'] : 21;
@@ -147,13 +174,13 @@ class FTP extends SitePublisher {
 
             unset( $this->ftp );
             return;
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             unset( $this->ftp );
             $this->handleException( $e );
         }
     }
 
-    public function putFileViaFTP() {
+    public function putFileViaFTP() : void {
         if ( ! $this->ftp->isdir( $this->target_path ) ) {
             $mkdir_result = $this->ftp->mkdir( $this->target_path, true );
         }
