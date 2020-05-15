@@ -4,6 +4,23 @@ namespace StaticHTMLOutput;
 
 class S3 extends SitePublisher {
 
+    /**
+     * @var int
+     */
+    public $files_remaining;
+    /**
+     * @var string
+     */
+    public $target_path;
+    /**
+     * @var string
+     */
+    public $local_file_contents;
+    /**
+     * @var string
+     */
+    public $hash_key;
+
     public function __construct() {
         $this->loadSettings( 's3' );
 
@@ -34,7 +51,7 @@ class S3 extends SitePublisher {
         }
     }
 
-    public function upload_files() {
+    public function upload_files() : void {
         $this->files_remaining = $this->getRemainingItemsCount();
 
         if ( $this->files_remaining < 0 ) {
@@ -66,7 +83,11 @@ class S3 extends SitePublisher {
                     $this->settings['s3RemotePath'] . '/' . $this->target_path;
             }
 
-            $this->local_file_contents = file_get_contents( $local_file );
+            $this->local_file_contents = (string) file_get_contents( $local_file );
+
+            if ( ! $this->local_file_contents ) {
+                continue;
+            }
 
             $this->hash_key = $this->target_path . basename( $local_file );
 
@@ -83,7 +104,7 @@ class S3 extends SitePublisher {
                             MimeTypes::guess_type( $local_file )
                         );
 
-                    } catch ( Exception $e ) {
+                    } catch ( StaticHTMLOutputException $e ) {
                         $this->handleException( $e );
                     }
                 }
@@ -96,7 +117,7 @@ class S3 extends SitePublisher {
                         MimeTypes::guess_type( $local_file )
                     );
 
-                } catch ( Exception $e ) {
+                } catch ( StaticHTMLOutputException $e ) {
                     $this->handleException( $e );
                 }
             }
@@ -118,7 +139,7 @@ class S3 extends SitePublisher {
         }
     }
 
-    public function test_s3() {
+    public function test_s3() : void {
         try {
             $this->put_s3_object(
                 '.tmp_statichtmloutput.txt',
@@ -129,13 +150,17 @@ class S3 extends SitePublisher {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             }
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             WsLog::l( 'S3 ERROR RETURNED: ' . $e );
             echo "There was an error testing S3.\n";
         }
     }
 
-    public function put_s3_object( $s3_path, $content, $content_type ) {
+    public function put_s3_object(
+        string $s3_path,
+        string $content,
+        string $content_type
+    ) : void {
         // NOTE: quick fix for #287
         $s3_path = str_replace( '@', '%40', $s3_path );
 
@@ -229,6 +254,10 @@ class S3 extends SitePublisher {
 
         $ch = curl_init( $url );
 
+        if ( ! is_resource ( $ch ) ) {
+            return;
+        }
+
         curl_setopt( $ch, CURLOPT_HEADER, false );
         curl_setopt( $ch, CURLOPT_HTTPHEADER, $curl_headers );
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
@@ -246,13 +275,13 @@ class S3 extends SitePublisher {
 
         $this->checkForValidResponses(
             $http_code,
-            [ '200' ]
+            [ 200 ]
         );
 
         curl_close( $ch );
     }
 
-    public function cloudfront_invalidate_all_items() {
+    public function cloudfront_invalidate_all_items() : void {
         WsLog::l( 'Invalidating all CloudFront items' );
 
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
