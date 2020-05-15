@@ -46,10 +46,6 @@ class View {
     public function render() {
         $file = $this->path . '/' . $this->template . $this->extension;
 
-        if ( ! is_readable( $file ) ) {
-            error_log( 'Can\'t find view template: ' . $file );
-        }
-
         include $file;
 
         return $this;

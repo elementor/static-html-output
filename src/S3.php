@@ -86,12 +86,6 @@ class S3 extends SitePublisher {
                     } catch ( Exception $e ) {
                         $this->handleException( $e );
                     }
-                } else {
-                    // count cache hits/missed
-                    // WsLog::l(
-                    // "Skipping {$this->hash_key} as identical " .
-                    // 'to deploy cache'
-                    // );
                 }
             } else {
                 try {
@@ -274,7 +268,7 @@ class S3 extends SitePublisher {
         $access_key = $this->settings['s3Key'];
         $secret_key = $this->settings['s3Secret'];
 
-        $epoch = date( 'U' );
+        $epoch = gmdate( 'U' );
 
         $xml = <<<EOD
 <InvalidationBatch>

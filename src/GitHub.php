@@ -88,12 +88,6 @@ class GitHub extends SitePublisher {
                         $this->target_path,
                         $this->local_file_contents
                     );
-                } else {
-                    // noisy
-                    // WsLog::l(
-                    // "Skipping {$this->target_path} as identical " .
-                    // 'to deploy cache'
-                    // );
                 }
             } else {
                 if ( $this->fileExistsInGitHub() ) {

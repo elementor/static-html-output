@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Static HTML Output
  * Plugin URI:  https://statichtmloutput.com
- * Description: Security & Performance via static website publishing. One plugin to solve WordPress's biggest problems.
+ * Description: Security & Performance via static website publishing.
  * Version:     6.6.8
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
@@ -39,16 +39,25 @@ function wp_static_html_output_server_side_export() {
     return null;
 }
 
-add_action( 'static_html_output_server_side_export_hook', 'static_html_output_server_side_export', 10, 0 );
+add_action(
+    'static_html_output_server_side_export_hook',
+    'static_html_output_server_side_export',
+    10,
+    0
+);
 
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'static_html_output_action_links' );
+add_filter(
+    'plugin_action_links_' . plugin_basename( __FILE__ ),
+    'static_html_output_action_links'
+);
 add_action( 'wp_ajax_wp_static_html_output_ajax', 'static_html_output_ajax' );
 
 function static_html_output_ajax() {
     $valid_referer = check_ajax_referer( 'statichtmloutput', 'nonce' );
 
     if ( ! $valid_referer ) {
-        error_log( 'Invalid ajax referer' );
+        wp_die();
+        return null;
     }
 
     $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
@@ -90,9 +99,6 @@ function static_html_output_ajax() {
     } elseif ( strpos( $ajax_method, 'bunny' ) !== false ) {
         $class = new StaticHTMLOutput\BunnyCDN();
     } else {
-        error_log( 'trying to execute unknown function via AJAX' );
-        error_log( $class );
-        error_log( $ajax_method );
         wp_die();
         return null;
     }

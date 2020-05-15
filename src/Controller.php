@@ -233,7 +233,8 @@ class Controller {
 
     public function reset_default_settings() {
         if ( ! delete_option( 'statichtmloutput-options' ) ) {
-            error_log( "Couldn't reset plugin to default settings" );
+            WsLog::l( 'Error resetting options to defaults' );
+            echo 'ERROR';
         }
 
         $this->options = new Options( self::OPTIONS_KEY );
@@ -293,7 +294,7 @@ class Controller {
 
     public function logEnvironmentalInfo() {
         $info = [
-            '' . date( 'Y-m-d h:i:s' ),
+            '' . gmdate( 'Y-m-d h:i:s' ),
             'PHP VERSION ' . phpversion(),
             'OS VERSION ' . php_uname(),
             'WP VERSION ' . get_bloginfo( 'version' ),

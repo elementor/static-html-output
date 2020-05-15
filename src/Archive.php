@@ -57,7 +57,7 @@ class Archive extends StaticHTMLOutput {
                 0664
             );
         } else {
-            error_log( "Couldn't create archive directory at " . $this->path );
+            WsLog::l( "Couldn't create archive directory at $this->path" );
         }
     }
 }

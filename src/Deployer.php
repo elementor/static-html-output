@@ -26,7 +26,6 @@ class Deployer extends StaticHTMLOutput {
                 break;
             case 's3':
                 if ( $test ) {
-                    error_log( 'testing s3 deploy' );
                     $s3->test_s3();
                     return;
                 }
@@ -39,7 +38,6 @@ class Deployer extends StaticHTMLOutput {
                 break;
             case 'bitbucket':
                 if ( $test ) {
-                    error_log( 'testing bitbucket deploy' );
                     $bitbucket->test_upload();
                     return;
                 }
@@ -51,7 +49,6 @@ class Deployer extends StaticHTMLOutput {
                 break;
             case 'bunnycdn':
                 if ( $test ) {
-                    error_log( 'testing BunnyCDN deploy' );
                     $bunny->test_deploy();
                     return;
                 }
@@ -64,7 +61,6 @@ class Deployer extends StaticHTMLOutput {
                 break;
             case 'ftp':
                 if ( $test ) {
-                    error_log( 'testing FTP deploy' );
                     $ftp->test_ftp();
                     return;
                 }
@@ -76,7 +72,6 @@ class Deployer extends StaticHTMLOutput {
                 break;
             case 'github':
                 if ( $test ) {
-                    error_log( 'testing GitHub deploy' );
                     $github->test_upload();
                     return;
                 }
@@ -88,7 +83,6 @@ class Deployer extends StaticHTMLOutput {
                 break;
             case 'gitlab':
                 if ( $test ) {
-                    error_log( 'testing GitLab deploy' );
                     $gitlab->test_file_create();
                     return;
                 }
@@ -102,8 +96,6 @@ class Deployer extends StaticHTMLOutput {
                 break;
             case 'netlify':
                 if ( $test ) {
-                    error_log( 'testing Netlify deploy' );
-                    $gitlab->loadArchive();
                     $netlify->test_netlify();
                     return;
                 }
@@ -118,7 +110,7 @@ class Deployer extends StaticHTMLOutput {
 
         $duration = $end_time - $start_time;
 
-        $deploy_result = 'Deployed to: ' . $method . ' in ' . date( 'H:i:s', $duration );
+        $deploy_result = 'Deployed to: ' . $method . ' in ' . gmdate( 'H:i:s', $duration );
 
         $this->finalizeDeployment( $deploy_result );
     }
