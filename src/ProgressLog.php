@@ -4,7 +4,7 @@ namespace StaticHTMLOutput;
 
 class ProgressLog {
 
-    public static function l( $portion, $total ) {
+    public static function l( int $portion, int $total ) : void {
         if ( $total === 0 ) {
             return;
         }

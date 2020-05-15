@@ -4,8 +4,11 @@ namespace StaticHTMLOutput;
 
 class PostSettings {
 
-    public static function get( $sets = [] ) : array {
-
+    /**
+     * @param mixed[] $sets
+     * @return mixed[] options
+     */
+    public static function get( array $sets = [] ) : array {
         $settings = [];
         $key_sets = [];
         $target_keys = [];

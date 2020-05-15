@@ -1,12 +1,28 @@
 <?php
 
+namespace StaticHTMLOutput;
+
 class Netlify extends SitePublisher {
+
+    /**
+     * @var string
+     */
+    public $base_url;
+    /**
+     * @var string
+     */
+    public $site_id;
+    /**
+     * @var string
+     */
+    public $zip_archive_path;
+    /**
+     * @var Request
+     */
+    public $client;
 
     public function __construct() {
         $this->loadSettings( 'netlify' );
-
-        $this->settings['netlifySiteID'];
-        $this->settings['netlifyPersonalAccessToken'];
         $this->base_url = 'https://api.netlify.com';
 
         $this->detectSiteID();
@@ -22,12 +38,12 @@ class Netlify extends SitePublisher {
             case 'netlify_do_export':
                 $this->bootstrap();
                 $this->loadArchive();
-                $this->deploy();
+                $this->upload_files();
                 break;
         }
     }
 
-    public function detectSiteID() {
+    public function detectSiteID() : void {
         $this->site_id = $this->settings['netlifySiteID'];
 
         if ( strpos( $this->site_id, 'netlify.com' ) !== false ) {
@@ -41,7 +57,7 @@ class Netlify extends SitePublisher {
         }
     }
 
-    public function deploy() {
+    public function upload_files() : void {
         $this->zip_archive_path = $this->settings['wp_uploads_path'] . '/' .
             $this->archive->name . '.zip';
 
@@ -65,16 +81,16 @@ class Netlify extends SitePublisher {
 
             $this->checkForValidResponses(
                 $this->client->status_code,
-                [ '200', '201', '301', '302', '304' ]
+                [ 200, 201, 301, 302, 304 ]
             );
 
             $this->finalizeDeployment();
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
     }
 
-    public function test_netlify() {
+    public function test_netlify() : void {
         $this->zip_archive_path = $this->settings['wp_uploads_path'] . '/' .
             $this->archive->name . '.zip';
 
@@ -111,7 +127,7 @@ class Netlify extends SitePublisher {
 
                 echo 'Netlify test error';
             }
-        } catch ( Exception $e ) {
+        } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
     }

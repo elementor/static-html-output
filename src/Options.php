@@ -3,8 +3,17 @@
 namespace StaticHTMLOutput;
 
 class Options {
+    /**
+     * @var mixed
+     */
     protected $statichtmloutput_options = [];
-    protected $statichtmloutput_option_key = null;
+    /**
+     * @var string
+     */
+    protected $statichtmloutput_option_key = '';
+    /**
+     * @var string[]
+     */
     protected $statichtmloutput_options_keys = [
         'additionalUrls',
         'allowOfflineUsage',
@@ -78,6 +87,9 @@ class Options {
         'useRelativeURLs',
     ];
 
+    /**
+     * @var string[]
+     */
     protected $whitelisted_keys = [
         'additionalUrls',
         'allowOfflineUsage',
@@ -142,7 +154,7 @@ class Options {
         'useRelativeURLs',
     ];
 
-    public function __construct( $option_key ) {
+    public function __construct( string $option_key ) {
         $options = get_option( $option_key );
 
         if ( false === $options ) {
@@ -153,7 +165,10 @@ class Options {
         $this->statichtmloutput_option_key = $option_key;
     }
 
-    public function __set( $name, $value ) {
+    /**
+     * @param mixed[] $value
+     */
+    public function __set( string $name, $value ) : Options {
         $this->statichtmloutput_options[ $name ] = $value;
 
         // NOTE: this is required, not certain why, investigate
@@ -161,21 +176,35 @@ class Options {
         return $this;
     }
 
-    public function setOption( $name, $value ) {
+    /**
+     * @param mixed[] $value
+     */
+    public function setOption( string $name, $value ) : Options {
         return $this->__set( $name, $value );
     }
 
-    public function __get( $name ) {
-        $value = array_key_exists( $name, $this->statichtmloutput_options ) ?
-            $this->statichtmloutput_options[ $name ] : null;
+    /**
+     * @return mixed option value
+     */
+    public function __get( string $name ) {
+        $value = array_key_exists(
+            $name,
+            $this->statichtmloutput_options ) ?  $this->statichtmloutput_options[ $name ] : null;
+
         return $value;
     }
 
-    public function getOption( $name ) {
+    /**
+     * @return mixed option value
+     */
+    public function getOption( string $name ) {
         return $this->__get( $name );
     }
 
-    public function getAllOptions( $reveal_sensitive_values = false ) {
+    /**
+     * @return mixed[] all the options
+     */
+    public function getAllOptions( bool $reveal_sensitive_values = false ) : array {
         $options_array = [];
 
         foreach ( $this->statichtmloutput_options_keys as $key ) {
@@ -197,22 +226,22 @@ class Options {
         return $options_array;
     }
 
-    public function optionExists( $name ) {
+    public function optionExists( string $name ) : bool {
         return in_array( $name, $this->statichtmloutput_options_keys );
     }
 
-    public function save() {
+    public function save() : bool {
         return update_option(
             $this->statichtmloutput_option_key,
             $this->statichtmloutput_options
         );
     }
 
-    public function delete() {
+    public function delete() : bool {
         return delete_option( $this->statichtmloutput_option_key );
     }
 
-    public function saveAllPostData() {
+    public function saveAllPostData() : void {
         foreach ( $this->statichtmloutput_options_keys as $option ) {
             // TODO: set which fields should get which sanitzation upon saving
             // TODO: validate before save & avoid making empty settings fields

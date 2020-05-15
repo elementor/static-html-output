@@ -102,7 +102,7 @@ class Deployer extends StaticHTMLOutput {
 
                 $netlify->bootstrap();
                 $netlify->loadArchive();
-                $netlify->deploy();
+                $netlify->upload_files();
                 break;
         }
 

@@ -9,6 +9,10 @@ class Request {
      */
     public $status_code;
     /**
+     * @var mixed
+     */
+    public $default_options;
+    /**
      * @var string
      */
     public $body;
@@ -25,7 +29,10 @@ class Request {
         ];
     }
 
-    public function applyDefaultOptions( $curl_handle ) {
+    /**
+     * @param resource $curl_handle
+     */
+    public function applyDefaultOptions( $curl_handle ) : void {
         foreach ( $this->default_options as $option => $value ) {
             curl_setopt(
                 $curl_handle,
@@ -35,12 +42,16 @@ class Request {
         }
     }
 
+    /**
+     * @param mixed[] $headers
+     * @param mixed[] $curl_options
+     */
     public function postWithJSONPayloadCustomHeaders(
-        $url,
-        $data,
-        $headers,
-        $curl_options = []
-        ) {
+        string $url,
+        string $data,
+        array $headers,
+        array $curl_options = []
+        ) : void {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $url );
@@ -58,7 +69,7 @@ class Request {
             foreach ( $curl_options as $option => $value ) {
                 curl_setopt(
                     $ch,
-                    $option,
+                    (int) $option,
                     $value
                 );
             }
@@ -76,13 +87,16 @@ class Request {
             $headers
         );
 
-        $this->body = curl_exec( $ch );
+        $this->body = (string) curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
         curl_close( $ch );
     }
 
-    public function getWithCustomHeaders( $url, $headers ) {
+    /**
+     * @param mixed[] $headers
+     */
+    public function getWithCustomHeaders( string $url, array $headers ) : void {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $url );
@@ -105,12 +119,12 @@ class Request {
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
         $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
 
-        $this->body = substr( $output, $header_size );
-        $header = substr( $output, 0, $header_size );
+        $this->body = substr( (string) $output, $header_size );
+        $header = substr( (string) $output, 0, $header_size );
 
         $raw_headers = explode(
             "\n",
-            trim( mb_substr( $output, 0, $header_size ) )
+            trim( mb_substr( (string) $output, 0, $header_size ) )
         );
 
         unset( $raw_headers[0] );
@@ -125,11 +139,14 @@ class Request {
         curl_close( $ch );
     }
 
+    /**
+     * @param mixed[] $headers
+     */
     public function putWithJSONPayloadCustomHeaders(
-        $url,
-        $data,
-        $headers
-        ) {
+        string $url,
+        string $data,
+        array $headers
+        ) : void {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $url );
@@ -155,17 +172,20 @@ class Request {
 
         curl_setopt( $ch, CURLOPT_USERAGENT, 'StaticHTMLOutput.com' );
 
-        $this->body = curl_exec( $ch );
+        $this->body = (string) curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
         curl_close( $ch );
     }
 
+    /**
+     * @param mixed[] $headers
+     */
     public function putWithFileStreamAndHeaders(
-        $url,
-        $local_file,
-        $headers
-        ) {
+        string $url,
+        string $local_file,
+        array $headers
+        ) : void {
         $ch = curl_init();
 
         $file_stream = fopen( $local_file, 'r' );
@@ -190,17 +210,20 @@ class Request {
 
         $this->applyDefaultOptions( $ch );
 
-        $this->body = curl_exec( $ch );
+        $this->body = (string) curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
         curl_close( $ch );
     }
 
+    /**
+     * @param mixed[] $headers
+     */
     public function postWithFileStreamAndHeaders(
-        $url,
-        $local_file,
-        $headers
-        ) {
+        string $url,
+        string $local_file,
+        array $headers
+        ) : void {
         $ch = curl_init();
 
         $file_stream = fopen( $local_file, 'r' );
@@ -225,17 +248,20 @@ class Request {
 
         $this->applyDefaultOptions( $ch );
 
-        $this->body = curl_exec( $ch );
+        $this->body = (string) curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
         curl_close( $ch );
     }
 
+    /**
+     * @param mixed[] $curl_options
+     */
     public function postWithArray(
-        $url,
-        $data,
-        $curl_options = []
-        ) {
+        string $url,
+        string $data,
+        array $curl_options = []
+        ) : void {
         $ch = curl_init();
 
         curl_setopt( $ch, CURLOPT_URL, $url );
@@ -252,7 +278,7 @@ class Request {
             foreach ( $curl_options as $option => $value ) {
                 curl_setopt(
                     $ch,
-                    $option,
+                    (int) $option,
                     $value
                 );
             }
@@ -264,7 +290,7 @@ class Request {
             $data
         );
 
-        $this->body = curl_exec( $ch );
+        $this->body = (string) curl_exec( $ch );
         $this->status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
         curl_close( $ch );

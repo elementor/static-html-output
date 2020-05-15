@@ -4,7 +4,11 @@ namespace StaticHTMLOutput;
 
 class DBSettings {
 
-    public static function get( $sets = [] ) {
+    /**
+     * @param mixed[] $sets
+     * @return mixed[] options
+     */
+    public static function get( array $sets = [] ) {
         $plugin = Controller::getInstance();
 
         $settings = [];
