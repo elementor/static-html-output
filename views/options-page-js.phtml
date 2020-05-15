@@ -81,8 +81,6 @@ jQuery(document).ready(function($){
         },
         error: function(serverResponse) {
           $('#initial_crawl_list_loader').hide();
-          // TODO: surface via ajaxerrorhandler
-          console.log('error in generating the initial crawl list');
         }
     });
 
@@ -198,8 +196,7 @@ jQuery(document).ready(function($){
           break;
 
         default:
-          console.log('unexpected return value from export target processing');
-          break; 
+          break;
       }
     } else {
       // if zip was selected, call to get zip name and enable the button with the link to download
@@ -607,8 +604,6 @@ jQuery(document).ready(function($){
   }
 
   function checkProgress() {
-    console.log('checking progress');
-
     // get WP2STATIC-PROGRESS.txt
     $.get( progress_file + '?cacheBuster=' + Date.now(), function( data ) {
       progress_amount = parseInt( data );
