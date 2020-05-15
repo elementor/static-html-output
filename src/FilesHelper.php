@@ -472,8 +472,6 @@ class StaticHTMLOutput_FilesHelper {
 
             switch ( $post->post_type ) {
                 case 'page':
-                    error_log($post->ID);
-
                     $permalink = get_page_link( $post->ID );
                     break;
                 case 'post':
