@@ -6,6 +6,10 @@ function filter_arr_empty_vals( $url ) {
 
 namespace StaticHTMLOutput;
 
+use RecursiveIteratorIterator;
+use RecursiveArrayIterator;
+use RecursiveDirectoryIterator;
+
 class StaticHTMLOutput_FilesHelper {
 
     public static function delete_dir_with_files( $dir ) {
@@ -468,6 +472,8 @@ class StaticHTMLOutput_FilesHelper {
 
             switch ( $post->post_type ) {
                 case 'page':
+                    error_log($post->ID);
+
                     $permalink = get_page_link( $post->ID );
                     break;
                 case 'post':

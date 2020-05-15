@@ -1,11 +1,8 @@
 <script>
-//TODO: in help screen and error dialog, give button to display all client settings (excluding pwds) for easier troubleshooting
-
 
 var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>
 
-// TODO: update this from prapre_for_export() response;
-var current_archive = {}; 
+var current_archive = {};
 
 var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'folder'; ?>';
 
@@ -788,19 +785,14 @@ jQuery(document).ready(function($){
   /* END FUNCTION DECLARATIONS */
   /*****************************/
 
-
-  if (Notification.permission !== "granted") {
-      Notification.requestPermission();
-  }
-
 	$('input[type="checkbox"]').change(function() {
 		setExportSettingDetailsVisibility(this);
     });
 
 	// disable zip base url field when offline usage is checked
 	$('#allowOfflineUsage').change(function() {
-    offlineUsageChangeHandler($(this));
-  });
+      offlineUsageChangeHandler($(this));
+    });
 
 	// handler when deployment method is changed
 	$('.selected_deployment_method').change(function() {

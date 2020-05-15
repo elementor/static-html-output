@@ -13,9 +13,9 @@ class SitePublisher {
         $target_settings[] = $deploy_method;
 
         if ( isset( $_POST['selected_deployment_option'] ) ) {
-            $this->settings = WPSHO_PostSettings::get( $target_settings );
+            $this->settings = PostSettings::get( $target_settings );
         } else {
-            $this->settings = WPSHO_DBSettings::get( $target_settings );
+            $this->settings = DBSettings::get( $target_settings );
         }
     }
 

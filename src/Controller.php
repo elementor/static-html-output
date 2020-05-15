@@ -14,10 +14,10 @@ class Controller {
     public static function getInstance() {
         if ( null === self::$instance ) {
             self::$instance = new self();
-            self::$instance->options = new StaticHTMLOutput_Options(
+            self::$instance->options = new Options(
                 self::OPTIONS_KEY
             );
-            self::$instance->view = new StaticHTMLOutput_View();
+            self::$instance->view = new View();
         }
 
         return self::$instance;
@@ -157,10 +157,10 @@ class Controller {
 
         if ( defined( 'WP_CLI' ) ) {
             $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
+                DBSettings::get( $target_settings );
         } else {
             $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
+                PostSettings::get( $target_settings );
         }
 
         $plugin_hook = 'statichtmloutput';
@@ -236,7 +236,7 @@ class Controller {
             error_log( "Couldn't reset plugin to default settings" );
         }
 
-        $this->options = new StaticHTMLOutput_Options( self::OPTIONS_KEY );
+        $this->options = new Options( self::OPTIONS_KEY );
         $this->setDefaultOptions();
 
         echo 'SUCCESS';
@@ -264,10 +264,10 @@ class Controller {
 
         if ( defined( 'WP_CLI' ) ) {
             $this->settings =
-                WPSHO_DBSettings::get( $target_settings );
+                DBSettings::get( $target_settings );
         } else {
             $this->settings =
-                WPSHO_PostSettings::get( $target_settings );
+                PostSettings::get( $target_settings );
         }
         $uploads_dir = $this->settings['wp_uploads_path'];
 

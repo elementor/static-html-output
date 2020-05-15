@@ -17,14 +17,13 @@ if ( ! defined( 'WPINC' ) ) {
     die;
 }
 
-define( 'WP2STATIC_PATH', plugin_dir_path( __FILE__ ) );
+define( 'STATICHTMLOUTPUT_PATH', plugin_dir_path( __FILE__ ) );
 
-if ( file_exists( WP2STATIC_PATH . 'vendor/autoload.php' ) ) {
-    require_once WP2STATIC_PATH . 'vendor/autoload.php';
+if ( file_exists( STATICHTMLOUTPUT_PATH . 'vendor/autoload.php' ) ) {
+    require_once STATICHTMLOUTPUT_PATH . 'vendor/autoload.php';
 }
 
 StaticHTMLOutput\Controller::init( __FILE__ );
-
 
 function static_html_output_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=statichtmloutput">Settings</a>';
@@ -34,7 +33,7 @@ function static_html_output_action_links( $links ) {
 }
 
 function wp_static_html_output_server_side_export() {
-    $plugin = StaticHTMLOutput_Controller::getInstance();
+    $plugin = Controller::getInstance();
     $plugin->doExportWithoutGUI();
     wp_die();
     return null;
@@ -45,14 +44,114 @@ add_action( 'static_html_output_server_side_export_hook', 'static_html_output_se
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'static_html_output_action_links' );
 add_action( 'wp_ajax_wp_static_html_output_ajax', 'static_html_output_ajax' );
 
-function wp_static_html_output_ajax() {
-    check_ajax_referer( 'statichtmloutput', 'nonce' );
+function static_html_output_ajax() {
+    error_log('caling plugin ajax');
+
+    $valid_referer = check_ajax_referer( 'statichtmloutput', 'nonce' );
+
+    if ( ! $valid_referer ) {
+        error_log('Invalid ajax referer');
+    }
+
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
-        $plugin_instance = StaticHTMLOutput_Controller::getInstance();
+        error_log("instance method $instance_method");
+
+        $plugin_instance = StaticHTMLOutput\Controller::getInstance();
         call_user_func( [ $plugin_instance, $instance_method ] );
     }
+/*
+        } elseif ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'bitbucket_prepare_export' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'bitbucket_upload_files' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'github_prepare_export' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'github_upload_files' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'test_github' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'gitlab_prepare_export' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'gitlab_upload_files' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'test_gitlab' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'test_bitbucket' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'test_netlify' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'netlify_do_export' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'test_s3' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 's3_prepare_export' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 's3_transfer_files' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'cloudfront_invalidate_all_items' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'test_ftp' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'ftp_prepare_export' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'ftp_transfer_files' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'test_bunny' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'bunnycdn_prepare_export' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'bunnycdn_transfer_files' ) {
+
+            wp_die();
+            return null;
+        } elseif ( $ajax_action == 'bunnycdn_purge_cache' ) {
+*/
 
     wp_die();
     return null;

@@ -17,7 +17,7 @@ class ProgressLog {
 
         // NOTE: avoiding loading whole PostSettings for speed
         if ( defined( 'WP_CLI' ) ) {
-            $settings = WPSHO_DBSettings::get( $target_settings );
+            $settings = DBSettings::get( $target_settings );
 
             $wp_uploads_path = $settings['wp_uploads_path'];
         } else {

@@ -5,16 +5,14 @@
  * Copyright (c) 2011 Leon Stafford
  */
 
-$ajax_nonce = wp_create_nonce( 'wpstatichtmloutput' );
+$ajax_nonce = wp_create_nonce( 'statichtmloutput' );
 
-require_once(__DIR__ . '/../plugin/StaticHTMLOutput/TemplateHelper.php');
-
-$tpl = new TemplateHelper();
+$tpl = new StaticHTMLOutput\TemplateHelper();
 
 ?>
 
 <div class="wrap statichtmloutput">
-  <?php if ( PHP_VERSION < 5.6 ) : ?>
+  <?php if ( PHP_VERSION < 7.3 ) : ?>
 
    <div class="notice notice-error inline statichtmloutput-notice">
       <h2 class="title">Outdated PHP version detected</h2>
@@ -22,7 +20,7 @@ $tpl = new TemplateHelper();
 
       <p>Whilst the plugin tries to work on the most common PHP environments, it currently requires PHP 5.6 or higher.</p>
 
-      <p>As official security support drops for PHP 5.6 at the end of 2018, it is strongly recommended to upgraded your WordPress hosting environment to PHP 7, ideally, PHP 7.1 or 7.2, as 7.0 will also stop being supported in December, 2018.<br><br>For help on upgrading your environment, please join our support community at <a href="https://statichtmloutput.com/community/" target="_blank">https://statichtmloutput.com/community/</a></p>
+      <p>StaticHTMLOutput requires at least PHP 7.3. If your hosting doesn't offer PHP 7.4 or at least PHP 7.3, find a better host!</p>
 
       <p>Your current PHP version is: <?php echo PHP_VERSION; ?></p>
     </div>
