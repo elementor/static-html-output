@@ -89,20 +89,21 @@ class FileWriter extends StaticHTMLOutput {
         $file_contents = $this->content;
 
         if ( $file_contents ) {
-            $this->logAction( 'SAVING ' . $this->url . ' to ' . $filename );
-            file_put_contents( $filename, $file_contents );
-            chmod( $filename, 0664 );
+            $write_result = file_put_contents( $filename, $file_contents );
+
+            if ( ! $write_result ) {
+                WsLog::l( "Failed saving $this->url to $filename" );
+                return;
+            }
+
+            $modified = chmod( $filename, 0664 );
+
+            if ( ! $modified ) {
+                WsLog::l( "Failed chmod'ing $filename" );
+            }
         } else {
-            $this->logAction( 'NOT SAVING EMTPY FILE ' . $this->url );
+            WsLog::l( "Not saving empty file $this->url" );
         }
-    }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        WsLog::l( $action );
     }
 }
 

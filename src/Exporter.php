@@ -167,10 +167,7 @@ class Exporter extends StaticHTMLOutput {
 
                     if ( $exclusion != '' ) {
                         if ( strpos( $url_to_crawl, $exclusion ) !== false ) {
-                            $this->logAction(
-                                'Excluding ' . $url_to_crawl .
-                                ' because of rule ' . $exclusion
-                            );
+                            WsLog::l( "Excluding $url_to_crawl because of rule $exclusion" );
 
                             $match = true;
                         }
@@ -214,14 +211,6 @@ class Exporter extends StaticHTMLOutput {
                 '/WP-STATIC-FINAL-CRAWL-LIST.txt',
             0664
         );
-    }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        WsLog::l( $action );
     }
 }
 

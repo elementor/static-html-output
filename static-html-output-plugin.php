@@ -58,6 +58,9 @@ function static_html_output_ajax() {
         'prepare_for_export',
         'post_process_archive_dir',
         'finalize_deployment',
+        'save_options',
+        'reset_default_settings',
+        'delete_deploy_cache',
     ];
 
     if ( in_array( $ajax_method, $controller_methods ) ) {

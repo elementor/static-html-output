@@ -19,12 +19,6 @@ class WsLog {
             $settings = PostSettings::get( $target_settings );
         }
 
-        // NOTE: should be checked before sending to speed up requests
-        // extra check here until old WsLog calls updated
-        if ( ! isset( $settings['debug_mode'] ) ) {
-            return;
-        }
-
         $wp_uploads_path = $settings['wp_uploads_path'];
 
         $log_file_path = $wp_uploads_path . '/WP-STATIC-EXPORT-LOG.txt';

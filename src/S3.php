@@ -66,10 +66,6 @@ class S3 extends SitePublisher {
                     $this->settings['s3RemotePath'] . '/' . $this->target_path;
             }
 
-            $this->logAction(
-                "Uploading {$local_file} to {$this->target_path} in S3"
-            );
-
             $this->local_file_contents = file_get_contents( $local_file );
 
             $this->hash_key = $this->target_path . basename( $local_file );
@@ -91,10 +87,11 @@ class S3 extends SitePublisher {
                         $this->handleException( $e );
                     }
                 } else {
-                    $this->logAction(
-                        "Skipping {$this->hash_key} as identical " .
-                            'to deploy cache'
-                    );
+                    // count cache hits/missed
+                    // WsLog::l(
+                    //     "Skipping {$this->hash_key} as identical " .
+                    //         'to deploy cache'
+                    // );
                 }
             } else {
                 try {
@@ -148,12 +145,8 @@ class S3 extends SitePublisher {
         // NOTE: quick fix for #287
         $s3_path = str_replace( '@', '%40', $s3_path );
 
-        $this->logAction( "PUT'ing file to {$s3_path} in S3" );
-
         $host_name = $this->settings['s3Bucket'] . '.s3.' .
             $this->settings['s3Region'] . '.amazonaws.com';
-
-        $this->logAction( "Using S3 Endpoint {$host_name}" );
 
         $content_acl = 'public-read';
         $content_title = $s3_path;
@@ -240,8 +233,6 @@ class S3 extends SitePublisher {
 
         $url = 'http://' . $host_name . '/' . $content_title;
 
-        $this->logAction( "S3 URL: {$url}" );
-
         $ch = curl_init( $url );
 
         curl_setopt( $ch, CURLOPT_HEADER, false );
@@ -259,9 +250,6 @@ class S3 extends SitePublisher {
         $output = curl_exec( $ch );
         $http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
-        $this->logAction( "API response code: {$http_code}" );
-        $this->logAction( "API response body: {$output}" );
-
         $this->checkForValidResponses(
             $http_code,
             [ '200' ]
@@ -271,10 +259,10 @@ class S3 extends SitePublisher {
     }
 
     public function cloudfront_invalidate_all_items() {
-        $this->logAction( 'Invalidating all CloudFront items' );
+        WsLog::l( 'Invalidating all CloudFront items' );
 
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
-            error_log( 'no CF ID found' );
+            WsLog::l( 'no Cloudfront ID found' );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS'; }
@@ -328,7 +316,7 @@ EOD;
             $resp .= fgets( $fp, 1024 );
         }
 
-        $this->logAction( "CloudFront response body: {$resp}" );
+        WsLog::l( "CloudFront response body: {$resp}" );
 
         fclose( $fp );
 

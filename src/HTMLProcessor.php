@@ -239,11 +239,6 @@ class HTMLProcessor extends StaticHTMLOutput {
                         $url
                     );
 
-                $this->logAction(
-                    'Adding discovered URL: ' .
-                    $discovered_url_without_site_url
-                );
-
                 $this->discovered_urls[] = $discovered_url_without_site_url;
             }
         }
@@ -1030,14 +1025,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         ];
 
         return $replacements;
-    }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        WsLog::l( $action );
     }
 }
 

@@ -71,10 +71,6 @@ class GitHub extends SitePublisher {
                     $this->settings['ghPath'] . '/' . $this->target_path;
             }
 
-            $this->logAction(
-                "Uploading {$local_file} to {$this->target_path} in GitHub"
-            );
-
             $this->local_file_contents = file_get_contents( $local_file );
 
             if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
@@ -93,10 +89,11 @@ class GitHub extends SitePublisher {
                         $this->local_file_contents
                     );
                 } else {
-                    $this->logAction(
-                        "Skipping {$this->target_path} as identical " .
-                            'to deploy cache'
-                    );
+                    // noisy
+                    // WsLog::l(
+                    //     "Skipping {$this->target_path} as identical " .
+                    //         'to deploy cache'
+                    // );
                 }
             } else {
                 if ( $this->fileExistsInGitHub() ) {
@@ -226,9 +223,6 @@ JSON;
             ]
         );
 
-        $this->logAction( "API response code {$this->client->status_code}" );
-        $this->logAction( "API response body {$this->client->body}" );
-
         $this->checkForValidResponses(
             $this->client->status_code,
             [ '200', '201', '301', '302', '304' ]
@@ -243,15 +237,13 @@ JSON;
         $commit_message = '';
 
         if ( ! empty( $this->existing_file_object ) ) {
-            $this->logAction( "{$this->target_path} path exists in GitHub" );
+            WsLog::l( "{$this->target_path} path exists in GitHub" );
 
             return true;
         }
     }
 
     public function updateFileInGitHub() {
-        $this->logAction( "Updating {$this->target_path} in GitHub" );
-
         $action = 'UPDATE';
         $existing_sha = $this->existing_file_object['oid'];
         $existing_bytesize = $this->existing_file_object['byteSize'];
@@ -298,11 +290,6 @@ JSON;
                 ]
             );
 
-            $this->logAction(
-                "API response code {$this->client->status_code}"
-            );
-            $this->logAction( "API response body {$this->client->body}" );
-
             $this->checkForValidResponses(
                 $this->client->status_code,
                 [ '200', '201', '301', '302', '304' ]
@@ -313,8 +300,6 @@ JSON;
     }
 
     public function createFileInGitHub() {
-        $this->logAction( "Creating {$this->target_path} in GitHub" );
-
         $action = 'CREATE';
 
         $b64_file_contents = base64_encode( $this->local_file_contents );
@@ -344,10 +329,7 @@ JSON;
                 'branch' => $this->settings['ghBranch'],
             ];
 
-            $headers = [
-                'Authorization: ' .
-                        'token ' . $this->settings['ghToken'],
-            ];
+            $headers = [ "Authorization: token {$this->settings['ghToken']}" ];
 
             $this->client->putWithJSONPayloadCustomHeaders(
                 $this->remote_path,
@@ -358,16 +340,10 @@ JSON;
                 ]
             );
 
-            $this->logAction(
-                "API response code {$this->client->status_code}"
-            );
-            $this->logAction( "API response body {$this->client->body}" );
-
             $this->checkForValidResponses(
                 $this->client->status_code,
                 [ '200', '201', '301', '302', '304' ]
             );
-
         } catch ( Exception $e ) {
             $this->handleException( $e );
         }

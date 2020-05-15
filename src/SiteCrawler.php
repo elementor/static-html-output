@@ -265,7 +265,7 @@ class SiteCrawler extends StaticHTMLOutput {
             );
         }
 
-        $this->logAction(
+        WsLog::l(
             'Exclusion rules ' . implode( PHP_EOL, $exclusions )
         );
 
@@ -279,7 +279,7 @@ class SiteCrawler extends StaticHTMLOutput {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
                     if ( false !== strpos( $this->url, $exclusion ) ) {
-                        $this->logAction(
+                        WsLog::l(
                             'Excluding ' . $this->url .
                             ' because of rule ' . $exclusion
                         );
@@ -305,11 +305,6 @@ class SiteCrawler extends StaticHTMLOutput {
                 $batch_index;
 
             ProgressLog::l( $completed_urls, $total_urls_to_crawl );
-
-            $this->logAction(
-                'Memory allocated by crawl script: ' .
-                round( memory_get_usage( true ) / 1024 )
-            );
         }
 
         $this->checkIfMoreCrawlingNeeded();
@@ -320,8 +315,6 @@ class SiteCrawler extends StaticHTMLOutput {
     }
 
     public function loadFileForProcessing() {
-        $this->logAction( "Crawling {$this->url}" );
-
         $ch = curl_init();
 
         if ( isset( $this->settings['crawlPort'] ) ) {
@@ -372,7 +365,7 @@ class SiteCrawler extends StaticHTMLOutput {
         $good_response_codes = [ '200', '201', '301', '302', '304' ];
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
-            $this->logAction(
+            WsLog::l(
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
             );
 
@@ -522,18 +515,10 @@ class SiteCrawler extends StaticHTMLOutput {
         }
     }
 
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        WsLog::l( $action );
-    }
-
     public function checkForCurlErrors( $response, $curl_handle ) {
         if ( $response === false ) {
             $response = curl_error( $curl_handle );
-            $this->logAction(
+            WsLog::l(
                 'cURL error:' .
                 stripslashes( $response )
             );

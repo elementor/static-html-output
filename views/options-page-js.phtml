@@ -241,8 +241,8 @@ jQuery(document).ready(function($){
       stopPolling();
       $('#current_action').html(
         // if not debug mode
-        'Failed during "' + status_text  + '", please consult the Help tab for where to get assistance.')
-        // if debug mode 
+        'Failed during "' + status_text  + '", please check your Export Log from Logs tab or email support.')
+        // if debug mode
       $(".pulsate-css").hide();
       $('#startExportButton').prop('disabled', false);
       $('.saveSettingsButton').prop('disabled', false);
@@ -834,72 +834,42 @@ jQuery(document).ready(function($){
     switch(current_tab_text) {
       case 'Advanced options':
 		    $('.export_your_site').hide();
-		    $('.help_troubleshooting').hide();
 		    $('.crawl_settings').hide();
 		    $('.processing_settings').hide();
 		    $('.advanced_settings').show();
 		    $('.export_logs').hide();
-		    $('.give_love').hide();
       break;
 
       case 'Deploy static website':
 		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
 		    $('.export_your_site').show();
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').hide();
 		    $('.export_logs').hide();
-		    $('.give_love').hide();
-      break;
-
-      case 'Help':
-		    $('.export_your_site').hide();
-		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').show();
-		    $('.processing_settings').hide();
-		    $('.crawl_settings').hide();
-		    $('.export_logs').hide();
-		    $('.give_love').hide();
       break;
 
       case 'Logs':
 		    $('.export_your_site').hide();
 		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
 		    $('.export_logs').show();
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').hide();
-		    $('.give_love').hide();
       break;
 
       case 'Crawling':
 		    $('.export_your_site').hide();
 		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
 		    $('.processing_settings').hide();
 		    $('.crawl_settings').show();
 		    $('.export_logs').hide();
-		    $('.give_love').hide();
       break;
 
       case 'Processing':
 		    $('.export_your_site').hide();
 		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
 		    $('.processing_settings').show();
 		    $('.crawl_settings').hide();
 		    $('.export_logs').hide();
-		    $('.give_love').hide();
-      break;
-
-      case '':
-		    $('.export_your_site').hide();
-		    $('.advanced_settings').hide();
-		    $('.help_troubleshooting').hide();
-		    $('.processing_settings').hide();
-		    $('.crawl_settings').hide();
-		    $('.export_logs').hide();
-		    $('.give_love').show();
       break;
     }
 

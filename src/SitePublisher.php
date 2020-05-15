@@ -336,13 +336,5 @@ class SitePublisher {
 
         fclose( $fp );
     }
-
-    public function logAction( $action ) {
-        if ( ! isset( $this->settings['debug_mode'] ) ) {
-            return;
-        }
-
-        WsLog::l( $action );
-    }
 }
 
