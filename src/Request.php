@@ -44,11 +44,12 @@ class Request {
 
     /**
      * @param mixed[] $headers
+     * @param mixed[] $data
      * @param mixed[] $curl_options
      */
     public function postWithJSONPayloadCustomHeaders(
         string $url,
-        string $data,
+        array $data,
         array $headers,
         array $curl_options = []
         ) : void {
@@ -141,10 +142,11 @@ class Request {
 
     /**
      * @param mixed[] $headers
+     * @param mixed[] $data
      */
     public function putWithJSONPayloadCustomHeaders(
         string $url,
-        string $data,
+        array $data,
         array $headers
         ) : void {
         $ch = curl_init();
@@ -256,10 +258,11 @@ class Request {
 
     /**
      * @param mixed[] $curl_options
+     * @param mixed[] $data
      */
     public function postWithArray(
         string $url,
-        string $data,
+        array $data,
         array $curl_options = []
         ) : void {
         $ch = curl_init();

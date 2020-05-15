@@ -2,6 +2,8 @@
 
 namespace StaticHTMLOutput;
 
+use WP_CLI;
+
 /**
  * Generate a static copy of your website & publish remotely
  */

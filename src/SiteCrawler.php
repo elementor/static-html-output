@@ -2,6 +2,8 @@
 
 namespace StaticHTMLOutput;
 
+use Net_URL2;
+
 class SiteCrawler extends StaticHTMLOutput {
 
     /**
@@ -80,7 +82,6 @@ class SiteCrawler extends StaticHTMLOutput {
         $this->response = '';
         $this->content_type = '';
         $this->url = '';
-        $this->full_url = '';
         $this->extension = '';
         $this->archive_dir = '';
         $this->list_of_urls_to_crawl_path = '';

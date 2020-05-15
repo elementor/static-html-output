@@ -64,7 +64,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->processed_urls = [];
     }
 
-    public function processHTML( string $html_document, Net_URL2 $page_url ) : bool {
+    public function processHTML( string $html_document, string $page_url ) : bool {
         if ( $html_document == '' ) {
             return false;
         }

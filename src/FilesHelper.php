@@ -1,9 +1,5 @@
 <?php
 
-function filter_arr_empty_vals( $url ) {
-    return ( strpos( $url, ' ' ) === false );
-}
-
 namespace StaticHTMLOutput;
 
 use RecursiveIteratorIterator;
@@ -594,7 +590,9 @@ class StaticHTMLOutput_FilesHelper {
 
         $url_queue = array_filter(
             $unique_urls,
-            'filter_arr_empty_vals'
+            function ( string $url ) {
+                return ( strpos( $url, ' ' ) === false );
+            }
         );
 
         $stripped_urls = str_replace(
