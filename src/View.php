@@ -4,10 +4,25 @@ namespace StaticHTMLOutput;
 
 class View {
 
+    /**
+     * @var mixed[]
+     */
     protected $variables = [];
+    /**
+     * @var string
+     */
     protected $path = null;
+    /**
+     * @var string
+     */
     protected $directory = 'views';
+    /**
+     * @var string
+     */
     protected $extension = '.phtml';
+    /**
+     * @var string
+     */
     protected $template = null;
 
     public function __construct() {
@@ -20,22 +35,31 @@ class View {
         $this->path = implode( '/', $path_array );
     }
 
-    public function setTemplate( $tpl ) {
+    public function setTemplate( string $tpl ) : View {
         $this->template = $tpl;
         $this->variables = [];
         return $this;
     }
 
-    public function __set( $name, $value ) {
+    /**
+     * @param mixed $value template variable value
+     */
+    public function __set( string $name, $value ) : View {
         $this->variables[ $name ] = $value;
         return $this;
     }
 
-    public function assign( $name, $value ) {
+    /**
+     * @param mixed $value template variable value
+     */
+    public function assign( string $name, $value ) : View {
         return $this->__set( $name, $value );
     }
 
-    public function __get( $name ) {
+    /**
+     * @return mixed template variable value
+     */
+    public function __get( string $name ) {
         $value = array_key_exists( $name, $this->variables ) ?
         $this->variables[ $name ] :
         null;
@@ -43,7 +67,7 @@ class View {
         return $value;
     }
 
-    public function render() {
+    public function render() : View {
         $file = $this->path . '/' . $this->template . $this->extension;
 
         include $file;
@@ -51,11 +75,11 @@ class View {
         return $this;
     }
 
-    public function fetch() {
+    public function fetch() : string {
         ob_start();
 
         $this->render();
-        $contents = ob_get_contents();
+        $contents = (string) ob_get_contents();
 
         ob_end_clean();
 

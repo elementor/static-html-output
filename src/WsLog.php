@@ -4,7 +4,7 @@ namespace StaticHTMLOutput;
 
 class WsLog {
 
-    public static function l( $text ) {
+    public static function l( string $text ) : void {
         $target_settings = [
             'general',
             'wpenv',

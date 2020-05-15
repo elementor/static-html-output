@@ -4,6 +4,119 @@ namespace StaticHTMLOutput;
 
 class WPSite {
 
+    /**
+     * @var string
+     */
+    public $uploads_url;
+    /**
+     * @var string
+     */
+    public $site_url;
+    /**
+     * @var string
+     */
+    public $parent_theme_url;
+    /**
+     * @var string
+     */
+    public $wp_content_url;
+    /**
+     * @var string
+     */
+    public $site_path;
+    /**
+     * @var string
+     */
+    public $plugins_path;
+    /**
+     * @var string
+     */
+    public $wp_uploads_path;
+    /**
+     * @var string
+     */
+    public $wp_includes_path;
+    /**
+     * @var string
+     */
+    public $wp_content_path;
+    /**
+     * @var string
+     */
+    public $theme_root_path;
+    /**
+     * @var string
+     */
+    public $parent_theme_path;
+    /**
+     * @var string
+     */
+    public $child_theme_path;
+    /**
+     * @var bool
+     */
+    public $child_theme_active;
+    /**
+     * @var mixed
+     */
+    public $permalink_structure;
+    /**
+     * @var string
+     */
+    public $wp_inc;
+    /**
+     * @var string
+     */
+    public $wp_content;
+    /**
+     * @var string
+     */
+    public $wp_uploads;
+    /**
+     * @var string
+     */
+    public $wp_plugins;
+    /**
+     * @var string
+     */
+    public $wp_themes;
+    /**
+     * @var string
+     */
+    public $wp_active_theme;
+    /**
+     * @var string
+     */
+    public $subdirectory;
+    /**
+     * @var string
+     */
+    public $wp_site_subdir;
+    /**
+     * @var string
+     */
+    public $wp_site_path;
+    /**
+     * @var string
+     */
+    public $wp_site_url;
+    /**
+     * @var string
+     */
+    public $wp_uploads_url;
+    /**
+     * @var bool
+     */
+    public $uploads_writable;
+    /**
+     * @var bool
+     */
+    public $permalinks_set;
+    /**
+     * @var bool
+     */
+    public $curl_enabled;
+
     public function __construct() {
         $wp_upload_path_and_url = wp_upload_dir();
         $this->uploads_url = $wp_upload_path_and_url['baseurl'];
@@ -48,29 +161,33 @@ class WPSite {
         $this->curl_enabled = $this->hasCurlSupport();
     }
 
-    public function isSiteInstalledInSubDirectory() {
+    public function isSiteInstalledInSubDirectory() : string {
         $parsed_site_url = parse_url( rtrim( $this->site_url, '/' ) );
 
-        if ( isset( $parsed_site_url['path'] ) ) {
+        if ( ! is_array( $parsed_site_url ) ) {
+            return '';
+        }
+
+        if ( array_key_exists('path', $parsed_site_url ) ) {
             return $parsed_site_url['path'];
         }
 
-        return false;
+        return '';
     }
 
-    public function uploadsPathIsWritable() {
+    public function uploadsPathIsWritable() : bool {
         return $this->wp_uploads_path && is_writable( $this->wp_uploads_path );
     }
 
-    public function hasCurlSupport() {
+    public function hasCurlSupport() : bool {
         return extension_loaded( 'curl' );
     }
 
-    public function permalinksAreDefined() {
-        return strlen( get_option( 'permalink_structure' ) );
+    public function permalinksAreDefined() : bool {
+        return strlen( get_option( 'permalink_structure' ) ) > 0;
     }
 
-    public function detect_base_url() {
+    public function detect_base_url() : void {
         $site_url = get_option( 'siteurl' );
         $home = get_option( 'home' );
     }
@@ -83,7 +200,7 @@ class WPSite {
             don't assume wp-contents is a subdir of ABSPATH
             don't asssume uploads is a subdir of wp-contents or even 'uploads'
     */
-    public function getWPDirFullPath( $wp_dir ) {
+    public function getWPDirFullPath( string $wp_dir ) : string {
         $full_path = '';
 
         switch ( $wp_dir ) {
@@ -127,7 +244,7 @@ class WPSite {
         return rtrim( $full_path, '/' );
     }
 
-    public function getWPDirNameOnly( $wp_dir ) {
+    public function getWPDirNameOnly( string $wp_dir ) : string {
         $wp_dir_name = '';
 
         switch ( $wp_dir ) {
@@ -149,18 +266,27 @@ class WPSite {
         return rtrim( $wp_dir_name, '/' );
     }
 
-    public function getLastPathSegment( $path ) {
+    public function getLastPathSegment( string $path ) : string {
         $path_segments = explode( '/', $path );
 
-        return end( $path_segments );
+        return (string) end( $path_segments );
     }
 
     /*
         For when we have a site like domain.com
         and wp-content themes and plugins are under /wp/
     */
-    public function getWPContentSubDirectory() {
+    public function getWPContentSubDirectory() : string {
         $parsed_url = parse_url( $this->parent_theme_url );
+
+        if ( ! is_array( $parsed_url ) ) {
+            return '';
+        }
+
+        if ( ! array_key_exists( 'path', $parsed_url ) ) {
+            return '';
+        }
+
         $path_segments = explode( '/', $parsed_url['path'] );
 
         /*
