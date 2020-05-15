@@ -573,7 +573,7 @@ jQuery(document).ready(function($){
         method: 'POST',
         success: function(serverResponse) {
           // if an action is successful, and there are other actions queued up
-          if (serverResponse === 'SUCCESS' && args.length > 1) {
+          if (serverResponse.includes('SUCCESS') && args.length > 1) {
             batch_increment = 0;
             // rm first action now that it's succeeded
             args.shift();

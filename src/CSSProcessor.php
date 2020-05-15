@@ -2,6 +2,9 @@
 
 namespace StaticHTMLOutput;
 
+use Sabberworm;
+use Net_URL2;
+
 class CSSProcessor extends StaticHTMLOutput {
 
     public function __construct() {

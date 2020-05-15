@@ -45,113 +45,56 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'static_html_o
 add_action( 'wp_ajax_wp_static_html_output_ajax', 'static_html_output_ajax' );
 
 function static_html_output_ajax() {
-    error_log('caling plugin ajax');
-
     $valid_referer = check_ajax_referer( 'statichtmloutput', 'nonce' );
 
     if ( ! $valid_referer ) {
         error_log('Invalid ajax referer');
     }
 
-    $instance_method = filter_input( INPUT_POST, 'ajax_action' );
+    $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
 
-    if ( '' !== $instance_method && is_string( $instance_method ) ) {
-        error_log("instance method $instance_method");
+    $controller_methods = [
+        'generate_filelist_preview',
+        'prepare_for_export',
+        'post_process_archive_dir',
+        'finalize_deployment',
+    ];
 
-        $plugin_instance = StaticHTMLOutput\Controller::getInstance();
-        call_user_func( [ $plugin_instance, $instance_method ] );
+    if ( in_array( $ajax_method, $controller_methods ) ) {
+        $class = StaticHTMLOutput\Controller::getInstance();
+        call_user_func( [ $class, $ajax_method ] );
+
+        wp_die();
+        return null;
+    } elseif ( strpos( $ajax_method, 'crawl' ) !== false ) {
+        $class = new StaticHTMLOutput\SiteCrawler();
+        // crawl_again is used to detemine 2nd run of crawling
+        if ( $ajax_method === 'crawl_again' ) {
+            $ajax_method = 'crawl_discovered_links';
+        }
+    } elseif ( strpos( $ajax_method, 'bitbucket' ) !== false ) {
+        $class = new StaticHTMLOutput\Bitbucket();
+    } elseif ( strpos( $ajax_method, 'github' ) !== false ) {
+        $class = new StaticHTMLOutput\GitHub();
+    } elseif ( strpos( $ajax_method, 'gitlab' ) !== false ) {
+        $class = new StaticHTMLOutput\GitLab();
+    } elseif ( strpos( $ajax_method, 's3' ) !== false ) {
+        $class = new StaticHTMLOutput\S3();
+    } elseif ( strpos( $ajax_method, 'cloudfront' ) !== false ) {
+        $class = new StaticHTMLOutput\S3();
+    } elseif ( strpos( $ajax_method, 'ftp' ) !== false ) {
+        $class = new StaticHTMLOutput\FTP();
+    } elseif ( strpos( $ajax_method, 'bunny' ) !== false ) {
+        $class = new StaticHTMLOutput\BunnyCDN();
+    } else {
+        error_log('trying to execute unknown function via AJAX');
+        error_log($class);
+        error_log($ajax_method);
+        wp_die();
+        return null;
     }
-/*
-        } elseif ( $ajax_action === 'crawl_site' || $ajax_action === 'crawl_again' ) {
 
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'bitbucket_prepare_export' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'bitbucket_upload_files' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'github_prepare_export' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'github_upload_files' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'test_github' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'gitlab_prepare_export' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'gitlab_upload_files' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'test_gitlab' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'test_bitbucket' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'test_netlify' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'netlify_do_export' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'test_s3' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 's3_prepare_export' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 's3_transfer_files' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'cloudfront_invalidate_all_items' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'test_ftp' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'ftp_prepare_export' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'ftp_transfer_files' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'test_bunny' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'bunnycdn_prepare_export' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'bunnycdn_transfer_files' ) {
-
-            wp_die();
-            return null;
-        } elseif ( $ajax_action == 'bunnycdn_purge_cache' ) {
-*/
+    call_user_func( [ $class, $ajax_method ] );
 
     wp_die();
     return null;

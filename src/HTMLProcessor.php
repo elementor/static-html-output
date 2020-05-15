@@ -2,6 +2,10 @@
 
 namespace StaticHTMLOutput;
 
+use DOMDocument;
+use Net_URL2;
+use DOMXPath;
+
 class HTMLProcessor extends StaticHTMLOutput {
 
     public function __construct() {

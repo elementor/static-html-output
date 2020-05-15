@@ -123,7 +123,7 @@ class Deployer extends StaticHTMLOutput {
         $this->finalizeDeployment( $deploy_result );
     }
 
-    public function finalizeDeployment( string $deploy_result ) : string {
+    public function finalizeDeployment( string $deploy_result = '' ) : string {
         $this->triggerPostDeployHooks();
 
         return $deploy_result;

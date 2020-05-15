@@ -2,6 +2,10 @@
 
 namespace StaticHTMLOutput;
 
+use ZipArchive;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+
 class ArchiveProcessor extends StaticHTMLOutput {
 
     public function __construct() {
