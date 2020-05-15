@@ -12,28 +12,26 @@
  */
 
 
-// intercept low latency dependent actions and avoid boostrapping whole plugin
-require_once dirname( __FILE__ ) .
-    '/plugin/StaticHTMLOutput/Dispatcher.php';
 
-require_once 'plugin/StaticHTMLOutput/StaticHTMLOutput.php';
-require_once 'plugin/StaticHTMLOutput/Options.php';
-require_once 'plugin/StaticHTMLOutput/TemplateHelper.php';
-require_once 'plugin/StaticHTMLOutput/View.php';
-require_once 'plugin/StaticHTMLOutput/WsLog.php';
-require_once 'plugin/StaticHTMLOutput/FilesHelper.php';
-require_once 'plugin/StaticHTMLOutput.php';
-require_once 'plugin/URL2/URL2.php';
+if ( ! defined( 'WPINC' ) ) {
+    die;
+}
 
-StaticHTMLOutput_Controller::init( __FILE__ );
+define( 'WP2STATIC_PATH', plugin_dir_path( __FILE__ ) );
 
-function wp_static_html_output_plugin_action_links( $links ) {
+if ( file_exists( WP2STATIC_PATH . 'vendor/autoload.php' ) ) {
+    require_once WP2STATIC_PATH . 'vendor/autoload.php';
+}
+
+StaticHTMLOutput\Controller::init( __FILE__ );
+
+
+function static_html_output_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=statichtmloutput">Settings</a>';
     array_unshift( $links, $settings_link );
 
     return $links;
 }
-
 
 function wp_static_html_output_server_side_export() {
     $plugin = StaticHTMLOutput_Controller::getInstance();
@@ -42,13 +40,13 @@ function wp_static_html_output_server_side_export() {
     return null;
 }
 
-add_action( 'wp_static_html_output_server_side_export_hook', 'wp_static_html_output_server_side_export', 10, 0 );
+add_action( 'static_html_output_server_side_export_hook', 'static_html_output_server_side_export', 10, 0 );
 
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wp_static_html_output_plugin_action_links' );
-add_action( 'wp_ajax_wp_static_html_output_ajax', 'wp_static_html_output_ajax' );
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'static_html_output_action_links' );
+add_action( 'wp_ajax_wp_static_html_output_ajax', 'static_html_output_ajax' );
 
 function wp_static_html_output_ajax() {
-    check_ajax_referer( 'wpstatichtmloutput', 'nonce' );
+    check_ajax_referer( 'statichtmloutput', 'nonce' );
     $instance_method = filter_input( INPUT_POST, 'ajax_action' );
 
     if ( '' !== $instance_method && is_string( $instance_method ) ) {
@@ -63,29 +61,18 @@ function wp_static_html_output_ajax() {
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
-function wp_static_html_output_add_dashboard_widgets() {
-
-    wp_add_dashboard_widget(
-        'wp_static_html_output_dashboard_widget',
-        'Static HTML Output',
-        'wp_static_html_output_dashboard_widget_function'
-    );
-}
-// add_action( 'wp_dashboard_setup', 'wp_static_html_output_add_dashboard_widgets' );
-function wp_static_html_output_dashboard_widget_function() {
-
-    echo '<p>Publish whole site as static HTML</p>';
-    echo "<button class='button button-primary'>Publish whole site</button>";
-}
-
 function wp_static_html_output_deregister_scripts() {
     wp_deregister_script( 'wp-embed' );
     wp_deregister_script( 'comment-reply' );
 }
+
 add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
 remove_action( 'wp_head', 'wlwmanifest_link' );
 
-// WP CLI support
 if ( defined( 'WP_CLI' ) ) {
-    require_once dirname( __FILE__ ) . '/plugin/static-html-output-wp-cli-commands.php';
+    WP_CLI::add_command( 'statichtmloutput', 'StaticHTMLOutput\CLI' );
+    WP_CLI::add_command(
+        'statichtmloutput options',
+        [ 'StaticHTMLOutput\CLI', 'options' ]
+    );
 }

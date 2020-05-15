@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
-<ruleset name="StaticHTMLOutput">
-  <description>StaticHTMLOutput Project Coding Standard</description>
+<ruleset name="WP2Static">
+  <description>WP2Static Project Coding Standard</description>
+  <config name="testVersion" value="7.2-"/>
   <!--
     Note: Applied WP standard override to allow tabs instead
           of spaces, however, PHP CBF is using 4 spaces - Gray
@@ -10,10 +11,11 @@
   <arg name="colors" />
   <arg name="tab-width" value="2" />
   <!-- Custom line length validation -->
+  <rule ref="Squiz.PHP.DiscouragedFunctions" />
   <rule ref="Generic.Files.LineLength">
     <properties>
-      <property name="lineLimit" value="80" />
-      <property name="absoluteLineLimit" value="100" />
+      <property name="lineLimit" value="100" />
+      <property name="absoluteLineLimit" value="120" />
     </properties>
   </rule>
   <rule ref="Generic.WhiteSpace.DisallowTabIndent" />
@@ -34,6 +36,9 @@
     <properties>
       <property name="customPropertiesWhitelist" type="array">
         <element value="parentNode"/>
+        <element value="nodeType"/>
+        <element value="nodeText"/>
+        <element value="textContent"/>
         <element value="tagName"/>
         <element value="firstChild"/>
         <element value="childNodes"/>
@@ -43,6 +48,7 @@
   <rule ref="WordPress">
     <exclude name="Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed" />
     <exclude name="Generic.Commenting.DocComment.ShortNotCapital" />
+    <exclude name="Generic.Commenting.DocComment.MissingShort" />
     <exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
     <exclude name="Generic.Functions.OpeningFunctionBraceKernighanRitchie.BraceOnNewLine" />
     <exclude name="Generic.PHP.NoSilencedErrors.Discouraged" />
@@ -70,7 +76,7 @@
     <exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
     <exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
     <exclude name="WordPress.DB.DirectDatabaseQuery.SchemaChange" />
-    <exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
+    <exclude name="WordPress.DB.PreparedSQL" />
     <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
     <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
     <exclude name="WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid" />
@@ -96,5 +102,7 @@
     <exclude name="WordPress.Security.ValidatedSanitizedInput" />
     <exclude name="WordPress.WhiteSpace.PrecisionAlignment" />
     <exclude name="WordPress.WP.AlternativeFunctions" />
+    <exclude name="Generic.Arrays.DisallowShortArraySyntax" />
   </rule>
+  <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
 </ruleset>

@@ -1,0 +1,72 @@
+{
+    "name": "wp2static/static-html-output-plugin",
+    "description": "WordPress Static HTML Generator Plugin.",
+    "homepage": "https://wp2static.com",
+      "license": "UNLICENSE",
+      "authors": [
+        {
+          "name": "Leon Stafford",
+          "email": "me@ljs.dev",
+          "homepage": "https://ljs.dev"
+        }
+      ],
+    "type": "wordpress-plugin",
+    "support": {
+        "issues": "https://github.com/WP2Static/static-html-output-plugin/issues",
+        "forum": "https://statichtmloutput.com",
+        "docs": "https://wstatichtmloutput.com",
+        "source": "https://github.com/WP2Static/static-html-output-plugin"
+    },
+    "require": {
+        "php": ">=7.3",
+        "sabberworm/php-css-parser": "*",
+        "pear/net_url2": "*",
+        "nicolab/php-ftp-client": "*"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "*",
+        "thecodingmachine/phpstan-strict-rules": "*",
+        "szepeviktor/phpstan-wordpress": "*",
+        "squizlabs/php_codesniffer": "*",
+        "phpunit/phpunit": "*",
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "wp-coding-standards/wpcs": "*",
+        "jakub-onderka/php-parallel-lint": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "StaticHTMLOutput\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PHPStan\\WordPress\\": "tests/phpstan/",
+            "StaticHTMLOutput\\": "src/"
+        }
+    },
+    "config": {
+        "platform": {
+          "php": "7.2.17"
+        },
+        "preferred-install": {
+            "*": "dist"
+        },
+        "classmap-authoritative": true
+    },
+    "scripts": {
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=4G",
+        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
+        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/*,*/admin/*,*/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
+        "phpunit": "vendor/bin/phpunit ./tests/unit/",
+        "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
+        "lint": "vendor/bin/parallel-lint --exclude vendor .",
+        "test": [
+            "@lint",
+            "@phpcs",
+            "@phpstan",
+            "@phpunit"
+        ],
+        "build": "/bin/sh tools/build_release.sh",
+        "post-install-cmd": "sh ./tools/composer-post-install.sh"
+    }
+}
