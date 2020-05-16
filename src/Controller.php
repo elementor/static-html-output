@@ -166,7 +166,7 @@ class Controller {
         $plugin_hook = 'statichtmloutput';
 
         $initial_file_list_count =
-            StaticHTMLOutput_FilesHelper::buildInitialFileList(
+            FilesHelper::buildInitialFileList(
                 true,
                 $this->wp_site->wp_uploads_path,
                 $this->wp_site->uploads_url,

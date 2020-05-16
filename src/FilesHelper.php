@@ -6,9 +6,9 @@ use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
 use RecursiveDirectoryIterator;
 
-class StaticHTMLOutput_FilesHelper {
+class FilesHelper {
 
-    public static function delete_dir_with_files( $dir ) {
+    public static function delete_dir_with_files( $dir ) : bool {
         if ( is_dir( $dir ) ) {
             $files = array_diff( scandir( $dir ), [ '.', '..' ] );
 
@@ -22,7 +22,10 @@ class StaticHTMLOutput_FilesHelper {
         }
     }
 
-    public static function getThemeFiles( $theme_type ) {
+    /**
+     * @return string[] list of URLs
+     */
+    public static function getThemeFiles( string $theme_type ) : array {
         $wp_site = new WPSite();
 
         $files = [];
