@@ -6,13 +6,35 @@ namespace StaticHTMLOutput;
 // it should fall back to regular crawl processing method
 // (where response status will also be checked in case of 404)
 class FileCopier {
-    public function __construct( $url, $wp_site_url, $wp_site_path ) {
+
+    /**
+     * @var string
+     */
+    public $url;
+    /**
+     * @var string
+     */
+    public $wp_site_url;
+    /**
+     * @var string
+     */
+    public $wp_site_path;
+    /**
+     * @var mixed[]
+     */
+    public $settings;
+
+    public function __construct(
+        string $url,
+        string $wp_site_url,
+        string $wp_site_path
+    ) {
         $this->url = $url;
         $this->wp_site_url = $wp_site_url;
         $this->wp_site_path = $wp_site_path;
     }
 
-    public function getLocalFileForURL() {
+    public function getLocalFileForURL() : string {
         $local_file = str_replace(
             $this->wp_site_url,
             $this->wp_site_path,
@@ -27,27 +49,30 @@ class FileCopier {
                 ' for URL: ' . $this->url .
                 ' (FILE NOT FOUND/UNREADABLE)'
             );
+            return '';
         }
 
     }
 
-    public function copyFile( $archive_dir ) {
-        $url_info = parse_url( $this->url );
-        $path_info = [];
+    public function copyFile( string $archive_dir ) : void {
+        $url_path = parse_url( $this->url, PHP_URL_PATH );
 
         $local_file = $this->getLocalFileForURL();
 
-        // TODO: here we can allow certain external host files to be crawled
-        if ( ! isset( $url_info['path'] ) ) {
-            return false;
+        if ( ! $local_file ) {
+            return;
         }
 
-        $path_info = pathinfo( $url_info['path'] );
+        // TODO: here we can allow certain external host files to be crawled
+        if ( ! $url_path ) {
+            return;
+        }
 
-        $directory_in_archive =
-            isset( $path_info['dirname'] ) ?
-            $path_info['dirname'] :
-            '';
+        $path_info = [];
+
+        $path_info = pathinfo( $url_path );
+
+        $directory_in_archive = $path_info['dirname'] ? $path_info['dirname'] : '';
 
         // TODO: This was never being called
         // as settings weren't loaded. Investigate necessity
@@ -65,7 +90,7 @@ class FileCopier {
             wp_mkdir_p( $file_dir );
         }
 
-        $file_extension = $path_info['extension'];
+        $file_extension = isset( $path_info['extension'] ) ? $path_info['extension'] : '';
         $basename = $path_info['filename'] . '.' . $file_extension;
         $filename = $file_dir . '/' . $basename;
         $filename = str_replace( '//', '/', $filename );

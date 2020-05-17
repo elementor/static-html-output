@@ -3,7 +3,30 @@
 namespace StaticHTMLOutput;
 
 class FileWriter extends StaticHTMLOutput {
-    public function __construct( $url, $content, $file_type, $content_type ) {
+
+    /**
+     * @var string
+     */
+    public $url;
+    /**
+     * @var string
+     */
+    public $content;
+    /**
+     * @var string
+     */
+    public $file_type;
+    /**
+     * @var string
+     */
+    public $content_type;
+
+    public function __construct(
+        string $url,
+        string $content,
+        string $file_type,
+        string $content_type
+    ) {
         $this->url = $url;
         $this->content = $content;
         $this->file_type = $file_type;
@@ -16,23 +39,17 @@ class FileWriter extends StaticHTMLOutput {
         );
     }
 
-    public function saveFile( $archive_dir ) {
-        $url_info = parse_url( $this->url );
-        $path_info = [];
+    public function saveFile( string $archive_dir ) : void {
+        $url_info = parse_url( $this->url, PHP_URL_PATH );
 
-        if ( ! isset( $url_info['path'] ) ) {
-            return false;
+        if ( ! $url_info ) {
+            return;
         }
 
         // set what the new path will be based on the given url
-        if ( $url_info['path'] != '/' ) {
-            $path_info = pathinfo( $url_info['path'] );
-        } else {
-            $path_info = pathinfo( 'index.html' );
-        }
+        $path_info = $url_info === '/' ? pathinfo( 'index.html' ) : pathinfo( $url_info );
 
-        $directory_in_archive =
-            isset( $path_info['dirname'] ) ? $path_info['dirname'] : '';
+        $directory_in_archive = $path_info['dirname'] ? $path_info['dirname'] : '';
 
         if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
             $directory_in_archive = str_replace(
@@ -68,7 +85,7 @@ class FileWriter extends StaticHTMLOutput {
         $filename = '';
 
         // set path for homepage to index.html, else build filename
-        if ( $url_info['path'] == '/' ) {
+        if ( $url_info === '/' ) {
             // TODO: isolate and fix the cause requiring this trim:
             $filename = rtrim( $file_dir, '.' ) . 'index.html';
         } else {
