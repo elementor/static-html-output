@@ -19,9 +19,9 @@
     },
     "require": {
         "php": ">=7.3",
-        "sabberworm/php-css-parser": "*",
-        "pear/net_url2": "*",
-        "nicolab/php-ftp-client": "*"
+        "sabberworm/php-css-parser": "^8.3.0",
+        "pear/net_url2": "^2.1.2",
+        "nicolab/php-ftp-client": "^1.5.3"
     },
     "require-dev": {
         "phpstan/phpstan": "*",
@@ -61,6 +61,7 @@
         "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "test": [
+            "composer validate --strict",
             "@lint",
             "@phpcs",
             "@phpstan",
