@@ -19,29 +19,37 @@ class Archive extends StaticHTMLOutput {
 
         $this->path = '';
         $this->name = '';
-        $this->crawl_list = '';
-        $this->export_log = '';
     }
 
-    public function setToCurrentArchive() {
+    public function setToCurrentArchive() : void {
         $handle = fopen(
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-CURRENT-ARCHIVE.txt',
             'r'
         );
 
-        $this->path = stream_get_line( $handle, 0 );
+        if ( ! is_resource( $handle ) ) {
+            return;
+        }
+
+        $path = stream_get_line( $handle, 0 );
+
+        if ( ! $path ) {
+            return;
+        }
+
+        $this->path = $path;
         $this->name = basename( $this->path );
     }
 
-    public function currentArchiveExists() {
+    public function currentArchiveExists() : bool {
         return is_file(
             $this->settings['wp_uploads_path'] .
             '/WP2STATIC-CURRENT-ARCHIVE.txt'
         );
     }
 
-    public function create() {
+    public function create() : void {
         $this->name = $this->settings['wp_uploads_path'] .
             '/wp-static-html-output-' . time();
 

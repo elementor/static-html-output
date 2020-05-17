@@ -8,6 +8,15 @@ use RecursiveDirectoryIterator;
 
 class ArchiveProcessor extends StaticHTMLOutput {
 
+    /**
+     * @var Archive
+     */
+    public $archive;
+    /**
+     * @var string
+     */
+    public $target_folder;
+
     public function __construct() {
         $this->archive = new Archive();
         $this->archive->setToCurrentArchive();
@@ -25,7 +34,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
         );
     }
 
-    public function renameWPDirectory( $source, $target ) {
+    public function renameWPDirectory( string $source, string $target ) : void {
         if ( empty( $source ) || empty( $target ) ) {
             WsLog::l(
                 'Failed trying to rename: ' .
@@ -52,8 +61,12 @@ class ArchiveProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function recursive_copy( $srcdir, $dstdir ) {
+    public function recursive_copy( string $srcdir, string $dstdir ) : void {
         $dir = opendir( $srcdir );
+
+        if ( ! is_resource( $dir ) ) {
+            return;
+        }
 
         if ( ! is_dir( $dstdir ) ) {
             mkdir( $dstdir );
@@ -70,17 +83,24 @@ class ArchiveProcessor extends StaticHTMLOutput {
                 }
             }
         }
+
         closedir( $dir );
     }
 
-    public function dir_is_empty( $dirname ) {
+    public function dir_is_empty( string $dirname ) : bool {
         if ( ! is_dir( $dirname ) ) {
             return false;
         }
 
         $dotfiles = [ '.', '..', '/.statichtmloutput_safety' ];
 
-        foreach ( scandir( $dirname ) as $file ) {
+        $dir_files = scandir( $dirname );
+
+        if ( ! $dir_files ) {
+            return false;
+        }
+
+        foreach ( $dir_files as $file ) {
             if ( ! in_array( $file, $dotfiles ) ) {
                  return false;
             }
@@ -89,12 +109,18 @@ class ArchiveProcessor extends StaticHTMLOutput {
         return true;
     }
 
-    public function dir_has_safety_file( $dirname ) {
+    public function dir_has_safety_file( string $dirname ) : bool {
         if ( ! is_dir( $dirname ) ) {
             return false;
         }
 
-        foreach ( scandir( $dirname ) as $file ) {
+        $dir_files = scandir( $dirname );
+
+        if ( ! $dir_files ) {
+            return false;
+        }
+
+        foreach ( $dir_files as $file ) {
             if ( $file == '.statichtmloutput_safety' ) {
                  return true;
             }
@@ -103,7 +129,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
         return false;
     }
 
-    public function put_safety_file( $dirname ) {
+    public function put_safety_file( string $dirname ) : bool {
         if ( ! is_dir( $dirname ) ) {
             return false;
         }
@@ -111,12 +137,16 @@ class ArchiveProcessor extends StaticHTMLOutput {
         $safety_file = $dirname . '/.statichtmloutput_safety';
         $result = file_put_contents( $safety_file, 'statichtmloutput' );
 
+        if ( ! $result ) {
+            return false;
+        }
+
         chmod( $safety_file, 0664 );
 
-        return $result;
+        return true;
     }
 
-    public function copyStaticSiteToPublicFolder() {
+    public function copyStaticSiteToPublicFolder() : void {
         if ( $this->settings['selected_deployment_option'] === 'folder' ) {
             $target_folder = trim( $this->settings['targetFolder'] );
             $this->target_folder = $target_folder;
@@ -199,9 +229,9 @@ class ArchiveProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function createNetlifySpecialFiles() {
+    public function createNetlifySpecialFiles() : void {
         if ( $this->settings['selected_deployment_option'] !== 'netlify' ) {
-            return false;
+            return;
         }
 
         if ( isset( $this->settings['netlifyRedirects'] ) ) {
@@ -219,7 +249,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function create_zip() {
+    public function create_zip() : void {
         $deployer = $this->settings['selected_deployment_option'];
 
         if ( ! in_array( $deployer, [ 'zip', 'netlify' ] ) ) {
@@ -232,7 +262,8 @@ class ArchiveProcessor extends StaticHTMLOutput {
         $zip_archive = new ZipArchive();
 
         if ( $zip_archive->open( $temp_zip, ZIPARCHIVE::CREATE ) !== true ) {
-            return new WP_Error( 'Could not create archive' );
+            WsLog::l( 'Could not create archive' );
+            return;
         }
 
         $iterator = new RecursiveIteratorIterator(
@@ -242,12 +273,19 @@ class ArchiveProcessor extends StaticHTMLOutput {
         foreach ( $iterator as $filename => $file_object ) {
             $base_name = basename( $filename );
             if ( $base_name != '.' && $base_name != '..' ) {
+                $realpath = realpath( $filename );
+
+                if ( ! $realpath ) {
+                    continue;
+                }
+
                 if ( ! $zip_archive->addFile(
-                    realpath( $filename ),
+                    $realpath,
                     str_replace( $this->archive->path, '', $filename )
                 )
                 ) {
-                    return new WP_Error( 'Could not add file: ' . $filename );
+                    WsLog::l( 'Could not add file: ' . $filename );
+                    return;
                 }
             }
         }
@@ -260,7 +298,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
         rename( $temp_zip, $zip_path );
     }
 
-    public function removeWPCruft() {
+    public function removeWPCruft() : void {
         if ( file_exists( $this->archive->path . '/xmlrpc.php' ) ) {
             unlink( $this->archive->path . '/xmlrpc.php' );
         }
@@ -274,7 +312,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
         );
     }
 
-    public function renameArchiveDirectories() {
+    public function renameArchiveDirectories() : void {
         if ( ! isset( $this->settings['rename_rules'] ) ) {
             return;
         }
