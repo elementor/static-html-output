@@ -78,7 +78,7 @@ class CLI {
 
     }
 
-    public function microtime_diff( string $start, string $end = null) : float {
+    public function microtime_diff( string $start, string $end = null ) : float {
         if ( ! $end ) {
             $end = microtime();
         }

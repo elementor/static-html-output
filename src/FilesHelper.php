@@ -251,11 +251,9 @@ class FilesHelper {
     /**
      *  Autoptimize puts it's cache dir one level above the uploads URL
      *  ie, domain.com/cache/ or domain.com/subdir/cache/
-
      *  so, we grab all the files from the its actual cache dir
-
      *  then strip the site path and any subdir path (no extra logic needed?)
-     * 
+     *
      * @return string[] list of URLs
      */
     public static function getAutoptimizeCacheFiles(
@@ -720,7 +718,7 @@ class FilesHelper {
 
             $post_type_obj = get_post_type_object( $post_type );
 
-            if ( ! $post_type_obj || ! isset( $post_type_obj->labels->name) ) {
+            if ( ! $post_type_obj || ! isset( $post_type_obj->labels->name ) ) {
                 continue;
             }
 

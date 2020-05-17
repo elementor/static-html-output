@@ -57,7 +57,9 @@ class Controller {
         register_activation_hook( $bootstrap_file, [ 'StaticHTMLOutput\Controller', 'activate' ] );
 
         if ( is_admin() ) {
-            add_action( 'admin_menu', [ 'StaticHTMLOutput\Controller', 'registerOptionsPage' ]
+            add_action(
+                'admin_menu',
+                [ 'StaticHTMLOutput\Controller', 'registerOptionsPage' ]
             );
             add_filter( 'custom_menu_order', '__return_true' );
             add_filter( 'menu_order', [ 'StaticHTMLOutput\Controller', 'set_menu_order' ] );

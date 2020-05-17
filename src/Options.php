@@ -6,7 +6,9 @@ class Options {
     /**
      * @var string
      */
+    // phpcs:disable
     public $baseUrl;
+    // phpcs:enable
     /**
      * @var mixed
      */
