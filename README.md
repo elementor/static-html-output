@@ -5,7 +5,7 @@ WordPress plugin to generate a static copy of your site and deploy to GitHub Pag
 **Note: This is the continuation of what was originally named "WP Static HTML Output Plugin". A new approach is available in [WP2Static](https://github.com/WP2Static/wp2static)
 
 
-[![CircleCI](https://circleci.com/gh/WP2Static/static-html-output.svg?style=svg)](https://circleci.com/gh/WP2Static/static-html-output)
+[![CircleCI](https://circleci.com/gh/WP2Static/static-html-output-plugin.svg?style=svg)](https://circleci.com/gh/WP2Static/static-html-output-plugin)
 
 
 ## WordPress as a Static Site Generator
