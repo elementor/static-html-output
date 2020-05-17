@@ -4,6 +4,10 @@ namespace StaticHTMLOutput;
 
 class Options {
     /**
+     * @var string
+     */
+    public $baseUrl;
+    /**
      * @var mixed
      */
     protected $statichtmloutput_options = [];
@@ -177,7 +181,7 @@ class Options {
     }
 
     /**
-     * @param mixed[] $value
+     * @param mixed $value
      */
     public function setOption( string $name, $value ) : Options {
         return $this->__set( $name, $value );

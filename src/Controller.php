@@ -3,15 +3,43 @@
 namespace StaticHTMLOutput;
 
 class Controller {
+    /**
+     * @var mixed[]
+     */
+    public $settings;
+    /**
+     * @var View
+     */
+    public $view;
+    /**
+     * @var Options
+     */
+    public $options;
+    /**
+     * @var Exporter
+     */
+    public $exporter;
+    /**
+     * @var string
+     */
+    public $current_archive;
+    /**
+     * @var WPSite
+     */
+    public $wp_site;
+
     const VERSION = '6.6.8';
     const OPTIONS_KEY = 'statichtmloutput-options';
     const HOOK = 'statichtmloutput';
 
+    /**
+     * @var Controller
+     */
     protected static $instance = null;
 
     protected function __construct() {}
 
-    public static function getInstance() {
+    public static function getInstance() : Controller {
         if ( null === self::$instance ) {
             self::$instance = new self();
             self::$instance->options = new Options(
@@ -23,29 +51,27 @@ class Controller {
         return self::$instance;
     }
 
-    public static function init( $bootstrap_file ) {
+    public static function init( string $bootstrap_file ) : Controller {
         $instance = self::getInstance();
 
-        register_activation_hook(
-            $bootstrap_file,
-            [ $instance, 'activate' ]
-        );
+        register_activation_hook( $bootstrap_file, [ 'StaticHTMLOutput\Controller', 'activate' ] );
 
         if ( is_admin() ) {
-            add_action(
-                'admin_menu',
-                [
-                    $instance,
-                    'registerOptionsPage',
-                ]
+            add_action( 'admin_menu', [ 'StaticHTMLOutput\Controller', 'registerOptionsPage' ]
             );
             add_filter( 'custom_menu_order', '__return_true' );
-            add_filter( 'menu_order', [ $instance, 'set_menu_order' ] );
+            add_filter( 'menu_order', [ 'StaticHTMLOutput\Controller', 'set_menu_order' ] );
         }
         return $instance;
     }
 
 
+    /**
+     * Adjusts position of dashboard menu icons
+     *
+     * @param string[] $menu_order list of menu items
+     * @return string[] list of menu items
+     */
     public function set_menu_order( $menu_order ) {
         $order = [];
         $file  = plugin_basename( __FILE__ );
@@ -65,7 +91,7 @@ class Controller {
     }
 
 
-    public function setDefaultOptions() {
+    public function setDefaultOptions() : void {
         if ( null === $this->options->getOption( 'version' ) ) {
             $this->options
             ->setOption( 'version', self::VERSION )
@@ -80,11 +106,11 @@ class Controller {
         }
     }
 
-    public function activate_for_single_site() {
+    public function activate_for_single_site() : void {
         $this->setDefaultOptions();
     }
 
-    public function activate( $network_wide ) {
+    public function activate( bool $network_wide ) : void {
         if ( $network_wide ) {
             global $wpdb;
 
@@ -109,14 +135,15 @@ class Controller {
         }
     }
 
-    public function registerOptionsPage() {
+    public function registerOptionsPage() : void {
         $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
+
         $page = add_menu_page(
             'Static HTML',
             'Static HTML',
             'manage_options',
             self::HOOK,
-            [ self::$instance, 'renderOptionsPage' ],
+            [ 'StaticHTMLOutput\Controller', 'renderOptionsPage' ],
             'dashicons-arrow-right-alt'
         );
 
@@ -129,25 +156,25 @@ class Controller {
         );
     }
 
-    public function enqueueAdminStyles() {
+    public function enqueueAdminStyles() : void {
         $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
 
         wp_enqueue_style(
             self::HOOK . '-admin',
             $plugins_url . 'statichtmloutput.css?sdf=sdfd',
-            null,
+            [],
             $this::VERSION
         );
     }
 
-    public function finalize_deployment() {
+    public function finalize_deployment() : void {
         $deployer = new Deployer();
         $deployer->finalizeDeployment();
 
         echo 'SUCCESS';
     }
 
-    public function generate_filelist_preview() {
+    public function generate_filelist_preview() : void {
         $this->wp_site = new WPSite();
 
         $target_settings = [
@@ -178,7 +205,7 @@ class Controller {
         }
     }
 
-    public function renderOptionsPage() {
+    public function renderOptionsPage() : void {
         $this->wp_site = new WPSite();
         $this->current_archive = '';
 
@@ -197,14 +224,14 @@ class Controller {
             ->render();
     }
 
-    public function userIsAllowed() {
+    public function userIsAllowed() : bool {
         $referred_by_admin = check_admin_referer( self::HOOK . '-options' );
         $user_can_manage_options = current_user_can( 'manage_options' );
 
         return $referred_by_admin && $user_can_manage_options;
     }
 
-    public function save_options() {
+    public function save_options() : void {
         if ( ! $this->userIsAllowed() ) {
             exit( 'Not allowed to change plugin options.' );
         }
@@ -212,7 +239,7 @@ class Controller {
         $this->options->saveAllPostData();
     }
 
-    public function prepare_for_export() {
+    public function prepare_for_export() : void {
         $this->exporter = new Exporter();
 
         $this->exporter->pre_export_cleanup();
@@ -231,7 +258,7 @@ class Controller {
         }
     }
 
-    public function reset_default_settings() {
+    public function reset_default_settings() : void {
         if ( ! delete_option( 'statichtmloutput-options' ) ) {
             WsLog::l( 'Error resetting options to defaults' );
             echo 'ERROR';
@@ -243,7 +270,7 @@ class Controller {
         echo 'SUCCESS';
     }
 
-    public function post_process_archive_dir() {
+    public function post_process_archive_dir() : void {
         $processor = new ArchiveProcessor();
 
         $processor->createNetlifySpecialFiles();
@@ -258,7 +285,7 @@ class Controller {
         }
     }
 
-    public function delete_deploy_cache() {
+    public function delete_deploy_cache() : void {
         $target_settings = [
             'wpenv',
         ];
@@ -292,7 +319,7 @@ class Controller {
         }
     }
 
-    public function logEnvironmentalInfo() {
+    public function logEnvironmentalInfo() : void {
         $info = [
             '' . gmdate( 'Y-m-d h:i:s' ),
             'PHP VERSION ' . phpversion(),
