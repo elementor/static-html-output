@@ -112,7 +112,9 @@ class Controller {
         $this->setDefaultOptions();
     }
 
-    public function activate( bool $network_wide ) : void {
+    public static function activate( bool $network_wide ) : void {
+        $instance = self::getInstance();
+
         if ( $network_wide ) {
             global $wpdb;
 
@@ -128,12 +130,12 @@ class Controller {
 
             foreach ( $site_ids as $site_id ) {
                 switch_to_blog( $site_id );
-                $this->activate_for_single_site();
+                $instance->activate_for_single_site();
             }
 
             restore_current_blog();
         } else {
-            $this->activate_for_single_site();
+            $instance->activate_for_single_site();
         }
     }
 
