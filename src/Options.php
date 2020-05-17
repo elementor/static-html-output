@@ -189,7 +189,8 @@ class Options {
     public function __get( string $name ) {
         $value = array_key_exists(
             $name,
-            $this->statichtmloutput_options ) ?  $this->statichtmloutput_options[ $name ] : null;
+            $this->statichtmloutput_options
+        ) ? $this->statichtmloutput_options[ $name ] : null;
 
         return $value;
     }

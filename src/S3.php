@@ -254,7 +254,7 @@ class S3 extends SitePublisher {
 
         $ch = curl_init( $url );
 
-        if ( ! is_resource ( $ch ) ) {
+        if ( ! is_resource( $ch ) ) {
             return;
         }
 

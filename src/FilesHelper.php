@@ -8,18 +8,30 @@ use RecursiveDirectoryIterator;
 
 class FilesHelper {
 
-    public static function delete_dir_with_files( $dir ) : bool {
-        if ( is_dir( $dir ) ) {
-            $files = array_diff( scandir( $dir ), [ '.', '..' ] );
-
-            foreach ( $files as $file ) {
-                ( is_dir( "$dir/$file" ) ) ?
-                self::delete_dir_with_files( "$dir/$file" ) :
-                unlink( "$dir/$file" );
-            }
-
-            return rmdir( $dir );
+    public static function delete_dir_with_files( string $dir ) : bool {
+        if ( ! is_dir( $dir ) ) {
+            return true;
         }
+
+        $dir_files = scandir( $dir );
+
+        if ( ! $dir_files ) {
+            return true;
+        }
+
+        $files = array_diff( $dir_files, [ '.', '..' ] );
+
+        if ( ! $files ) {
+            return true;
+        }
+
+        foreach ( $files as $file ) {
+            ( is_dir( "$dir/$file" ) ) ?
+            self::delete_dir_with_files( "$dir/$file" ) :
+            unlink( "$dir/$file" );
+        }
+
+        return rmdir( $dir );
     }
 
     /**
@@ -67,7 +79,7 @@ class FilesHelper {
                         $detected_filename
                     );
 
-                if ( $path_crawlable ) {
+                if ( $path_crawlable && is_string( $detected_filename ) ) {
                     array_push(
                         $files,
                         $detected_filename
@@ -79,7 +91,10 @@ class FilesHelper {
         return $files;
     }
 
-    public static function detectVendorFiles( $wp_site_url ) {
+    /**
+     * @return string[] list of URLs
+     */
+    public static function detectVendorFiles( string $wp_site_url ) : array {
         $wp_site = new WPSite();
 
         $vendor_files = [];
@@ -182,9 +197,20 @@ class FilesHelper {
         return $vendor_files;
     }
 
-    public static function recursively_scan_dir( $dir, $siteroot, $list_path ) {
+    /**
+     * Recursively scan a directory and save list of discovered files as URLs in path
+     */
+    public static function recursively_scan_dir(
+        string $dir,
+        string $siteroot,
+        string $list_path
+    ) : void {
         $dir = str_replace( '//', '/', $dir );
         $files = scandir( $dir );
+
+        if ( ! $files ) {
+            return;
+        }
 
         foreach ( $files as $item ) {
             if ( $item != '.' && $item != '..' && $item != '.git' ) {
@@ -222,19 +248,21 @@ class FilesHelper {
         }
     }
 
-    /*
-        Autoptimize puts it's cache dir one level above the uploads URL
-        ie, domain.com/cache/ or domain.com/subdir/cache/
+    /**
+     *  Autoptimize puts it's cache dir one level above the uploads URL
+     *  ie, domain.com/cache/ or domain.com/subdir/cache/
 
-        so, we grab all the files from the its actual cache dir
+     *  so, we grab all the files from the its actual cache dir
 
-        then strip the site path and any subdir path (no extra logic needed?)
-    */
+     *  then strip the site path and any subdir path (no extra logic needed?)
+     * 
+     * @return string[] list of URLs
+     */
     public static function getAutoptimizeCacheFiles(
-        $cache_dir,
-        $path_to_trim,
-        $prefix
-        ) {
+        string $cache_dir,
+        string $path_to_trim,
+        string $prefix
+        ) : array {
 
         $files = [];
 
@@ -264,7 +292,10 @@ class FilesHelper {
         return $files;
     }
 
-    public static function getListOfLocalFilesByUrl( $url ) {
+    /**
+     * @return string[] list of URLs
+     */
+    public static function getListOfLocalFilesByUrl( string $url ) : array {
         $files = [];
 
         $directory = str_replace( home_url( '/' ), ABSPATH, $url );
@@ -292,7 +323,7 @@ class FilesHelper {
         return $files;
     }
 
-    public static function filePathLooksCrawlable( $file_name ) {
+    public static function filePathLooksCrawlable( string $file_name ) : bool {
         $path_info = pathinfo( $file_name );
 
         if ( ! is_file( $file_name ) ) {
@@ -371,12 +402,15 @@ class FilesHelper {
         return true;
     }
 
+    /**
+     * @param mixed[] $settings
+     */
     public static function buildInitialFileList(
-        $via_cli = false,
-        $uploads_path,
-        $uploads_url,
-        $settings
-        ) {
+        bool $via_cli = false,
+        string $uploads_path,
+        string $uploads_url,
+        array $settings
+        ) : int {
         $wp_site = new WPSite();
 
         $base_url = untrailingslashit( home_url() );
@@ -443,11 +477,11 @@ class FilesHelper {
         return count( $url_queue );
     }
 
-    public static function getAllWPPostURLs( $wp_site_url ) {
+    /**
+     * @return string[] list of URLs
+     */
+    public static function getAllWPPostURLs( string $wp_site_url ) : array {
         global $wpdb;
-
-        $post_urls = [];
-        $unique_post_types = [];
 
         $query = "
             SELECT ID,post_type
@@ -465,23 +499,42 @@ class FilesHelper {
             )
         );
 
+        if ( ! $posts ) {
+            return [];
+        }
+
+        $post_urls = [];
+        $unique_post_types = [];
+
         foreach ( $posts as $post ) {
+            if ( ! isset( $post->post_type ) ) {
+                continue;
+            }
+
             // capture all post types
             $unique_post_types[] = $post->post_type;
 
-            switch ( $post->post_type ) {
-                case 'page':
-                    $permalink = get_page_link( $post->ID );
-                    break;
-                case 'post':
-                    $permalink = get_permalink( $post->ID );
-                    break;
-                case 'attachment':
-                    $permalink = get_attachment_link( $post->ID );
-                    break;
-                default:
-                    $permalink = get_post_permalink( $post->ID );
-                    break;
+            $permalink = '';
+
+            if ( isset( $post->ID ) ) {
+                switch ( $post->post_type ) {
+                    case 'page':
+                        $permalink = get_page_link( $post->ID );
+                        break;
+                    case 'post':
+                        $permalink = get_permalink( $post->ID );
+                        break;
+                    case 'attachment':
+                        $permalink = get_attachment_link( $post->ID );
+                        break;
+                    default:
+                        $permalink = get_post_permalink( $post->ID );
+                        break;
+                }
+            }
+
+            if ( ! is_string( $permalink ) ) {
+                continue;
             }
 
             if ( strpos( $permalink, '?post_type' ) !== false ) {
@@ -501,11 +554,16 @@ class FilesHelper {
                     http://domain.com/2018/
             */
 
-            $parsed_link = parse_url( $permalink );
+            $link_path = parse_url( $permalink, PHP_URL_PATH );
+
+            // we can skip any URLs without paths, as we're always detecting '/'
+            if ( ! $link_path ) {
+                continue;
+            }
+
             // rely on WP's site URL vs reconstructing from parsed
             // subdomain, ie http://domain.com/mywpinstall/
-            $link_host = $wp_site_url . '/';
-            $link_path = $parsed_link['path'];
+            $wp_url = $wp_site_url . '/';
 
             // NOTE: Windows filepath support
             $path_segments = explode( '/', $link_path );
@@ -518,7 +576,7 @@ class FilesHelper {
 
             // build each URL
             for ( $i = 0; $i < $number_of_segments; $i++ ) {
-                $full_url = $link_host;
+                $full_url = $wp_url;
 
                 for ( $x = 0; $x <= $i; $x++ ) {
                     $full_url .= $path_segments[ $x ] . '/';
@@ -537,6 +595,10 @@ class FilesHelper {
         $category_links = [];
 
         foreach ( $taxonomies as $taxonomy ) {
+            if ( ! isset( $taxonomy->name ) ) {
+                continue;
+            }
+
             $terms = get_terms(
                 $taxonomy->name,
                 [
@@ -544,8 +606,18 @@ class FilesHelper {
                 ]
             );
 
+            if ( ! is_array( $terms ) ) {
+                continue;
+            }
+
             foreach ( $terms as $term ) {
-                $permalink = trim( get_term_link( $term ) );
+                $term_link = get_term_link( $term );
+
+                if ( ! is_string( $term_link ) ) {
+                    continue;
+                }
+
+                $permalink = trim( $term_link );
                 $total_posts = $term->count;
 
                 $term_url = str_replace(
@@ -584,12 +656,17 @@ class FilesHelper {
         return $post_urls;
     }
 
-    public static function cleanDetectedURLs( $urls ) {
+    /**
+     * @param string[] $urls to clean
+     * @return string[] clean URLs
+     */
+    public static function cleanDetectedURLs( array $urls ) : array {
+        if ( ! $urls ) {
+            return [];
+        }
+
         $unique_urls = array_unique( $urls );
-
         $wp_site_url = get_home_url();
-
-        $search_text = ' ';
 
         $url_queue = array_filter(
             $unique_urls,
@@ -613,7 +690,11 @@ class FilesHelper {
         return $cleaned_urls;
     }
 
-    public static function getPaginationURLsForPosts( $post_types ) {
+    /**
+     * @param string[] $post_types to get pagination URLs from
+     * @return string[] list of URLs
+     */
+    public static function getPaginationURLsForPosts( array $post_types ) : array {
         global $wpdb, $wp_rewrite;
 
         $pagination_base = $wp_rewrite->pagination_base;
@@ -638,6 +719,11 @@ class FilesHelper {
             );
 
             $post_type_obj = get_post_type_object( $post_type );
+
+            if ( ! $post_type_obj || ! isset( $post_type_obj->labels->name) ) {
+                continue;
+            }
+
             $plural_form = strtolower( $post_type_obj->labels->name );
 
             $count = $wpdb->num_rows;
@@ -659,7 +745,15 @@ class FilesHelper {
         return $urls_to_include;
     }
 
-    public static function getPaginationURLsForCategories( $categories ) {
+    /**
+     * @param mixed[] $categories with total counts
+     * @return string[] list of URLs
+     */
+    public static function getPaginationURLsForCategories( array $categories ) : array {
+        if ( ! $categories ) {
+            return [];
+        }
+
         global $wp_rewrite;
 
         $urls_to_include = [];
@@ -678,15 +772,29 @@ class FilesHelper {
         return $urls_to_include;
     }
 
-    public static function getPaginationURLsForComments( $wp_site_url ) {
+    /**
+     * @return string[] list of URLs
+     */
+    public static function getPaginationURLsForComments( string $wp_site_url ) : array {
         global $wp_rewrite;
 
-        $urls_to_include = [];
         $comments_pagination_base = $wp_rewrite->comments_pagination_base;
 
-        foreach ( get_comments() as $comment ) {
+        $comments = get_comments();
+
+        if ( ! is_array( $comments ) ) {
+            return [];
+        }
+
+        $urls_to_include = [];
+
+        foreach ( $comments as $comment ) {
             $comment_url = get_comment_link( $comment->comment_ID );
             $comment_url = strtok( $comment_url, '#' );
+
+            if ( ! is_string( $comment_url ) ) {
+                continue;
+            }
 
             $urls_to_include[] = str_replace(
                 $wp_site_url,

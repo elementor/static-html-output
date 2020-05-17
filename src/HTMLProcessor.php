@@ -153,7 +153,6 @@ class HTMLProcessor extends StaticHTMLOutput {
                     if ( $element_parent ) {
                         $element_parent->removeChild( $base_element );
                     }
-
                 }
             }
         } elseif ( $this->shouldCreateBaseHREF() ) {
