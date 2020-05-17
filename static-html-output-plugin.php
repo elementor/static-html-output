@@ -122,8 +122,5 @@ remove_action( 'wp_head', 'wlwmanifest_link' );
 
 if ( defined( 'WP_CLI' ) ) {
     WP_CLI::add_command( 'statichtmloutput', 'StaticHTMLOutput\CLI' );
-    WP_CLI::add_command(
-        'statichtmloutput options',
-        [ 'StaticHTMLOutput\CLI', 'options' ]
-    );
+    WP_CLI::add_command( 'statichtmloutput options', [ 'StaticHTMLOutput\CLI', 'options' ] );
 }

@@ -7,6 +7,31 @@ use Net_URL2;
 
 class CSSProcessor extends StaticHTMLOutput {
 
+    /**
+     * @var string
+     */
+    public $placeholder_url;
+    /**
+     * @var string
+     */
+    public $raw_css;
+    /**
+     * @var string
+     */
+    public $page_url;
+    /**
+     * @var Sabberworm\CSS\CSSList\Document
+     */
+    public $css_doc;
+    /**
+     * @var string[]
+     */
+    public $discovered_urls;
+    /**
+     * @var bool
+     */
+    public $harvest_new_urls;
+
     public function __construct() {
         $this->loadSettings(
             [
@@ -18,7 +43,7 @@ class CSSProcessor extends StaticHTMLOutput {
         );
     }
 
-    public function processCSS( $css_document, $page_url ) {
+    public function processCSS( string $css_document, string $page_url ) : bool {
         if ( $css_document == '' ) {
             return false;
         }
@@ -108,7 +133,7 @@ class CSSProcessor extends StaticHTMLOutput {
         return true;
     }
 
-    public function isInternalLink( $link, $domain = false ) {
+    public function isInternalLink( string $link, string $domain = '' ) : bool {
         if ( ! $domain ) {
             $domain = $this->placeholder_url;
         }
@@ -121,11 +146,11 @@ class CSSProcessor extends StaticHTMLOutput {
         return $is_internal_link;
     }
 
-    public function getCSS() {
+    public function getCSS() : string {
         return $this->css_doc->render();
     }
 
-    public function rewriteSiteURLsToPlaceholder() {
+    public function rewriteSiteURLsToPlaceholder() : void {
         $rewritten_source = str_replace(
             [
                 $this->settings['wp_site_url'],
@@ -141,7 +166,7 @@ class CSSProcessor extends StaticHTMLOutput {
         $this->raw_css = $rewritten_source;
     }
 
-    public function detectIfURLsShouldBeHarvested() {
+    public function detectIfURLsShouldBeHarvested() : void {
         if ( defined( 'WP_CLI' ) ) {
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
                 return;
@@ -157,16 +182,16 @@ class CSSProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function addDiscoveredURL( $url ) {
+    public function addDiscoveredURL( string $url ) : void {
         // trim any query strings or anchors
         $url = strtok( $url, '#' );
-        $url = strtok( $url, '?' );
+        $url = trim( (string) strtok( (string) $url, '?' ) );
 
-        if ( trim( $url ) === '' ) {
+        if ( ! $url ) {
             return;
         }
 
-        if ( isset( $this->harvest_new_urls ) ) {
+        if ( $this->harvest_new_urls ) {
             if ( ! $this->isValidURL( $url ) ) {
                 return;
             }
@@ -184,7 +209,7 @@ class CSSProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function writeDiscoveredURLs() {
+    public function writeDiscoveredURLs() : void {
         // @codingStandardsIgnoreStart
         if ( isset( $_POST['ajax_action'] ) &&
             $_POST['ajax_action'] === 'crawl_again' ) {
@@ -213,7 +238,7 @@ class CSSProcessor extends StaticHTMLOutput {
         );
     }
 
-    public function isValidURL( $url ) {
+    public function isValidURL( string $url ) : bool {
         // NOTE: not using native URL filter as it won't accept
         // non-ASCII URLs, which we want to support
         $url = trim( $url );
@@ -237,7 +262,7 @@ class CSSProcessor extends StaticHTMLOutput {
         return true;
     }
 
-    public function getTargetSiteProtocol( $url ) {
+    public function getTargetSiteProtocol( string $url ) : string {
         $protocol = '//';
 
         if ( strpos( $url, 'https://' ) !== false ) {

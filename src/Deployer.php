@@ -17,7 +17,7 @@ class Deployer extends StaticHTMLOutput {
         );
     }
 
-    public function deploy( bool $test = false ) : void {
+    public function deploy( bool $test = false ) : string {
         $method = $this->settings['selected_deployment_option'];
 
         $start_time = microtime( true );
@@ -32,7 +32,7 @@ class Deployer extends StaticHTMLOutput {
 
                 if ( $test ) {
                     $s3->test_s3();
-                    return;
+                    return '';
                 }
 
                 $s3->bootstrap();
@@ -45,7 +45,7 @@ class Deployer extends StaticHTMLOutput {
                 $bitbucket = new BitBucket();
                 if ( $test ) {
                     $bitbucket->test_upload();
-                    return;
+                    return '';
                 }
 
                 $bitbucket->bootstrap();
@@ -57,7 +57,7 @@ class Deployer extends StaticHTMLOutput {
                 $bunny = new BunnyCDN();
                 if ( $test ) {
                     $bunny->test_deploy();
-                    return;
+                    return '';
                 }
 
                 $bunny->bootstrap();
@@ -71,7 +71,7 @@ class Deployer extends StaticHTMLOutput {
 
                 if ( $test ) {
                     $ftp->test_ftp();
-                    return;
+                    return '';
                 }
 
                 $ftp->bootstrap();
@@ -84,7 +84,7 @@ class Deployer extends StaticHTMLOutput {
 
                 if ( $test ) {
                     $github->test_upload();
-                    return;
+                    return '';
                 }
 
                 $github->bootstrap();
@@ -97,7 +97,7 @@ class Deployer extends StaticHTMLOutput {
 
                 if ( $test ) {
                     $gitlab->test_file_create();
-                    return;
+                    return '';
                 }
 
                 $gitlab->bootstrap();
@@ -112,7 +112,7 @@ class Deployer extends StaticHTMLOutput {
 
                 if ( $test ) {
                     $netlify->test_netlify();
-                    return;
+                    return '';
                 }
 
                 $netlify->bootstrap();
@@ -127,7 +127,7 @@ class Deployer extends StaticHTMLOutput {
 
         $deploy_result = 'Deployed to: ' . $method . ' in ' . gmdate( 'H:i:s', (int) $duration );
 
-        $this->finalizeDeployment( $deploy_result );
+        return $this->finalizeDeployment( $deploy_result );
     }
 
     public function finalizeDeployment( string $deploy_result = '' ) : string {
