@@ -74,7 +74,7 @@ class Controller {
      * @param string[] $menu_order list of menu items
      * @return string[] list of menu items
      */
-    public function set_menu_order( $menu_order ) {
+    public static function set_menu_order( $menu_order ) {
         $order = [];
         $file  = plugin_basename( __FILE__ );
         foreach ( $menu_order as $index => $item ) {
@@ -137,7 +137,7 @@ class Controller {
         }
     }
 
-    public function registerOptionsPage() : void {
+    public static function registerOptionsPage() : void {
         $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
 
         $page = add_menu_page(
@@ -151,21 +151,18 @@ class Controller {
 
         add_action(
             'admin_print_styles-' . $page,
-            [
-                $this,
-                'enqueueAdminStyles',
-            ]
+            [ 'StaticHTMLOutput\Controller', 'enqueueAdminStyles' ]
         );
     }
 
-    public function enqueueAdminStyles() : void {
+    public static function enqueueAdminStyles() : void {
         $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
 
         wp_enqueue_style(
             self::HOOK . '-admin',
             $plugins_url . 'statichtmloutput.css?sdf=sdfd',
             [],
-            $this::VERSION
+            self::VERSION
         );
     }
 
@@ -207,21 +204,22 @@ class Controller {
         }
     }
 
-    public function renderOptionsPage() : void {
-        $this->wp_site = new WPSite();
-        $this->current_archive = '';
+    public static function renderOptionsPage() : void {
+        $instance = self::getInstance();
+        $instance->wp_site = new WPSite();
+        $instance->current_archive = '';
 
-        $this->view
+        $instance->view
             ->setTemplate( 'options-page-js' )
-            ->assign( 'options', $this->options )
-            ->assign( 'wp_site', $this->wp_site )
+            ->assign( 'options', $instance->options )
+            ->assign( 'wp_site', $instance->wp_site )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
 
-        $this->view
+        $instance->view
             ->setTemplate( 'options-page' )
-            ->assign( 'wp_site', $this->wp_site )
-            ->assign( 'options', $this->options )
+            ->assign( 'wp_site', $instance->wp_site )
+            ->assign( 'options', $instance->options )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
     }
