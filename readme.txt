@@ -132,10 +132,10 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 = 6.6.8 =
 
  * Tested with WP 5.4.1
+ * Requires minimum PHP 7.3
  * Matching project name to wp.org slug
  * Implement code quality tooling
  * Performance optimization for slow hosting providers
-
 
 = 6.6.7 =
 
