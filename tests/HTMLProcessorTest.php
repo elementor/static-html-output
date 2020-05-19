@@ -120,7 +120,7 @@ final class HTMLProcessorTest extends TestCase {
         $html_doc = new DOMDocument();
         $html_header = '<!DOCTYPE html><html lang="en-US" class="no-js no-svg"><body>';
         $html_footer = '</body></html>';
-        $html_doc->loadHTML( $html_header . $node_html . $html_footer);
+        $html_doc->loadHTML( $html_header . $node_html . $html_footer );
         $links = $html_doc->getElementsByTagName( $tag_name );
         $element = $links[0];
 
@@ -153,36 +153,38 @@ final class HTMLProcessorTest extends TestCase {
 
     public function anchorTagProvider() {
         return [
-           'anchor tag with relative href' =>  [
+            // phpcs:disable
+            'anchor tag with relative href' => [
                 '<a href="/first_lvl_dir/a_file.jpg">Link to some file</a>',
                 'a',
                 'href',
-                '<a href="http://mywpsite.com/first_lvl_dir/a_file.jpg">Link to some file</a>'
+                '<a href="http://mywpsite.com/first_lvl_dir/a_file.jpg">Link to some file</a>',
             ],
-           'img tag with relative src' =>  [
+            'img tag with relative src' => [
                 '<img src="/first_lvl_dir/a_file.jpg" />',
                 'img',
                 'src',
-                '<img src="http://mywpsite.com/first_lvl_dir/a_file.jpg">'
+                '<img src="http://mywpsite.com/first_lvl_dir/a_file.jpg">',
             ],
-           'script tag with relative src and malformed tag' =>  [
+            'script tag with relative src and malformed tag' => [
                 '<script src="/some.js" />',
                 'script',
                 'src',
-                '<script src="http://mywpsite.com/some.js"></script>'
+                '<script src="http://mywpsite.com/some.js"></script>',
             ],
-           'link tag with href to file at same hierachy' =>  [
+            'link tag with href to file at same hierachy' => [
                 '<link rel="stylesheet" type="text/css" href="theme.css">',
                 'link',
                 'href',
-                '<link rel="stylesheet" type="text/css" href="http://mywpsite.com/category/photos/my-gallery/theme.css">'
+                '<link rel="stylesheet" type="text/css" href="http://mywpsite.com/category/photos/my-gallery/theme.css">',
             ],
-           'link tag with href to site root' =>  [
+            'link tag with href to site root' => [
                 '<link rel="stylesheet" type="text/css" href="/">',
                 'link',
                 'href',
-                '<link rel="stylesheet" type="text/css" href="http://mywpsite.com/">'
+                '<link rel="stylesheet" type="text/css" href="http://mywpsite.com/">',
             ],
+        // phpcs:enable
         ];
     }
 }

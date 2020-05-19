@@ -36,6 +36,7 @@
     <properties>
       <property name="customPropertiesWhitelist" type="array">
         <element value="parentNode"/>
+        <element value="ownerDocument"/>
         <element value="nodeType"/>
         <element value="nodeText"/>
         <element value="textContent"/>
