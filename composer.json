@@ -64,7 +64,8 @@
             "composer validate --strict",
             "@lint",
             "@phpcs",
-            "@phpstan"
+            "@phpstan",
+            "@phpunit"
         ],
         "build": "/bin/sh tools/build_release.sh"
     }
