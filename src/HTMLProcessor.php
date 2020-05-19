@@ -665,27 +665,28 @@ class HTMLProcessor extends StaticHTMLOutput {
         $placeholder_url = $this->placeholder_url;
 
         if ( strpos( $processed_html, $placeholder_url ) !== false ) {
+            $placeholder_url = rtrim( $this->placeholder_url, '/' );
+            $destination_url = rtrim( $this->base_url, '/' );
+
             return $this->rewriteUnchangedPlaceholderURLs(
-                $processed_html
+                $processed_html,
+                $placeholder_url,
+                $destination_url,
+                $this->rewrite_rules
             );
         }
 
         return $processed_html;
     }
 
-    public function rewriteUnchangedPlaceholderURLs( string $processed_html ) : string {
-        if ( ! $this->rewrite_rules ) {
-            $this->rewrite_rules = '';
-        }
-
-        $placeholder_url = rtrim( $this->placeholder_url, '/' );
-        $destination_url = rtrim(
-            $this->base_url,
-            '/'
-        );
-
+    public function rewriteUnchangedPlaceholderURLs(
+        string $processed_html,
+        string $placeholder_url,
+        string $destination_url,
+        string $rewrite_rules
+    ) : string {
         // add base URL to rewrite_rules
-        $this->rewrite_rules .=
+        $rewrite_rules .=
             PHP_EOL .
                 $placeholder_url . ',' .
                 $destination_url;
@@ -695,7 +696,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $rewrite_rules = explode(
             "\n",
-            str_replace( "\r", '', $this->rewrite_rules )
+            str_replace( "\r", '', $rewrite_rules )
         );
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
