@@ -58,7 +58,7 @@
         "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/oldtests/*,*/tests/phpstan/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
         "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/oldtests/*,*/js/*,*/tests/phpstan/*,*/admin/*,*/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit",
-        "coverage": "vendor/bin/phpunit --coverage-html coverage --whitelist src/",
+        "coverage": "php -d zend_extension=xdebug.so vendor/bin/phpunit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "test": [
             "composer validate --strict",
