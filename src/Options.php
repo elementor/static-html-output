@@ -46,6 +46,7 @@ class Options {
         'bunnycdnPullZoneID',
         'bunnycdnStorageZoneName',
         'bunnycdnRemotePath',
+        'bunnycdn_api_host',
         'cfDistributionId',
         'completionEmail',
         'crawl_delay',

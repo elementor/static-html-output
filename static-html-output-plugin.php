@@ -98,6 +98,28 @@ function static_html_output_ajax() {
         $class = new StaticHTMLOutput\FTP();
     } elseif ( strpos( $ajax_method, 'bunny' ) !== false ) {
         $class = new StaticHTMLOutput\BunnyCDN();
+
+        switch ( $ajax_method ) {
+            case 'bunnycdn_prepare_export':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->prepareDeploy( true );
+                break;
+            case 'bunnycdn_transfer_files':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->upload_files();
+                break;
+            case 'bunnycdn_purge_cache':
+                $class->purge_all_cache();
+                break;
+            case 'test_bunny':
+                $class->test_deploy();
+                break;
+        }
+
+        wp_die();
+        return null;
     } else {
         wp_die();
         return null;

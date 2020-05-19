@@ -2,8 +2,18 @@
 
 namespace StaticHTMLOutput;
 
+use GuzzleHttp\Client;
+
 class BunnyCDN extends SitePublisher {
 
+    /**
+     * @var Client
+     */
+    public $account_client;
+    /**
+     * @var mixed[]
+     */
+    public $account_headers;
     /**
      * @var string
      */
@@ -20,10 +30,6 @@ class BunnyCDN extends SitePublisher {
      * @var string
      */
     public $local_file_contents;
-    /**
-     * @var Request
-     */
-    public $client;
 
     public function __construct() {
         $this->loadSettings( 'bunnycdn' );
@@ -42,24 +48,10 @@ class BunnyCDN extends SitePublisher {
             return;
         }
 
-        switch ( $_POST['ajax_action'] ) {
-            case 'bunnycdn_prepare_export':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->prepareDeploy( true );
-                break;
-            case 'bunnycdn_transfer_files':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->upload_files();
-                break;
-            case 'bunnycdn_purge_cache':
-                $this->purge_all_cache();
-                break;
-            case 'test_bunny':
-                $this->test_deploy();
-                break;
-        }
+        $this->account_client = new Client( [ 'base_uri' => $this->api_base ] );
+        $this->account_headers =
+            [ 'AccessKey' => $this->settings['bunnycdnStorageZoneAccessKey'] ];
+
     }
 
     public function upload_files() : void {
@@ -136,108 +128,63 @@ class BunnyCDN extends SitePublisher {
 
     public function purge_all_cache() : void {
         try {
-            $endpoint = 'https://bunnycdn.com/api/pullzone/' .
-                $this->settings['bunnycdnPullZoneID'] . '/purgeCache';
+            $client = new Client( [ 'base_uri' => 'https://bunnycdn.com' ] );
+            $headers =
+                [ 'AccessKey' => $this->settings['bunnycdnPullZoneAccessKey'] ];
 
-            $ch = curl_init();
-
-            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
-            curl_setopt( $ch, CURLOPT_URL, $endpoint );
-            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 0 );
-            curl_setopt( $ch, CURLOPT_POST, 1 );
-
-            curl_setopt(
-                $ch,
-                CURLOPT_HTTPHEADER,
+            $res = $client->request(
+                'POST',
+                '/api/pullzone/' . $this->settings['bunnycdnPullZoneID'] . '/purgeCache',
                 [
-                    'Content-Type: application/json',
-                    'Content-Length: 0',
-                    'AccessKey: ' .
-                        $this->settings['bunnycdnPullZoneAccessKey'],
-                ]
+                    'headers' => $headers,
+                ],
             );
 
-            $output = curl_exec( $ch );
-            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+            $result = json_decode( (string) $res->getBody() );
 
-            curl_close( $ch );
-
-            $good_response_codes = [ '200', '201' ];
-
-            if ( ! in_array( $status_code, $good_response_codes ) ) {
-                WsLog::l(
-                    'BAD RESPONSE STATUS (' . $status_code . '): '
+            if ( $result ) {
+                $this->checkForValidResponses(
+                    $result->HttpCode,
+                    [ 200, 201, 301, 302, 304 ]
                 );
-
-                echo 'FAIL';
-
-                throw new StaticHTMLOutputException( 'BunnyCDN API bad response status' );
             }
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
+            WsLog::l( 'BUNNYCDN PURGE CACHE: error encountered' );
             WsLog::l( $e );
             throw new StaticHTMLOutputException( $e );
         }
     }
 
     public function test_deploy() : void {
-
         try {
             $remote_path = $this->api_base . '/' .
                 $this->settings['bunnycdnStorageZoneName'] .
                 '/tmpFile';
 
-            $ch = curl_init();
-
-            curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
-            curl_setopt( $ch, CURLOPT_URL, $remote_path );
-            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-            curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-            curl_setopt( $ch, CURLOPT_HEADER, 0 );
-            curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-            curl_setopt( $ch, CURLOPT_POST, 1 );
-
-            curl_setopt(
-                $ch,
-                CURLOPT_HTTPHEADER,
+            $res = $this->account_client->request(
+                'PUT',
+                "$remote_path",
                 [
-                    'AccessKey: ' .
-                        $this->settings['bunnycdnStorageZoneAccessKey'],
-                ]
+                    'headers' => $this->account_headers,
+                    'body' => 'Testing Static HTML Output settings',
+                ],
             );
 
-            $post_options = [
-                'body' => 'Test StaticHTMLOutput connectivity',
-            ];
+            $result = json_decode( (string) $res->getBody() );
 
-            curl_setopt(
-                $ch,
-                CURLOPT_POSTFIELDS,
-                $post_options
-            );
+            if ( $result ) {
+                $this->checkForValidResponses(
+                    $result->HttpCode,
+                    [ 200, 201, 301, 302, 304 ]
+                );
 
-            $output = curl_exec( $ch );
-            $status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-
-            curl_close( $ch );
-
-            $good_response_codes = [ 200, 201, 301, 302, 304 ];
-
-            if ( ! in_array( $status_code, $good_response_codes ) ) {
-                WsLog::l( "BAD RESPONSE STATUS ($status_code)" );
-
-                throw new StaticHTMLOutputException( 'BunnyCDN API bad response status' );
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
+            WsLog::l( 'BUNNYCDN TEST EXPORT: error encountered' );
             WsLog::l( $e );
             throw new StaticHTMLOutputException( $e );
         }
@@ -253,19 +200,27 @@ class BunnyCDN extends SitePublisher {
                 $this->settings['bunnycdnStorageZoneName'] .
                 '/' . $this->target_path;
 
-            $headers = [ 'AccessKey: ' . $this->settings['bunnycdnStorageZoneAccessKey'] ];
-
-            $this->client->putWithFileStreamAndHeaders(
-                $remote_path,
-                $this->local_file,
-                $headers
+            $res = $this->account_client->request(
+                'PUT',
+                "$remote_path",
+                [
+                    'headers' => $this->account_headers,
+                    'body' => file_get_contents( $this->local_file ),
+                ],
             );
 
-            $this->checkForValidResponses(
-                $this->client->status_code,
-                [ 200, 201, 301, 302, 304 ]
-            );
+            $result = json_decode( (string) $res->getBody() );
+
+            if ( $result ) {
+                $this->checkForValidResponses(
+                    $result->HttpCode,
+                    [ 200, 201, 301, 302, 304 ]
+                );
+
+            }
         } catch ( StaticHTMLOutputException $e ) {
+            WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
+            WsLog::l( $e );
             $this->handleException( $e );
         }
     }

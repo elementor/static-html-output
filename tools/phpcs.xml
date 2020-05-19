@@ -35,6 +35,7 @@
   <rule ref="WordPress.NamingConventions.ValidVariableName">
     <properties>
       <property name="customPropertiesWhitelist" type="array">
+        <element value="HttpCode"/>
         <element value="parentNode"/>
         <element value="ownerDocument"/>
         <element value="nodeType"/>

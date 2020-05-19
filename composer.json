@@ -21,7 +21,8 @@
         "php": ">=7.3",
         "sabberworm/php-css-parser": "^8.3.0",
         "pear/net_url2": "^2.1.2",
-        "nicolab/php-ftp-client": "^1.5.3"
+        "nicolab/php-ftp-client": "^1.5.3",
+        "guzzlehttp/guzzle": "^6.5"
     },
     "require-dev": {
         "phpstan/phpstan": "*",
