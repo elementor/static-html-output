@@ -259,6 +259,59 @@ class CLI {
             );
         }
     }
+
+    /**
+     * Deploy Cache
+     *
+     * <delete>
+     *
+     * Empty all URLs from DeployCache
+     *
+     * @param string[] $args Arguments after command
+     * @param string[] $assoc_args Parameters after command
+     */
+    public function deploy_cache( array $args, array $assoc_args ) : void {
+        $action = isset( $args[0] ) ? $args[0] : null;
+
+        if ( empty( $action ) ) {
+            WP_CLI::error(
+                'Missing required argument: ' .
+                '<delete>'
+            );
+        }
+
+        if ( $action === 'delete' ) {
+
+            if ( ! isset( $assoc_args['force'] ) ) {
+                $this->multilinePrint(
+                    "no --force given. Please type 'yes' to confirm
+                    deletion of Deploy Cache"
+                );
+
+                $userval = trim( (string) fgets( STDIN ) );
+
+                if ( $userval !== 'yes' ) {
+                    WP_CLI::error( 'Failed to delete Deploy Cache' );
+                }
+            }
+
+            $instance = Controller::getInstance();
+            $instance->delete_deploy_cache();
+
+            WP_CLI::success( 'Deleted Deploy Cache' );
+        }
+    }
+
+    /**
+     * Print multilines of input text via WP-CLI
+     */
+    public function multilinePrint( string $string ) : void {
+        $msg = trim( str_replace( [ "\r", "\n" ], '', $string ) );
+
+        $msg = preg_replace( '!\s+!', ' ', $msg );
+
+        WP_CLI::line( PHP_EOL . $msg . PHP_EOL );
+    }
 }
 
 /*

@@ -121,6 +121,12 @@ Success: Deployed to: zip in 00:00:01
 Sending confirmation email...
 ```
 
+Delete deploy cache
+
+`wp statichtmloutput deploy_cache delete`
+
+With option `--force`, else will prompt for confirmation.
+
 ## Hooks
 
 ### Modify the initial list of URLs to crawl
