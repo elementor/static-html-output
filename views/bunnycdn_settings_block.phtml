@@ -53,6 +53,26 @@
       </tr>
       <tr>
         <th scope="row">
+          <label for="bunnycdn_api_host">API Region</label>
+        </th>
+        <td>
+        <?php 
+
+        // TODO: shift to S3 model/helper
+        $bunny_regions = array(
+          "sg.storage.bunnycdn.com" => "Asia Singapore",
+          "storage.bunnycdn.com" => "Europe (Falkenstein)",
+          "ny.storage.bunnycdn.com" => "US West (New York)",
+        );
+        ?>
+
+          <?php $tpl->displaySelectMenu($this, $bunny_regions, 'bunnycdn_api_host', 'API Region', '(BETA)'); ?><br>
+
+          <span class="description">choose the BunnyCDN region for API requests</span>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
           <label for="bunny_test">Test BunnyCDN Settings</label>
         </th>
         <td>

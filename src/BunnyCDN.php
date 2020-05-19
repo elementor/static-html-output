@@ -28,7 +28,11 @@ class BunnyCDN extends SitePublisher {
     public function __construct() {
         $this->loadSettings( 'bunnycdn' );
 
-        $this->api_base = 'https://storage.bunnycdn.com';
+        if ( isset( $this->settings['bunnycdn_api_host'] ) ) {
+            $this->api_base = 'https://' . $this->settings['bunnycdn_api_host'];
+        } else {
+            $this->api_base = 'https://storage.bunnycdn.com';
+        }
 
         $this->previous_hashes_path =
             $this->settings['wp_uploads_path'] .

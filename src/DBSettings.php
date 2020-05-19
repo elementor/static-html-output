@@ -107,6 +107,7 @@ class DBSettings {
             'bunnycdnPullZoneID',
             'bunnycdnStorageZoneName',
             'bunnycdnRemotePath',
+            'bunnycdn_api_host',
         ];
 
         $key_sets['s3'] = [
