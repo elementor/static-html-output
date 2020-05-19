@@ -128,6 +128,10 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
 == Changelog ==
 
+= 6.6.10 =
+
+ * fix ZIP download URL when dev site's protocol doesn't match Site URL's
+
 = 6.6.9 =
 
  * Tested with WP 5.4.1
@@ -135,6 +139,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * Matching project name to wp.org slug
  * Implement code quality tooling
  * Performance optimization for slow hosting providers
+ * Minor fix for setting base HREF option
 
 = 6.6.7 =
 

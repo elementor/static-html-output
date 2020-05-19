@@ -208,6 +208,7 @@ jQuery(document).ready(function($){
                 path_segments = archive_path.split('/');
                 current_archive.name = path_segments[path_segments.length - 2];
                 zipURL = wp_site.uploads_url + '/' + current_archive.name + '.zip';
+                zipURL = zipURL.replace('https://', '//').replace('http://', '//');
                 $('#downloadZIP').attr('href', zipURL);
             },
             'text'
