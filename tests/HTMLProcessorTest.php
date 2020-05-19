@@ -153,7 +153,6 @@ final class HTMLProcessorTest extends TestCase {
 
     public function anchorTagProvider() {
         return [
-            // phpcs:disable
             'anchor tag with relative href' => [
                 '<a href="/first_lvl_dir/a_file.jpg">Link to some file</a>',
                 'a',
@@ -176,7 +175,8 @@ final class HTMLProcessorTest extends TestCase {
                 '<link rel="stylesheet" type="text/css" href="theme.css">',
                 'link',
                 'href',
-                '<link rel="stylesheet" type="text/css" href="http://mywpsite.com/category/photos/my-gallery/theme.css">',
+                '<link rel="stylesheet" type="text/css" ' .
+                'href="http://mywpsite.com/category/photos/my-gallery/theme.css">',
             ],
             'link tag with href to site root' => [
                 '<link rel="stylesheet" type="text/css" href="/">',
@@ -184,7 +184,102 @@ final class HTMLProcessorTest extends TestCase {
                 'href',
                 '<link rel="stylesheet" type="text/css" href="http://mywpsite.com/">',
             ],
-        // phpcs:enable
+        ];
+    }
+
+    /**
+     * @covers StaticHTMLOutput\HTMLProcessor::__construct
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
+     * @dataProvider rewritePlaceholdersProvider
+     */
+    public function testRewritingRemainingPlaceholders(
+        $site_url,
+        $placeholder_url,
+        $raw_html,
+        $exp_result
+        ) {
+
+        $html_processor = new HTMLProcessor(
+            false, // $allow_offline_usage = false
+            false, // $remove_conditional_head_comments = false
+            false, // $remove_html_comments = false
+            false, // $remove_wp_links = false
+            false, // $remove_wp_meta = false
+            '', // $rewrite_rules = false
+            false, // $use_relative_urls = false
+            '', // $base_href
+            '', // $base_url
+            '', // $selected_deployment_option = 'folder'
+            $site_url, // $wp_site_url
+            '' // $wp_uploads_path
+        );
+
+        $this->assertEquals(
+            $exp_result,
+            $html_processor->rewriteSiteURLsToPlaceholder(
+                $raw_html,
+                $site_url,
+                $placeholder_url
+            )
+        );
+    }
+
+    public function rewritePlaceholdersProvider() {
+        return [
+            'http site url without trailing slash, https destination' => [
+                'http://mywpdevsite.com',
+                'https://PLACEHOLDER.wpsho',
+                '<a href="http://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="https://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+            'http site url with trailing slash, https destination' => [
+                'http://mywpdevsite.com',
+                'https://PLACEHOLDER.wpsho',
+                '<a href="http://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="https://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+            'https site url without trailing slash, https destination' => [
+                'https://mywpdevsite.com',
+                'https://PLACEHOLDER.wpsho',
+                '<a href="https://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="https://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+            'https site url with trailing slash, https destination' => [
+                'https://mywpdevsite.com',
+                'https://PLACEHOLDER.wpsho',
+                '<a href="https://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="https://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+            'https site url without trailing slash, http destination' => [
+                'https://mywpdevsite.com',
+                'http://PLACEHOLDER.wpsho',
+                '<a href="https://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="http://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+            'https site url with trailing slash, http destination' => [
+                'https://mywpdevsite.com',
+                'http://PLACEHOLDER.wpsho',
+                '<a href="https://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="http://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
+            'https site url with trailing slash, http destination, escaped link' => [
+                'https://mywpdevsite.com',
+                'http://PLACEHOLDER.wpsho',
+                '<a href="https:\/\/mywpdevsite.com\/banana.jpg">Link to some file</a>',
+                '<a href="http:\/\/PLACEHOLDER.wpsho\/banana.jpg">Link to some file</a>',
+            ],
+            'http site url without trailing slash, https destination, escaped link' => [
+                'http://mywpdevsite.com',
+                'https://PLACEHOLDER.wpsho',
+                '<a href="http:\/\/mywpdevsite.com\/banana.jpg">Link to some file</a>',
+                '<a href="https:\/\/PLACEHOLDER.wpsho\/banana.jpg">Link to some file</a>',
+            ],
+            'https site url with http leftovers in original source' => [
+                'https://mywpdevsite.com',
+                'https://PLACEHOLDER.wpsho',
+                '<a href="http://mywpdevsite.com/banana.jpg">Link to some file</a>',
+                '<a href="http://PLACEHOLDER.wpsho/banana.jpg">Link to some file</a>',
+            ],
         ];
     }
 }

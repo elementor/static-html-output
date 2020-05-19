@@ -145,9 +145,14 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->placeholder_url =
             $this->destination_protocol . 'PLACEHOLDER.wpsho/';
 
+        $site_url = rtrim( $this->wp_site_url, '/' );
+        $placeholder_url = rtrim( $this->placeholder_url, '/' );
+
         // initial rewrite of all site URLs to placeholder URLs
         $this->raw_html = $this->rewriteSiteURLsToPlaceholder(
-            $html_document
+            $html_document,
+            $site_url,
+            $placeholder_url
         );
 
         // detect if a base tag exists while in the loop
@@ -1073,10 +1078,11 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $this->destination_protocol;
     }
 
-    public function rewriteSiteURLsToPlaceholder( string $raw_html ) : string {
-        $site_url = rtrim( $this->wp_site_url, '/' );
-        $placeholder_url = rtrim( $this->placeholder_url, '/' );
-
+    public function rewriteSiteURLsToPlaceholder(
+        string $raw_html,
+        string $site_url,
+        string $placeholder_url
+    ) : string {
         $patterns = [
             $site_url,
             addcslashes( $site_url, '/' ),
