@@ -10,6 +10,58 @@ class CSSProcessor extends StaticHTMLOutput {
     /**
      * @var string
      */
+    public $destination_protocol_relative_url;
+    /**
+     * @var bool
+     */
+    public $allow_offline_usage;
+    /**
+     * @var bool
+     */
+    public $remove_conditional_head_comments;
+    /**
+     * @var bool
+     */
+    public $remove_html_comments;
+    /**
+     * @var bool
+     */
+    public $remove_wp_links;
+    /**
+     * @var bool
+     */
+    public $remove_wp_meta;
+    /**
+     * @var string
+     */
+    public $rewrite_rules;
+    /**
+     * @var bool
+     */
+    public $use_relative_urls;
+    /**
+     * @var string
+     */
+    public $base_href;
+    /**
+     * @var string Destination URL
+     */
+    public $base_url;
+    /**
+     * @var string
+     */
+    public $selected_deployment_option;
+    /**
+     * @var string
+     */
+    public $wp_site_url;
+    /**
+     * @var string
+     */
+    public $wp_uploads_path;
+    /**
+     * @var string
+     */
     public $placeholder_url;
     /**
      * @var string
@@ -31,6 +83,10 @@ class CSSProcessor extends StaticHTMLOutput {
      * @var bool
      */
     public $harvest_new_urls;
+    /**
+     * @var string[]
+     */
+    public $processed_urls;
 
     public function __construct(
         bool $allow_offline_usage = false,
@@ -105,15 +161,17 @@ class CSSProcessor extends StaticHTMLOutput {
                 $this->addDiscoveredURL( $original_link );
 
                 if ( $this->isInternalLink( $original_link ) ) {
-                    if ( ! isset( $this->rewrite_rules ) ) {
+                    if ( ! $this->rewrite_rules ) {
                         $this->rewrite_rules = '';
                     }
 
                     // add base URL to rewrite_rules
                     $this->rewrite_rules .=
-                        PHP_EOL .
-                            $this->placeholder_url . ',' .
-                            $this->base_url;
+                        PHP_EOL . $this->placeholder_url . ',' . $this->base_url;
+
+                    $this->rewrite_rules .=
+                        PHP_EOL . $this->getProtocolRelativeURL( $this->placeholder_url ) .
+                        ',' . $this->getProtocolRelativeURL( $this->base_url );
 
                     $rewrite_from = [];
                     $rewrite_to = [];

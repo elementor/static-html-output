@@ -58,7 +58,6 @@ class HTMLProcessor extends StaticHTMLOutput {
      * @var string
      */
     public $wp_uploads_path;
-
     /**
      * @var string
      */

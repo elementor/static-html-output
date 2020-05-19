@@ -10,6 +10,15 @@ final class CSSProcessorTest extends TestCase {
     /**
      * @covers StaticHTMLOutput\CSSProcessor::__construct
      * @covers StaticHTMLOutput\CSSProcessor::processCSS
+     * @covers StaticHTMLOutput\CSSProcessor::addDiscoveredURL
+     * @covers StaticHTMLOutput\CSSProcessor::detectIfURLsShouldBeHarvested
+     * @covers StaticHTMLOutput\CSSProcessor::getCSS
+     * @covers StaticHTMLOutput\CSSProcessor::getProtocolRelativeURL
+     * @covers StaticHTMLOutput\CSSProcessor::getTargetSiteProtocol
+     * @covers StaticHTMLOutput\CSSProcessor::isInternalLink
+     * @covers StaticHTMLOutput\CSSProcessor::rewriteSiteURLsToPlaceholder
+     * @covers StaticHTMLOutput\CSSProcessor::writeDiscoveredURLs
+
      * @dataProvider cssSampleContents
      */
     public function testParsingStylesheets( string $raw_css, string $parsed_css ) {
@@ -56,16 +65,16 @@ final class CSSProcessorTest extends TestCase {
     public function cssSampleContents() {
         return [
             'background img FQU' => [
-                'body { background-image: url("http://localsite.com/wp-content/uploads/2020/05/thisguyblogs.jpg");' .
-                'box-sizing: border-box;}',
-                'body {background-image: url("https://deploysite.com/wp-content/uploads/2020/05/thisguyblogs.jpg");' .
-                'box-sizing: border-box;}',
+                'body { background-image: url("http://localsite.com/wp-content/uploads/' .
+                '2020/05/thisguyblogs.jpg");box-sizing: border-box;}',
+                'body {background-image: url("https://deploysite.com/wp-content/uploads/' .
+                '2020/05/thisguyblogs.jpg");box-sizing: border-box;}',
             ],
             'background img protocol relative' => [
-                'body { background-image: url("//localsite.com/wp-content/uploads/2020/05/thisguyblogs.jpg");' .
-                'box-sizing: border-box;}',
-                'body {background-image: url("//deploysite.com/wp-content/uploads/2020/05/thisguyblogs.jpg");' .
-                'box-sizing: border-box;}',
+                'body { background-image: url("//localsite.com/wp-content/uploads/' .
+                '2020/05/thisguyblogs.jpg");box-sizing: border-box;}',
+                'body {background-image: url("//deploysite.com/wp-content/uploads/' .
+                '2020/05/thisguyblogs.jpg");box-sizing: border-box;}',
             ],
         ];
     }
