@@ -43,7 +43,7 @@ class HTMLProcessor extends StaticHTMLOutput {
      */
     public $base_href;
     /**
-     * @var string
+     * @var string Destination URL
      */
     public $base_url;
     /**
@@ -241,6 +241,8 @@ class HTMLProcessor extends StaticHTMLOutput {
                         $base_element,
                         $first_head_child
                     );
+                } else {
+                    $head_element->appendChild( $base_element );
                 }
             } else {
                 WsLog::l(
@@ -260,11 +262,9 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     public function detectIfURLsShouldBeHarvested() : void {
         if ( ! defined( 'WP_CLI' ) ) {
-            // @codingStandardsIgnoreStart
-            $this->harvest_new_urls = (
-                 $_POST['ajax_action'] === 'crawl_site'
-            );
-            // @codingStandardsIgnoreEnd
+            $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
+
+            $this->harvest_new_urls = $ajax_method === 'crawl_site';
         } else {
             // we shouldn't harvest any while we're in the second crawl
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
@@ -552,12 +552,11 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function writeDiscoveredURLs() : void {
-        // @codingStandardsIgnoreStart
-        if ( isset( $_POST['ajax_action'] ) &&
-            $_POST['ajax_action'] === 'crawl_again' ) {
+        $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( $ajax_method === 'crawl_again' ) {
             return;
         }
-        // @codingStandardsIgnoreEnd
 
         if ( defined( 'WP_CLI' ) ) {
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {
