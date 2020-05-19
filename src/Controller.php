@@ -28,7 +28,7 @@ class Controller {
      */
     public $wp_site;
 
-    const VERSION = '6.6.8';
+    const VERSION = '6.6.9';
     const OPTIONS_KEY = 'statichtmloutput-options';
     const HOOK = 'statichtmloutput';
 
@@ -162,7 +162,7 @@ class Controller {
 
         wp_enqueue_style(
             self::HOOK . '-admin',
-            $plugins_url . 'statichtmloutput.css?sdf=sdfd',
+            $plugins_url . 'statichtmloutput.css',
             [],
             self::VERSION
         );
