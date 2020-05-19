@@ -51,16 +51,32 @@ class HTMLProcessor extends StaticHTMLOutput {
      */
     public $processed_urls;
 
-    public function __construct() {
-        $this->loadSettings(
-            [
-                'github',
-                'wpenv',
-                'processing',
-                'advanced',
-            ]
-        );
-
+    public function __construct(
+        bool $allow_offline_usage,
+        bool $remove_conditional_head_comments,
+        bool $remove_html_comments,
+        bool $remove_wp_links,
+        bool $remove_wp_meta,
+        bool $rewrite_rules,
+        bool $use_relative_urls,
+        string $base_href,
+        string $base_url,
+        string $selected_deployment_option,
+        string $wp_site_url,
+        string $wp_uploads_path
+    ) {
+        $this->allow_offline_usage = $allow_offline_usage;
+        $this->remove_conditional_head_comments = $remove_conditional_head_comments;
+        $this->remove_html_comments = $remove_html_comments;
+        $this->remove_wp_links = $remove_wp_links;
+        $this->remove_wp_meta = $remove_wp_meta;
+        $this->rewrite_rules = $rewrite_rules;
+        $this->use_relative_urls = $use_relative_urls;
+        $this->base_href = $base_href;
+        $this->base_url = $base_url;
+        $this->selected_deployment_option = $selected_deployment_option;
+        $this->wp_site_url = $wp_site_url;
+        $this->wp_uploads_path = $wp_uploads_path;
         $this->processed_urls = [];
     }
 
@@ -75,7 +91,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         // NOTE: set placeholder_url to same protocol as target
         // making it easier to rewrite URLs without considering protocol
         $this->destination_protocol =
-            $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+            $this->getTargetSiteProtocol( $this->base_url );
 
         $this->placeholder_url =
             $this->destination_protocol . 'PLACEHOLDER.wpsho/';
@@ -145,7 +161,7 @@ class HTMLProcessor extends StaticHTMLOutput {
                 if ( $this->shouldCreateBaseHREF() ) {
                     $base_element->setAttribute(
                         'href',
-                        $this->settings['baseHREF']
+                        $this->base_href
                     );
                 } else {
                     $element_parent = $base_element->parentNode;
@@ -159,7 +175,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             $base_element = $this->xml_doc->createElement( 'base' );
             $base_element->setAttribute(
                 'href',
-                $this->settings['baseHREF']
+                $this->base_href
             );
             $head_element =
                 $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
@@ -214,7 +230,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->convertToRelativeURL( $element );
         $this->convertToOfflineURL( $element );
 
-        if ( isset( $this->settings['removeWPLinks'] ) ) {
+        if ( isset( $this->remove_wp_links ) ) {
             $relative_links_to_rm = [
                 'shortlink',
                 'canonical',
@@ -354,7 +370,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function stripHTMLComments() : void {
-        if ( isset( $this->settings['removeHTMLComments'] ) ) {
+        if ( isset( $this->remove_html_comments ) ) {
             $xpath = new DOMXPath( $this->xml_doc );
 
             $comments = $xpath->query( '//comment()' );
@@ -383,7 +399,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         foreach ( $head_elements as $node ) {
             if ( $node instanceof DOMComment ) {
                 if (
-                    isset( $this->settings['removeConditionalHeadComments'] )
+                    isset( $this->remove_conditional_head_comments )
                 ) {
                     $element_parent = $node->parentNode;
 
@@ -443,7 +459,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     public function processMeta( DOMElement $element ) : void {
         // TODO: detect meta redirects here + build list for rewriting
-        if ( isset( $this->settings['removeWPMeta'] ) ) {
+        if ( isset( $this->remove_wp_meta ) ) {
             $meta_name = $element->getAttribute( 'name' );
 
             if ( strpos( $meta_name, 'generator' ) !== false ) {
@@ -498,7 +514,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         file_put_contents(
-            $this->settings['wp_uploads_path'] .
+            $this->wp_uploads_path .
                 '/WP-STATIC-DISCOVERED-URLS.txt',
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
@@ -506,7 +522,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         );
 
         chmod(
-            $this->settings['wp_uploads_path'] .
+            $this->wp_uploads_path .
                 '/WP-STATIC-DISCOVERED-URLS.txt',
             0664
         );
@@ -603,18 +619,18 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function rewriteUnchangedPlaceholderURLs( string $processed_html ) : string {
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            $this->settings['rewrite_rules'] = '';
+        if ( ! isset( $this->rewrite_rules ) ) {
+            $this->rewrite_rules = '';
         }
 
         $placeholder_url = rtrim( $this->placeholder_url, '/' );
         $destination_url = rtrim(
-            $this->settings['baseUrl'],
+            $this->base_url,
             '/'
         );
 
         // add base URL to rewrite_rules
-        $this->settings['rewrite_rules'] .=
+        $this->rewrite_rules .=
             PHP_EOL .
                 $placeholder_url . ',' .
                 $destination_url;
@@ -624,7 +640,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $rewrite_rules = explode(
             "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
+            str_replace( "\r", '', $this->rewrite_rules )
         );
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
@@ -661,14 +677,14 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         */
         $site_url = addcslashes( $this->placeholder_url, '/' );
-        $destination_url = addcslashes( $this->settings['baseUrl'], '/' );
+        $destination_url = addcslashes( $this->base_url, '/' );
 
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-            $this->settings['rewrite_rules'] = '';
+        if ( ! isset( $this->rewrite_rules ) ) {
+            $this->rewrite_rules = '';
         }
 
         // add base URL to rewrite_rules
-        $this->settings['rewrite_rules'] .=
+        $this->rewrite_rules .=
             PHP_EOL .
                 $site_url . ',' .
                 $destination_url;
@@ -678,7 +694,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $rewrite_rules = explode(
             "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
+            str_replace( "\r", '', $this->rewrite_rules )
         );
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
@@ -701,7 +717,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function rewriteWPPathsSrcSetURL( string $url_to_change ) : string {
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
+        if ( ! isset( $this->rewrite_rules ) ) {
             return $url_to_change;
         }
 
@@ -710,7 +726,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $rewrite_rules = explode(
             "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
+            str_replace( "\r", '', $this->rewrite_rules )
         );
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
@@ -730,7 +746,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function rewriteWPPaths( DOMElement $element ) : void {
-        if ( ! isset( $this->settings['rewrite_rules'] ) ) {
+        if ( ! isset( $this->rewrite_rules ) ) {
             return;
         }
 
@@ -739,7 +755,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $rewrite_rules = explode(
             "\n",
-            str_replace( "\r", '', $this->settings['rewrite_rules'] )
+            str_replace( "\r", '', $this->rewrite_rules )
         );
 
         foreach ( $rewrite_rules as $rewrite_rule_line ) {
@@ -814,7 +830,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $site_root = '';
 
         $relative_url = str_replace(
-            $this->settings['baseUrl'],
+            $this->base_url,
             $site_root,
             $url_to_change
         );
@@ -844,10 +860,10 @@ class HTMLProcessor extends StaticHTMLOutput {
         // check it actually needs to be changed
         if ( $this->isInternalLink(
             $url_to_change,
-            $this->settings['baseUrl']
+            $this->base_url
         ) ) {
             $rewritten_url = str_replace(
-                $this->settings['baseUrl'],
+                $this->base_url,
                 $site_root,
                 $url_to_change
             );
@@ -1008,7 +1024,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function rewriteSiteURLsToPlaceholder( string $raw_html ) : string {
-        $site_url = rtrim( $this->settings['wp_site_url'], '/' );
+        $site_url = rtrim( $this->wp_site_url, '/' );
         $placeholder_url = rtrim( $this->placeholder_url, '/' );
 
         $patterns = [
@@ -1049,12 +1065,12 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function shouldUseRelativeURLs() : bool {
-        if ( ! isset( $this->settings['useRelativeURLs'] ) ) {
+        if ( ! isset( $this->use_relative_urls ) ) {
             return false;
         }
 
         // NOTE: relative URLs should not be used when creating an offline ZIP
-        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
+        if ( isset( $this->allow_offline_usage ) ) {
             return false;
         }
 
@@ -1062,12 +1078,12 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function shouldCreateBaseHREF() : bool {
-        if ( empty( $this->settings['baseHREF'] ) ) {
+        if ( empty( $this->base_href ) ) {
             return false;
         }
 
         // NOTE: base HREF should not be set when creating an offline ZIP
-        if ( isset( $this->settings['allowOfflineUsage'] ) ) {
+        if ( isset( $this->allow_offline_usage ) ) {
             return false;
         }
 
@@ -1075,11 +1091,11 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function shouldCreateOfflineURLs() : bool {
-        if ( ! isset( $this->settings['allowOfflineUsage'] ) ) {
+        if ( ! isset( $this->allow_offline_usage ) ) {
             return false;
         }
 
-        if ( $this->settings['selected_deployment_option'] != 'zip' ) {
+        if ( $this->selected_deployment_option != 'zip' ) {
             return false;
         }
 
@@ -1115,19 +1131,19 @@ class HTMLProcessor extends StaticHTMLOutput {
      */
     public function getBaseURLRewriteReplacements() : array {
         $replacements = [
-            $this->settings['baseUrl'],
-            addcslashes( $this->settings['baseUrl'], '/' ),
+            $this->base_url,
+            addcslashes( $this->base_url, '/' ),
             $this->getProtocolRelativeURL(
-                $this->settings['baseUrl']
+                $this->base_url
             ),
             $this->getProtocolRelativeURL(
-                rtrim( $this->settings['baseUrl'], '/' )
+                rtrim( $this->base_url, '/' )
             ),
             $this->getProtocolRelativeURL(
-                $this->settings['baseUrl'] . '//'
+                $this->base_url . '//'
             ),
             $this->getProtocolRelativeURL(
-                addcslashes( $this->settings['baseUrl'], '/' )
+                addcslashes( $this->base_url, '/' )
             ),
         ];
 

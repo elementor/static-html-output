@@ -20,15 +20,21 @@ final class HTMLProcessorTest extends TestCase {
             TODO: rename function to reflect what it's now doing
 
         */
+        $processor = new StaticHTMLOutput\HTMLProcessor(
+            // allowOfflineUsage
+            // removeConditionalHeadComments
+            // removeHTMLComments
+            // removeWPLinks
+            // removeWPMeta
+            // rewrite_rules
+            // useRelativeURLs
+            // baseHREF
+            // baseUrl
+            // selected_deployment_option
+            // wp_site_url
+            // wp_uploads_path']
 
-        $processor = $this->getMockBuilder( 'StaticHTMLOutput\HTMLProcessor' )
-            ->setMethods(
-                [
-                    'loadSettings',
-                    'isInternalLink',
-                ]
-            )
-            ->getMock();
+        );
 
         $processor->settings = [];
 
