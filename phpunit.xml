@@ -4,6 +4,7 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          testdox="true"
+         failOnRisky="true"
          executionOrder="depends,defects"
          forceCoversAnnotation="true"
          beStrictAboutCoversAnnotation="true"

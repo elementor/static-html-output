@@ -495,6 +495,29 @@ final class HTMLProcessorTest extends TestCase {
     /**
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
      * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
+     * @covers StaticHTMLOutput\HTMLProcessor::convertToOfflineURL
+     * @covers StaticHTMLOutput\HTMLProcessor::convertToRelativeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
+     * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::getHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
+     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::processHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::processHead
+     * @covers StaticHTMLOutput\HTMLProcessor::processMeta
+     * @covers StaticHTMLOutput\HTMLProcessor::removeQueryStringFromInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
+     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
+     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateOfflineURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::shouldUseRelativeURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
+     * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
+
      * @dataProvider unicodeProvider
      */
     public function testUnicodeOutput(
