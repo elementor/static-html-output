@@ -67,6 +67,16 @@ final class HTMLProcessorTest extends TestCase {
                 'http://someotherdomain.com',
                 true,
             ],
+            'external FQU, protocol relative' => [
+                '//example.com/category/travel/photos/001.jpg',
+                '',
+                false,
+            ],
+            'external FQU with matching domain as 2nd arg' => [
+                'http://someotherdomain.com/category/travel/photos/001.jpg',
+                'http://someotherdomain.com',
+                true,
+            ],
             'not external FQU' => [
                 'http://someothersite.com/category/travel/photos/001.jpg',
                 '',
