@@ -478,6 +478,39 @@ class SiteCrawler extends StaticHTMLOutput {
 
         switch ( $this->file_type ) {
             case 'html':
+                // temp workaround while refactoring settings
+                // prepare string settings
+                $string_settings = [
+                    'baseHREF',
+                    'baseUrl',
+                    'rewrite_rules',
+                    'selected_deployment_option',
+                    'wp_site_url',
+                    'wp_uploads_path',
+                ];
+
+                foreach ( $string_settings as $setting ) {
+                    if ( ! isset( $this->settings[ $setting ] ) ) {
+                        $this->settings[ $setting ] = '';
+                    }
+                }
+
+                // prepare bool settings
+                $bool_settings = [
+                    'allowOfflineUsage',
+                    'removeConditionalHeadComments',
+                    'removeHTMLComments',
+                    'removeWPLinks',
+                    'removeWPMeta',
+                    'useRelativeURLs',
+                ];
+
+                foreach ( $bool_settings as $setting ) {
+                    if ( ! isset( $this->settings[ $setting ] ) ) {
+                        $this->settings[ $setting ] = false;
+                    }
+                }
+
                 $processor = new HTMLProcessor(
                     $this->settings['allowOfflineUsage'],
                     $this->settings['removeConditionalHeadComments'],

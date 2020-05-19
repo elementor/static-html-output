@@ -11,6 +11,55 @@ use DOMElement;
 class HTMLProcessor extends StaticHTMLOutput {
 
     /**
+     * @var bool
+     */
+    public $allow_offline_usage;
+    /**
+     * @var bool
+     */
+    public $remove_conditional_head_comments;
+    /**
+     * @var bool
+     */
+    public $remove_html_comments;
+    /**
+     * @var bool
+     */
+    public $remove_wp_links;
+    /**
+     * @var bool
+     */
+    public $remove_wp_meta;
+    /**
+     * @var string
+     */
+    public $rewrite_rules;
+    /**
+     * @var bool
+     */
+    public $use_relative_urls;
+    /**
+     * @var string
+     */
+    public $base_href;
+    /**
+     * @var string
+     */
+    public $base_url;
+    /**
+     * @var string
+     */
+    public $selected_deployment_option;
+    /**
+     * @var string
+     */
+    public $wp_site_url;
+    /**
+     * @var string
+     */
+    public $wp_uploads_path;
+
+    /**
      * @var string
      */
     public $raw_html;
@@ -52,16 +101,16 @@ class HTMLProcessor extends StaticHTMLOutput {
     public $processed_urls;
 
     public function __construct(
-        bool $allow_offline_usage,
-        bool $remove_conditional_head_comments,
-        bool $remove_html_comments,
-        bool $remove_wp_links,
-        bool $remove_wp_meta,
-        bool $rewrite_rules,
-        bool $use_relative_urls,
+        bool $allow_offline_usage = false,
+        bool $remove_conditional_head_comments = false,
+        bool $remove_html_comments = false,
+        bool $remove_wp_links = false,
+        bool $remove_wp_meta = false,
+        string $rewrite_rules = '',
+        bool $use_relative_urls = false,
         string $base_href,
         string $base_url,
-        string $selected_deployment_option,
+        string $selected_deployment_option = 'folder',
         string $wp_site_url,
         string $wp_uploads_path
     ) {
@@ -230,7 +279,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->convertToRelativeURL( $element );
         $this->convertToOfflineURL( $element );
 
-        if ( isset( $this->remove_wp_links ) ) {
+        if ( $this->remove_wp_links ) {
             $relative_links_to_rm = [
                 'shortlink',
                 'canonical',
@@ -370,7 +419,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function stripHTMLComments() : void {
-        if ( isset( $this->remove_html_comments ) ) {
+        if ( $this->remove_html_comments ) {
             $xpath = new DOMXPath( $this->xml_doc );
 
             $comments = $xpath->query( '//comment()' );
@@ -398,9 +447,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         foreach ( $head_elements as $node ) {
             if ( $node instanceof DOMComment ) {
-                if (
-                    isset( $this->remove_conditional_head_comments )
-                ) {
+                if ( $this->remove_conditional_head_comments ) {
                     $element_parent = $node->parentNode;
 
                     if ( ! $element_parent ) {
@@ -459,7 +506,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     public function processMeta( DOMElement $element ) : void {
         // TODO: detect meta redirects here + build list for rewriting
-        if ( isset( $this->remove_wp_meta ) ) {
+        if ( $this->remove_wp_meta ) {
             $meta_name = $element->getAttribute( 'name' );
 
             if ( strpos( $meta_name, 'generator' ) !== false ) {
@@ -540,6 +587,10 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function isInternalLink( string $link, string $domain = '' ) : bool {
+        if ( ! $link ) {
+            return false;
+        }
+
         // if first char is . let's call that internal link
         if ( $link[0] === '.' ) {
             return true;
@@ -619,7 +670,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function rewriteUnchangedPlaceholderURLs( string $processed_html ) : string {
-        if ( ! isset( $this->rewrite_rules ) ) {
+        if ( ! $this->rewrite_rules ) {
             $this->rewrite_rules = '';
         }
 
@@ -679,7 +730,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $site_url = addcslashes( $this->placeholder_url, '/' );
         $destination_url = addcslashes( $this->base_url, '/' );
 
-        if ( ! isset( $this->rewrite_rules ) ) {
+        if ( ! $this->rewrite_rules ) {
             $this->rewrite_rules = '';
         }
 
@@ -717,7 +768,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function rewriteWPPathsSrcSetURL( string $url_to_change ) : string {
-        if ( ! isset( $this->rewrite_rules ) ) {
+        if ( ! $this->rewrite_rules ) {
             return $url_to_change;
         }
 
@@ -746,7 +797,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function rewriteWPPaths( DOMElement $element ) : void {
-        if ( ! isset( $this->rewrite_rules ) ) {
+        if ( ! $this->rewrite_rules ) {
             return;
         }
 
@@ -1065,12 +1116,12 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function shouldUseRelativeURLs() : bool {
-        if ( ! isset( $this->use_relative_urls ) ) {
+        if ( ! $this->use_relative_urls ) {
             return false;
         }
 
         // NOTE: relative URLs should not be used when creating an offline ZIP
-        if ( isset( $this->allow_offline_usage ) ) {
+        if ( $this->allow_offline_usage ) {
             return false;
         }
 
@@ -1083,7 +1134,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         // NOTE: base HREF should not be set when creating an offline ZIP
-        if ( isset( $this->allow_offline_usage ) ) {
+        if ( $this->allow_offline_usage ) {
             return false;
         }
 
@@ -1091,7 +1142,7 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function shouldCreateOfflineURLs() : bool {
-        if ( ! isset( $this->allow_offline_usage ) ) {
+        if ( ! $this->allow_offline_usage ) {
             return false;
         }
 

@@ -20,27 +20,24 @@ final class HTMLProcessorTest extends TestCase {
             TODO: rename function to reflect what it's now doing
 
         */
-        $processor = new StaticHTMLOutput\HTMLProcessor(
-            // allowOfflineUsage
-            // removeConditionalHeadComments
-            // removeHTMLComments
-            // removeWPLinks
-            // removeWPMeta
-            // rewrite_rules
-            // useRelativeURLs
-            // baseHREF
-            // baseUrl
-            // selected_deployment_option
-            // wp_site_url
-            // wp_uploads_path']
-
+        $html_processor = new StaticHTMLOutput\HTMLProcessor(
+            false, // $allow_offline_usage = false
+            false, // $remove_conditional_head_comments = false
+            false, // $remove_html_comments = false
+            false, // $remove_wp_links = false
+            false, // $remove_wp_meta = false
+            '', // $rewrite_rules = false
+            false, // $use_relative_urls = false
+            '', // $base_href
+            '', // $base_url
+            '', // $selected_deployment_option = 'folder'
+            '', // $wp_site_url
+            '' // $wp_uploads_path
         );
 
-        $processor->settings = [];
+        $html_processor->placeholder_url = 'https://PLACEHOLDER.wpsho/';
 
-        $processor->placeholder_url = 'https://PLACEHOLDER.wpsho/';
-
-        $result = $processor->isInternalLink( $link, $domain );
+        $result = $html_processor->isInternalLink( $link, $domain );
 
         $this->assertEquals(
             $expectation,
