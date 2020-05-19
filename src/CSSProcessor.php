@@ -32,15 +32,33 @@ class CSSProcessor extends StaticHTMLOutput {
      */
     public $harvest_new_urls;
 
-    public function __construct() {
-        $this->loadSettings(
-            [
-                'crawling',
-                'wpenv',
-                'processing',
-                'advanced',
-            ]
-        );
+    public function __construct(
+        bool $allow_offline_usage = false,
+        bool $remove_conditional_head_comments = false,
+        bool $remove_html_comments = false,
+        bool $remove_wp_links = false,
+        bool $remove_wp_meta = false,
+        string $rewrite_rules = '',
+        bool $use_relative_urls = false,
+        string $base_href,
+        string $base_url,
+        string $selected_deployment_option = 'folder',
+        string $wp_site_url,
+        string $wp_uploads_path
+    ) {
+        $this->allow_offline_usage = $allow_offline_usage;
+        $this->remove_conditional_head_comments = $remove_conditional_head_comments;
+        $this->remove_html_comments = $remove_html_comments;
+        $this->remove_wp_links = $remove_wp_links;
+        $this->remove_wp_meta = $remove_wp_meta;
+        $this->rewrite_rules = $rewrite_rules;
+        $this->use_relative_urls = $use_relative_urls;
+        $this->base_href = $base_href;
+        $this->base_url = $base_url;
+        $this->selected_deployment_option = $selected_deployment_option;
+        $this->wp_site_url = $wp_site_url;
+        $this->wp_uploads_path = $wp_uploads_path;
+        $this->processed_urls = [];
     }
 
     public function processCSS( string $css_document, string $page_url ) : bool {
@@ -48,13 +66,19 @@ class CSSProcessor extends StaticHTMLOutput {
             return false;
         }
 
-        $protocol = $this->getTargetSiteProtocol( $this->settings['baseUrl'] );
+        $protocol = $this->getTargetSiteProtocol( $this->base_url );
 
         $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
 
-        $this->raw_css = $css_document;
+        $site_url = rtrim( $this->wp_site_url, '/' );
+        $placeholder_url = rtrim( $this->placeholder_url, '/' );
+
         // initial rewrite of all site URLs to placeholder URLs
-        $this->rewriteSiteURLsToPlaceholder();
+        $this->raw_css = $this->rewriteSiteURLsToPlaceholder(
+            $css_document,
+            $site_url,
+            $placeholder_url
+        );
 
         $css_parser = new Sabberworm\CSS\Parser( $this->raw_css );
         $this->css_doc = $css_parser->parse();
@@ -81,15 +105,15 @@ class CSSProcessor extends StaticHTMLOutput {
                 $this->addDiscoveredURL( $original_link );
 
                 if ( $this->isInternalLink( $original_link ) ) {
-                    if ( ! isset( $this->settings['rewrite_rules'] ) ) {
-                        $this->settings['rewrite_rules'] = '';
+                    if ( ! isset( $this->rewrite_rules ) ) {
+                        $this->rewrite_rules = '';
                     }
 
                     // add base URL to rewrite_rules
-                    $this->settings['rewrite_rules'] .=
+                    $this->rewrite_rules .=
                         PHP_EOL .
                             $this->placeholder_url . ',' .
-                            $this->settings['baseUrl'];
+                            $this->base_url;
 
                     $rewrite_from = [];
                     $rewrite_to = [];
@@ -99,7 +123,7 @@ class CSSProcessor extends StaticHTMLOutput {
                         str_replace(
                             "\r",
                             '',
-                            $this->settings['rewrite_rules']
+                            $this->rewrite_rules
                         )
                     );
 
@@ -134,10 +158,29 @@ class CSSProcessor extends StaticHTMLOutput {
     }
 
     public function isInternalLink( string $link, string $domain = '' ) : bool {
+        if ( ! $link ) {
+            return false;
+        }
+
+        // if first char is . let's call that internal link
+        if ( $link[0] === '.' ) {
+            return true;
+        }
+
+        // if first char is / and second char isn't / or \, let's call that internal
+        if ( $link[0] === '/' ) {
+            if ( isset( $link[1] ) && $link[1] !== '/' && $link[1] !== '\\' ) {
+                return true;
+            }
+        }
+
         if ( ! $domain ) {
             $domain = $this->placeholder_url;
         }
 
+        // TODO: apply only to links starting with .,..,/,
+        // or any with just a path, like banana.png
+        // check link is same host as $this->url and not a subdomain
         $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
             $domain,
             PHP_URL_HOST
@@ -150,20 +193,46 @@ class CSSProcessor extends StaticHTMLOutput {
         return $this->css_doc->render();
     }
 
-    public function rewriteSiteURLsToPlaceholder() : void {
+    public function rewriteSiteURLsToPlaceholder(
+        string $raw_css,
+        string $site_url,
+        string $placeholder_url
+    ) : string {
+        $patterns = [
+            $site_url,
+            addcslashes( $site_url, '/' ),
+            $this->getProtocolRelativeURL(
+                $site_url
+            ),
+            $this->getProtocolRelativeURL(
+                $site_url . '//'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $site_url, '/' )
+            ),
+        ];
+
+        $replacements = [
+            $placeholder_url,
+            addcslashes( $placeholder_url, '/' ),
+            $this->getProtocolRelativeURL(
+                $placeholder_url
+            ),
+            $this->getProtocolRelativeURL(
+                $placeholder_url . '/'
+            ),
+            $this->getProtocolRelativeURL(
+                addcslashes( $placeholder_url, '/' )
+            ),
+        ];
+
         $rewritten_source = str_replace(
-            [
-                $this->settings['wp_site_url'],
-                addcslashes( $this->settings['wp_site_url'], '/' ),
-            ],
-            [
-                $this->placeholder_url,
-                addcslashes( $this->placeholder_url, '/' ),
-            ],
-            $this->raw_css
+            $patterns,
+            $replacements,
+            $raw_css
         );
 
-        $this->raw_css = $rewritten_source;
+        return $rewritten_source;
     }
 
     public function detectIfURLsShouldBeHarvested() : void {
@@ -174,11 +243,9 @@ class CSSProcessor extends StaticHTMLOutput {
                 $this->harvest_new_urls = true;
             }
         } else {
-            // @codingStandardsIgnoreStart
-            $this->harvest_new_urls = (
-                 $_POST['ajax_action'] === 'crawl_site'
-            );
-            // @codingStandardsIgnoreEnd
+            $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
+
+            $this->harvest_new_urls = $ajax_method === 'crawl_site';
         }
     }
 
@@ -224,7 +291,7 @@ class CSSProcessor extends StaticHTMLOutput {
         }
 
         file_put_contents(
-            $this->settings['wp_uploads_path'] .
+            $this->wp_uploads_path .
                 '/WP-STATIC-DISCOVERED-URLS.txt',
             PHP_EOL .
                 implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
@@ -232,7 +299,7 @@ class CSSProcessor extends StaticHTMLOutput {
         );
 
         chmod(
-            $this->settings['wp_uploads_path'] .
+            $this->wp_uploads_path .
                 '/WP-STATIC-DISCOVERED-URLS.txt',
             0664
         );
@@ -274,6 +341,23 @@ class CSSProcessor extends StaticHTMLOutput {
         }
 
         return $protocol;
+    }
+
+    // TODO: move some of these URLs into settings to avoid extra calls
+    public function getProtocolRelativeURL( string $url ) : string {
+        $this->destination_protocol_relative_url = str_replace(
+            [
+                'https:',
+                'http:',
+            ],
+            [
+                '',
+                '',
+            ],
+            $url
+        );
+
+        return $this->destination_protocol_relative_url;
     }
 }
 
