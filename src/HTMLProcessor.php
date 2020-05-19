@@ -583,7 +583,6 @@ class HTMLProcessor extends StaticHTMLOutput {
             $abs = $this->page_url->resolve( $original_link );
             $element->setAttribute( $attribute, $abs );
         }
-
     }
 
     public function isInternalLink( string $link, string $domain = '' ) : bool {
