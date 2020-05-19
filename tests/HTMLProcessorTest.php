@@ -491,4 +491,54 @@ final class HTMLProcessorTest extends TestCase {
             ],
         ];
     }
+
+    /**
+     * @covers StaticHTMLOutput\HTMLProcessor::__construct
+     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
+     * @dataProvider unicodeProvider
+     */
+    public function testUnicodeOutput(
+        $test_html_content,
+        $exp_result
+        ) {
+
+        $html_processor = new HTMLProcessor(
+            false, // $allow_offline_usage = false
+            false, // $remove_conditional_head_comments = false
+            false, // $remove_html_comments = false
+            false, // $remove_wp_links = false
+            false, // $remove_wp_meta = false
+            '', // $rewrite_rules = false
+            false, // $use_relative_urls = false
+            '', // $base_href
+            'https://mynewdomain.com', // $base_url
+            '', // $selected_deployment_option = 'folder'
+            'http://mydomain.com', // $wp_site_url
+            '/tmp/' // $wp_uploads_path - temp write file during test while refactoring
+        );
+
+        $html_processor->processHTML(
+            $test_html_content,
+            'http://mywpsite.com/a-page/'
+        );
+
+        $this->assertEquals(
+            $exp_result,
+            $html_processor->getHTML()
+        );
+
+    }
+
+    public function unicodeProvider() {
+        return [
+            'unicode characters in source' => [
+                '<!DOCTYPE html><html lang="en-US"><head></head><meta charset="utf-8"/><title>' .
+                'wpnotes | Поредният WordPress сайт</title><body></body></html>',
+                '<!DOCTYPE html>
+<html lang="en-US"><head></head><meta charset="utf-8"><title>wpnotes | Поредният WordPress са' .
+                'йт</title><body></body></html>
+',
+            ],
+        ];
+    }
 }

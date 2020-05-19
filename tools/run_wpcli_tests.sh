@@ -1,5 +1,7 @@
 #!/bin/bash
 
+### Outdated script, but may be worth reviving diagnostics theme
+
 # remove previous version, while preserving settings.
 wp plugin deactivate --uninstall wordpress-static-html-plugin
 
