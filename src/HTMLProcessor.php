@@ -524,6 +524,18 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function isInternalLink( string $link, string $domain = '' ) : bool {
+        // if first char is . let's call that internal link
+        if ( $link[0] === '.' ) {
+            return true;
+        }
+
+        // if first char is / and second char isn't / or \, let's call that internal
+        if ( $link[0] === '/' ) {
+            if ( isset( $link[1] ) && $link[1] !== '/' && $link[1] !== '\\' ) {
+                return true;
+            }
+        }
+
         if ( ! $domain ) {
             $domain = $this->placeholder_url;
         }

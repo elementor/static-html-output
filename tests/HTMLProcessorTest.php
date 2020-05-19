@@ -1,16 +1,8 @@
 <?php
 
-chdir( dirname(__FILE__) . '/../../plugin' );
-
-$plugin_dir = getcwd();
-
-require_once $plugin_dir . '/StaticHTMLOutput/StaticHTMLOutput.php';
-require_once $plugin_dir . '/StaticHTMLOutput/HTMLProcessor.php';
-require_once $plugin_dir . '/URL2/URL2.php';
-
 use PHPUnit\Framework\TestCase;
 
-final class HTMLProcessorIsInternalLinkTest extends TestCase {
+final class HTMLProcessorTest extends TestCase {
 
     /**
      * @dataProvider internalLinkProvider
@@ -29,17 +21,16 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
 
         */
 
-        $processor = $this->getMockBuilder( 'HTMLProcessor' )
+        $processor = $this->getMockBuilder( 'StaticHTMLOutput\HTMLProcessor' )
             ->setMethods(
-                array(
+                [
                     'loadSettings',
-                )
+                    'isInternalLink',
+                ]
             )
             ->getMock();
 
-        $processor->method( 'loadSettings' )->willReturn( null );
-
-        $processor->settings = array();
+        $processor->settings = [];
 
         $processor->placeholder_url = 'https://PLACEHOLDER.wpsho/';
 
@@ -53,40 +44,50 @@ final class HTMLProcessorIsInternalLinkTest extends TestCase {
 
     public function internalLinkProvider() {
         return [
-           'site root' =>  [
+            'FQU site root' => [
                 'https://PLACEHOLDER.wpsho/',
-                null,
-                true
+                '',
+                true,
             ],
-           'internal FQU with file in nested subdirs' =>  [
+            'FQU from site with file in nested subdirs' => [
                 'https://PLACEHOLDER.wpsho//category/travel/photos/001.jpg',
-                null,
-                true
+                '',
+                true,
             ],
-           'external FQU with matching domain as 2nd arg' =>  [
+            'external FQU with matching domain as 2nd arg' => [
                 'http://someotherdomain.com/category/travel/photos/001.jpg',
                 'http://someotherdomain.com',
-                true
+                true,
             ],
-           'not external FQU' =>  [
+            'not external FQU' => [
                 'http://someothersite.com/category/travel/photos/001.jpg',
-                null,
-                false
+                '',
+                false,
             ],
-           'not internal FQU with different domain as 2nd arg' =>  [
+            'not internal FQU with different domain as 2nd arg' => [
                 'https://PLACEHOLDER.wpsho//category/travel/photos/001.jpg',
                 'http://someotherdomain.com',
-                false
+                false,
             ],
-           'not subdomain' =>  [
+            'subdomain on same domain' => [
                 'https://sub.PLACEHOLDER.wpsho/',
-                null,
-                false
+                '',
+                false,
             ],
-           'not internal partial URL' =>  [
+            'site root relative URL' => [
                 '/category/travel/photos/001.jpg',
-                null,
-                false
+                '',
+                true,
+            ],
+            'doc root relative URL' => [
+                './category/travel/photos/001.jpg',
+                '',
+                true,
+            ],
+            'doc root relative parent URL' => [
+                '../category/travel/photos/001.jpg',
+                '',
+                true,
             ],
         ];
     }

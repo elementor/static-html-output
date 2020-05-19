@@ -55,10 +55,10 @@
     },
     "scripts": {
         "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
-        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/tests/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
-        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/js/*,*/tests/*,*/admin/*,*/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
-        "phpunit": "vendor/bin/phpunit ./tests/unit/",
-        "coverage": "vendor/bin/phpunit tests/unit --coverage-html coverage --whitelist src/",
+        "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/oldtests/*,*/tests/phpstan/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
+        "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/oldtests/*,*/js/*,*/tests/phpstan/*,*/admin/*,*/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
+        "phpunit": "vendor/bin/phpunit",
+        "coverage": "vendor/bin/phpunit --coverage-html coverage --whitelist src/",
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "test": [
             "composer validate --strict",
