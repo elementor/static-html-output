@@ -131,6 +131,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 = 6.6.10 =
 
  * fix ZIP download URL when dev site's protocol doesn't match Site URL's
+ * fix protocol relative URLs in stylesheet rewriting
  * support BunnyCDN's BETA API endpoint regions
 
 = 6.6.9 =
