@@ -1,10 +1,14 @@
 <?php
 
+namespace StaticHTMLOutput;
+
 use PHPUnit\Framework\TestCase;
 
 final class HTMLProcessorTest extends TestCase {
 
     /**
+     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::__construct
      * @dataProvider internalLinkProvider
      */
     public function testDetectsInternalLink( $link, $domain, $expectation ) {
@@ -20,7 +24,7 @@ final class HTMLProcessorTest extends TestCase {
             TODO: rename function to reflect what it's now doing
 
         */
-        $html_processor = new StaticHTMLOutput\HTMLProcessor(
+        $html_processor = new HTMLProcessor(
             false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
@@ -91,6 +95,11 @@ final class HTMLProcessorTest extends TestCase {
                 '../category/travel/photos/001.jpg',
                 '',
                 true,
+            ],
+            'empty link URL' => [
+                '',
+                '',
+                false,
             ],
         ];
     }
