@@ -771,4 +771,55 @@ final class HTMLProcessorTest extends TestCase {
             ],
         ];
     }
+
+    /**
+     * @covers StaticHTMLOutput\HTMLProcessor::__construct
+     * @dataProvider codeProvider
+     */
+    public function testCodeProcessing(
+        $test_html_content,
+        $exp_result
+        ) {
+        // note on HTMLProcessor, we have: $processed_html = html_entity_decode
+        $this->markTestSkipped( 'Need to revisit why we\'re doing entity decoding in output' );
+
+        $html_processor = new HTMLProcessor(
+            false, // $allow_offline_usage = false
+            false, // $remove_conditional_head_comments = false
+            false, // $remove_html_comments = false
+            false, // $remove_wp_links = false
+            false, // $remove_wp_meta = false
+            '', // $rewrite_rules = false
+            false, // $use_relative_urls = false
+            '', // $base_href
+            'https://mynewdomain.com', // $base_url
+            '', // $selected_deployment_option = 'folder'
+            'http://mydomain.com', // $wp_site_url
+            '/tmp/' // $wp_uploads_path - temp write file during test while refactoring
+        );
+
+        $html_processor->processHTML(
+            $test_html_content,
+            'http://mywpsite.com/a-page/'
+        );
+
+        $this->assertEquals(
+            $exp_result,
+            $html_processor->getHTML()
+        );
+
+    }
+
+    public function codeProvider() {
+        return [
+            'preserves HTML encoding within <code> el' => [
+                '<!DOCTYPE html><html lang="en-US"><body>' .
+                '<code>&lt;div class="gcse-searchbox-only"&gt;&lt;/div&gt;<code>' .
+                '</body></html>',
+                '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><body>' .
+                '<code>&lt;div class="gcse-searchbox-only"&gt;&lt;/div&gt;<code>' .
+                '</body></html>' . PHP_EOL,
+            ],
+        ];
+    }
 }

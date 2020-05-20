@@ -657,23 +657,18 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function detectUnchangedPlaceholderURLs( string $processed_html ) : string {
-        $placeholder_url = $this->placeholder_url;
+        // run just on the hostname of each
+        $placeholder_host = 'PLACEHOLDER.wpsho';
+        $destination_host = (string) parse_url( $this->base_url, PHP_URL_HOST );
 
-        if ( strpos( $processed_html, $placeholder_url ) !== false ) {
-            $placeholder_url = rtrim( $this->placeholder_url, '/' );
-            $destination_url = rtrim( $this->base_url, '/' );
-
-            return $this->rewriteUnchangedPlaceholderURLs(
-                $processed_html,
-                $placeholder_url,
-                $destination_url,
-                $this->rewrite_rules
-            );
+        if ( strpos( $processed_html, $placeholder_host ) !== false ) {
+            return str_replace( $placeholder_host, $destination_host, $processed_html );
         }
 
         return $processed_html;
     }
 
+    // TODO: kill this fn, should not be needed anymore
     public function rewriteUnchangedPlaceholderURLs(
         string $processed_html,
         string $placeholder_url,
