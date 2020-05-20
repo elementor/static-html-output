@@ -781,6 +781,24 @@ final class HTMLProcessorTest extends TestCase {
                 '<link rel="prefetch" href="https://mynewdomain.com">' .
                 '</head><title>title</title><body>body</body></html>' . PHP_EOL,
             ],
+
+            /*
+                 'site root relative link rewritten to destination protocol' => [
+                   false,
+                   '<!DOCTYPE html><html lang="en-US"><head>' .
+                   '<link rel="apple-touch-icon" sizes="180x180" ' .
+                   'href="/wp-content/uploads/fbrfg/apple-touch-icon.png">' .
+                   '<link rel="icon" type="image/png" sizes="32x32" ' .
+                   'href="/wp-content/uploads/fbrfg/favicon-32x32.png">' .
+                   '</head><title>title</title><body>body</body></html>',
+                   '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
+                   '<link rel="apple-touch-icon" sizes="180x180" ' .
+                   'href="/wp-content/uploads/fbrfg/apple-touch-icon.png">' .
+                   '<link rel="icon" type="image/png" sizes="32x32" ' .
+                   'href="/wp-content/uploads/fbrfg/favicon-32x32.png">' .
+                   '</head><title>title</title><body>body</body></html>' . PHP_EOL,
+               ],
+            */
         ];
     }
 
