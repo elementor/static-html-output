@@ -90,6 +90,25 @@ function static_html_output_ajax() {
         $class = new StaticHTMLOutput\GitLab();
     } elseif ( strpos( $ajax_method, 'github' ) !== false ) {
         $class = new StaticHTMLOutput\GitHub();
+
+        switch ( $ajax_method ) {
+            case 'github_prepare_export':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->prepareDeploy( true );
+                break;
+            case 'github_upload_files':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->upload_files();
+                break;
+            case 'test_github':
+                $class->test_upload();
+                break;
+        }
+
+        wp_die();
+        return null;
     } elseif ( strpos( $ajax_method, 'netlify' ) !== false ) {
         $class = new StaticHTMLOutput\Netlify();
 

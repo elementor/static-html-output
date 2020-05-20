@@ -56,22 +56,6 @@ class GitHub extends SitePublisher {
 
         if ( defined( 'WP_CLI' ) ) {
             return; }
-
-        switch ( $_POST['ajax_action'] ) {
-            case 'github_prepare_export':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->prepareDeploy( true );
-                break;
-            case 'github_upload_files':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->upload_files();
-                break;
-            case 'test_github':
-                $this->test_upload();
-                break;
-        }
     }
 
     public function upload_files() : void {
