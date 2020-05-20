@@ -574,4 +574,201 @@ final class HTMLProcessorTest extends TestCase {
             ],
         ];
     }
+
+    /**
+     * @covers StaticHTMLOutput\HTMLProcessor::__construct
+     * @covers StaticHTMLOutput\HTMLProcessor::processLink
+     * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
+     * @covers StaticHTMLOutput\HTMLProcessor::convertToOfflineURL
+     * @covers StaticHTMLOutput\HTMLProcessor::convertToRelativeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
+     * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::getHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
+     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::processHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::processHead
+     * @covers StaticHTMLOutput\HTMLProcessor::removeQueryStringFromInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
+     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
+     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateOfflineURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::shouldUseRelativeURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
+     * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
+     * @dataProvider processlinkProvider
+     */
+    public function testProcessLink(
+        $remove_wp_links_option,
+        $test_html_content,
+        $exp_result
+        ) {
+
+        $html_processor = new HTMLProcessor(
+            false, // $allow_offline_usage = false
+            false, // $remove_conditional_head_comments = false
+            false, // $remove_html_comments = false
+            $remove_wp_links_option, // $remove_wp_links = false
+            false, // $remove_wp_meta = false
+            '', // $rewrite_rules = false
+            false, // $use_relative_urls = false
+            '', // $base_href
+            'https://mynewdomain.com', // $base_url
+            '', // $selected_deployment_option = 'folder'
+            'http://mydomain.com', // $wp_site_url
+            '/tmp/' // $wp_uploads_path - temp write file during test while refactoring
+        );
+
+        $html_processor->processHTML(
+            $test_html_content,
+            'http://mywpsite.com/a-page/'
+        );
+
+        $this->assertEquals(
+            $exp_result,
+            $html_processor->getHTML()
+        );
+
+    }
+
+    public function processlinkProvider() {
+        return [
+            'enabled option strips select rel links' => [
+                true,
+                '<!DOCTYPE html><html lang="en-US"><head>' .
+                '<link rel="alternate" hreflang="es" href="https://example.com">' .
+                '<link rel="appendix" href="https://example.com">' .
+                '<link rel="author" href="https://example.com">' .
+                '<link rel="bookmark" href="https://example.com">' .
+                '<link rel="chapter" href="https://example.com">' .
+                '<link rel="contents" href="https://example.com">' .
+                '<link rel="copyright" href="https://example.com">' .
+                '<link rel="dns-prefetch" href="https://example.com">' .
+                '<link rel="EditURI" href="https://example.com">' .
+                '<link rel="glossary" href="https://example.com">' .
+                '<link rel="help" href="https://example.com">' .
+                '<link rel="icon" href="favicon.ico">' .
+                '<link rel="index" href="https://example.com">' .
+                '<link rel="license" href="https://example.com">' .
+                '<link rel="shortcut icon" href="https://example.com">' .
+                '<link rel="apple-touch-icon" href="https://example.com">' .
+                '<link rel="manifest" href="https://example.com">' .
+                '<link rel="mask-icon" href="https://example.com">' .
+                '<link rel="next" href="https://example.com">' .
+                '<link rel="pingback" href="https://example.com">' .
+                '<link rel="preconnect" href="https://example.com">' .
+                '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="preload" href="https://example.com">' .
+                '<link rel="prerender" href="https://example.com">' .
+                '<link rel="prev" href="https://example.com">' .
+                '<link rel="section" href="https://example.com">' .
+                '<link rel="start" href="https://example.com">' .
+                '<link rel="stylesheet" href="styles.css">' .
+                '<link rel="subsection" href="https://example.com">' .
+                '<link rel="wlwmanifest" href="https://example.com">' .
+                '<link rel="https://api.w.org/" href="http://example.com/wp-json/" />' .
+                '</head><title>title</title><body>body</body></html>',
+                '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
+                '<link rel="alternate" hreflang="es" href="https://example.com">' .
+                '<link rel="appendix" href="https://example.com">' .
+                '<link rel="author" href="https://example.com">' .
+                '<link rel="bookmark" href="https://example.com">' .
+                '<link rel="chapter" href="https://example.com">' .
+                '<link rel="contents" href="https://example.com">' .
+                '<link rel="copyright" href="https://example.com">' .
+                '<link rel="dns-prefetch" href="https://example.com">' .
+                '<link rel="glossary" href="https://example.com">' .
+                '<link rel="help" href="https://example.com">' .
+                '<link rel="icon" href="favicon.ico">' .
+                '<link rel="license" href="https://example.com">' .
+                '<link rel="shortcut icon" href="https://example.com">' .
+                '<link rel="apple-touch-icon" href="https://example.com">' .
+                '<link rel="manifest" href="https://example.com">' .
+                '<link rel="mask-icon" href="https://example.com">' .
+                '<link rel="next" href="https://example.com">' .
+                '<link rel="preconnect" href="https://example.com">' .
+                '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="preload" href="https://example.com">' .
+                '<link rel="prerender" href="https://example.com">' .
+                '<link rel="prev" href="https://example.com">' .
+                '<link rel="section" href="https://example.com">' .
+                '<link rel="stylesheet" href="styles.css">' .
+                '<link rel="subsection" href="https://example.com">' .
+                '</head><title>title</title><body>body</body></html>' . PHP_EOL,
+            ],
+            'disabled option strips select rel links' => [
+                false,
+                '<!DOCTYPE html><html lang="en-US"><head>' .
+                '<link rel="alternate" hreflang="es" href="https://example.com">' .
+                '<link rel="appendix" href="https://example.com">' .
+                '<link rel="author" href="https://example.com">' .
+                '<link rel="bookmark" href="https://example.com">' .
+                '<link rel="chapter" href="https://example.com">' .
+                '<link rel="contents" href="https://example.com">' .
+                '<link rel="copyright" href="https://example.com">' .
+                '<link rel="dns-prefetch" href="https://example.com">' .
+                '<link rel="EditURI" href="https://example.com">' .
+                '<link rel="glossary" href="https://example.com">' .
+                '<link rel="help" href="https://example.com">' .
+                '<link rel="icon" href="favicon.ico">' .
+                '<link rel="index" href="https://example.com">' .
+                '<link rel="license" href="https://example.com">' .
+                '<link rel="shortcut icon" href="https://example.com">' .
+                '<link rel="apple-touch-icon" href="https://example.com">' .
+                '<link rel="manifest" href="https://example.com">' .
+                '<link rel="mask-icon" href="https://example.com">' .
+                '<link rel="next" href="https://example.com">' .
+                '<link rel="pingback" href="https://example.com">' .
+                '<link rel="preconnect" href="https://example.com">' .
+                '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="preload" href="https://example.com">' .
+                '<link rel="prerender" href="https://example.com">' .
+                '<link rel="prev" href="https://example.com">' .
+                '<link rel="section" href="https://example.com">' .
+                '<link rel="start" href="https://example.com">' .
+                '<link rel="stylesheet" href="styles.css">' .
+                '<link rel="subsection" href="https://example.com">' .
+                '<link rel="wlwmanifest" href="https://example.com">' .
+                '<link rel="https://api.w.org/" href="http://example.com/wp-json/" />' .
+                '</head><title>title</title><body>body</body></html>',
+                '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
+                '<link rel="alternate" hreflang="es" href="https://example.com">' .
+                '<link rel="appendix" href="https://example.com">' .
+                '<link rel="author" href="https://example.com">' .
+                '<link rel="bookmark" href="https://example.com">' .
+                '<link rel="chapter" href="https://example.com">' .
+                '<link rel="contents" href="https://example.com">' .
+                '<link rel="copyright" href="https://example.com">' .
+                '<link rel="dns-prefetch" href="https://example.com">' .
+                '<link rel="EditURI" href="https://example.com">' .
+                '<link rel="glossary" href="https://example.com">' .
+                '<link rel="help" href="https://example.com">' .
+                '<link rel="icon" href="favicon.ico">' .
+                '<link rel="index" href="https://example.com">' .
+                '<link rel="license" href="https://example.com">' .
+                '<link rel="shortcut icon" href="https://example.com">' .
+                '<link rel="apple-touch-icon" href="https://example.com">' .
+                '<link rel="manifest" href="https://example.com">' .
+                '<link rel="mask-icon" href="https://example.com">' .
+                '<link rel="next" href="https://example.com">' .
+                '<link rel="pingback" href="https://example.com">' .
+                '<link rel="preconnect" href="https://example.com">' .
+                '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="preload" href="https://example.com">' .
+                '<link rel="prerender" href="https://example.com">' .
+                '<link rel="prev" href="https://example.com">' .
+                '<link rel="section" href="https://example.com">' .
+                '<link rel="start" href="https://example.com">' .
+                '<link rel="stylesheet" href="styles.css">' .
+                '<link rel="subsection" href="https://example.com">' .
+                '<link rel="wlwmanifest" href="https://example.com">' .
+                '<link rel="https://api.w.org/" href="http://example.com/wp-json/">' .
+                '</head><title>title</title><body>body</body></html>' . PHP_EOL,
+            ],
+        ];
+    }
 }

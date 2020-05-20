@@ -286,16 +286,13 @@ class HTMLProcessor extends StaticHTMLOutput {
         if ( $this->remove_wp_links ) {
             $relative_links_to_rm = [
                 'shortlink',
-                'canonical',
                 'pingback',
-                'alternate',
                 'EditURI',
                 'wlwmanifest',
                 'index',
                 'profile',
-                'prev',
-                'next',
-                'wlwmanifest',
+                'start',
+                'index',
             ];
 
             $link_rel = $element->getAttribute( 'rel' );
