@@ -30,25 +30,6 @@ class S3 extends SitePublisher {
 
         if ( defined( 'WP_CLI' ) ) {
             return; }
-
-        switch ( $_POST['ajax_action'] ) {
-            case 'test_s3':
-                $this->test_s3();
-                break;
-            case 's3_prepare_export':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->prepareDeploy();
-                break;
-            case 's3_transfer_files':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->upload_files();
-                break;
-            case 'cloudfront_invalidate_all_items':
-                $this->cloudfront_invalidate_all_items();
-                break;
-        }
     }
 
     public function upload_files() : void {
@@ -151,8 +132,8 @@ class S3 extends SitePublisher {
                 echo 'SUCCESS';
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'S3 ERROR RETURNED: ' . $e );
-            echo "There was an error testing S3.\n";
+            WsLog::l( 'S3 TEST ERROR RETURNED: ' . $e );
+            throw new StaticHTMLOutputException( $e );
         }
     }
 

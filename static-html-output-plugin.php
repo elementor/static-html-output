@@ -3,7 +3,7 @@
  * Plugin Name: Static HTML Output
  * Plugin URI:  https://statichtmloutput.com
  * Description: Security & Performance via static website publishing.
- * Version:     6.6.10
+ * Version:     6.6.12
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
@@ -86,12 +86,51 @@ function static_html_output_ajax() {
         }
     } elseif ( strpos( $ajax_method, 'bitbucket' ) !== false ) {
         $class = new StaticHTMLOutput\Bitbucket();
-    } elseif ( strpos( $ajax_method, 'github' ) !== false ) {
-        $class = new StaticHTMLOutput\GitHub();
     } elseif ( strpos( $ajax_method, 'gitlab' ) !== false ) {
         $class = new StaticHTMLOutput\GitLab();
+    } elseif ( strpos( $ajax_method, 'github' ) !== false ) {
+        $class = new StaticHTMLOutput\GitHub();
+    } elseif ( strpos( $ajax_method, 'netlify' ) !== false ) {
+        $class = new StaticHTMLOutput\Netlify();
+
+        switch ( $ajax_method ) {
+            case 'test_netlify':
+                $class->loadArchive();
+                $class->test_netlify();
+                break;
+            case 'netlify_do_export':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->upload_files();
+                break;
+        }
+
+        wp_die();
+        return null;
     } elseif ( strpos( $ajax_method, 's3' ) !== false ) {
         $class = new StaticHTMLOutput\S3();
+
+        switch ( $ajax_method ) {
+            case 'test_s3':
+                $class->test_s3();
+                break;
+            case 's3_prepare_export':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->prepareDeploy();
+                break;
+            case 's3_transfer_files':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->upload_files();
+                break;
+            case 'cloudfront_invalidate_all_items':
+                $class->cloudfront_invalidate_all_items();
+                break;
+        }
+
+        wp_die();
+        return null;
     } elseif ( strpos( $ajax_method, 'cloudfront' ) !== false ) {
         $class = new StaticHTMLOutput\S3();
     } elseif ( strpos( $ajax_method, 'ftp' ) !== false ) {

@@ -29,18 +29,6 @@ class Netlify extends SitePublisher {
 
         if ( defined( 'WP_CLI' ) ) {
             return; }
-
-        switch ( $_POST['ajax_action'] ) {
-            case 'test_netlify':
-                $this->loadArchive();
-                $this->test_netlify();
-                break;
-            case 'netlify_do_export':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->upload_files();
-                break;
-        }
     }
 
     public function detectSiteID() : void {
@@ -117,15 +105,9 @@ class Netlify extends SitePublisher {
                     echo 'SUCCESS';
                 }
             } else {
-                $code = 404;
-
-                WsLog::l(
-                    'BAD RESPONSE STATUS FROM API (' . $code . ')'
-                );
-
-                http_response_code( $code );
-
-                echo 'Netlify test error';
+                $err = 'BAD RESPONSE STATUS FROM NETLIFY API';
+                WsLog::l( $err );
+                throw new StaticHTMLOutputException( $err );
             }
         } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );

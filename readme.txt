@@ -4,7 +4,7 @@ Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.4.1
 Requires PHP: 7.2
-Stable tag: 6.6.9
+Stable tag: 6.6.12
 
 Publish your website as static HTML for improved performance and security.
 
@@ -127,6 +127,10 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 7. Ways to support the plugin
 
 == Changelog ==
+
+= 6.6.12 =
+
+ * fix deployment test button giving false positives
 
 = 6.6.10 =
 
@@ -856,13 +860,13 @@ Critical upgrade with bugfixes and improvements
 
 = 2.8 =
 
-Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@statichtmloutput.com for assistance.
+Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@wp2static.com for assistance.
 
  * Bugfix: critical fix for Dropbox, BunnyCDN and Netlify exports
 
 = 2.7 =
 
-Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@statichtmloutput.com for assistance.
+Critical upgrade - recommended for all users. If you have troubles upgrading, please contact the developer at help@wp2static.com for assistance.
 
  * Bugfix: Fixes major issue where a failed first export blocked subsequent ones unless page was refreshed
  * Bugfix: Plugin was not respecting the Output Directory Override

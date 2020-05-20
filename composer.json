@@ -1,7 +1,7 @@
 {
     "name": "wp2static/static-html-output-plugin",
-    "description": "WordPress Static HTML Generator Plugin.",
-    "homepage": "https://wp2static.com",
+    "description": "WordPress Static HTML Output Plugin.",
+    "homepage": "https://statichtmloutput.com",
       "license": "UNLICENSE",
       "authors": [
         {
