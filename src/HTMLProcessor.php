@@ -667,7 +667,21 @@ class HTMLProcessor extends StaticHTMLOutput {
         $destination_host = (string) parse_url( $this->base_url, PHP_URL_HOST );
 
         if ( strpos( $processed_html, $placeholder_host ) !== false ) {
-            return str_replace( $placeholder_host, $destination_host, $processed_html );
+            // bulk replace hosts
+            $processed_html = str_replace(
+                $placeholder_host,
+                $destination_host,
+                $processed_html
+            );
+        }
+
+        // force http -> https if destination is https
+        if ( $this->destination_protocol === 'https://' ) {
+            $processed_html = str_replace(
+                'http://' . $destination_host,
+                'https://' . $destination_host,
+                $processed_html
+            );
         }
 
         return $processed_html;

@@ -119,7 +119,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
      * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
      * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
-     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
      * @dataProvider anchorTagProvider
      */
     public function testNormalizePartialURLInAnchor(
@@ -584,6 +583,7 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
      * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
      * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::getBaseURLRewritePatterns
      * @covers StaticHTMLOutput\HTMLProcessor::getHTML
      * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
      * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
@@ -770,6 +770,15 @@ final class HTMLProcessorTest extends TestCase {
                 '<link rel="subsection" href="https://example.com">' .
                 '<link rel="wlwmanifest" href="https://example.com">' .
                 '<link rel="https://api.w.org/" href="http://example.com/wp-json/">' .
+                '</head><title>title</title><body>body</body></html>' . PHP_EOL,
+            ],
+            'protocol relative link always rewritten to destination protocol' => [
+                false,
+                '<!DOCTYPE html><html lang="en-US"><head>' .
+                '<link rel="prefetch" href="//mydomain.com">' .
+                '</head><title>title</title><body>body</body></html>',
+                '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
+                '<link rel="prefetch" href="https://mynewdomain.com">' .
                 '</head><title>title</title><body>body</body></html>' . PHP_EOL,
             ],
         ];
