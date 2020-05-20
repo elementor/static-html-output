@@ -148,7 +148,7 @@ class Controller {
             'manage_options',
             self::HOOK,
             [ 'StaticHTMLOutput\Controller', 'renderOptionsPage' ],
-            'dashicons-arrow-right-alt'
+            'dashicons-migrate'
         );
 
         add_action(
