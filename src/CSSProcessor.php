@@ -68,7 +68,7 @@ class CSSProcessor extends StaticHTMLOutput {
      */
     public $raw_css;
     /**
-     * @var string
+     * @var Net_URL2
      */
     public $page_url;
     /**
@@ -123,9 +123,7 @@ class CSSProcessor extends StaticHTMLOutput {
         }
 
         $protocol = $this->getTargetSiteProtocol( $this->base_url );
-
         $this->placeholder_url = $protocol . 'PLACEHOLDER.wpsho/';
-
         $site_url = rtrim( $this->wp_site_url, '/' );
         $placeholder_url = rtrim( $this->placeholder_url, '/' );
 
@@ -138,11 +136,8 @@ class CSSProcessor extends StaticHTMLOutput {
 
         $css_parser = new Sabberworm\CSS\Parser( $this->raw_css );
         $this->css_doc = $css_parser->parse();
-
         $this->page_url = new Net_URL2( $page_url );
-
         $this->detectIfURLsShouldBeHarvested();
-
         $this->discovered_urls = [];
 
         foreach ( $this->css_doc->getAllValues() as $node_value ) {
@@ -322,25 +317,29 @@ class CSSProcessor extends StaticHTMLOutput {
             }
 
             if ( $this->isInternalLink( $url ) ) {
+                // get FQU resolved to this page
+                $url = $this->page_url->resolve( $url );
+
                 $discovered_url_without_site_url =
                     str_replace(
-                        rtrim( $this->placeholder_url, '/' ),
+                        rtrim( $this->wp_site_url, '/' ),
                         '',
                         $url
                     );
 
-                $this->discovered_urls[] = $discovered_url_without_site_url;
+                if ( is_string( $discovered_url_without_site_url ) ) {
+                    $this->discovered_urls[] = $discovered_url_without_site_url;
+                }
             }
         }
     }
 
     public function writeDiscoveredURLs() : void {
-        // @codingStandardsIgnoreStart
-        if ( isset( $_POST['ajax_action'] ) &&
-            $_POST['ajax_action'] === 'crawl_again' ) {
+        $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
+
+        if ( $ajax_method === 'crawl_again' ) {
             return;
         }
-        // @codingStandardsIgnoreEnd
 
         if ( defined( 'WP_CLI' ) ) {
             if ( defined( 'CRAWLING_DISCOVERED' ) ) {

@@ -35,6 +35,92 @@ class FilesHelper {
     }
 
     /**
+     * Detect Active Plugin CSS URLs
+     *
+     * @return string[] list of URLs
+     */
+    public static function getPluginCSSURLs() : array {
+        $files = [];
+
+        $plugins_path = trailingslashit( WP_PLUGIN_DIR );
+        $plugins_url = trailingslashit( plugins_url() );
+        $active_plugins = get_option( 'active_plugins' );
+
+        $active_plugin_dirs = array_map(
+            function ( $active_plugin ) use ( $plugins_path ) {
+                $plugin_base = dirname( $active_plugin );
+
+                // exclude SSG plugin dirs and known uploads dir excludables
+                $exclude_plugins = [
+                    'simplerstatic',
+                    'static-html-output-plugin',
+                    'wp2static',
+                ];
+
+                foreach ( $exclude_plugins as $exclude_plugin ) {
+                    if ( strpos( $plugin_base, $exclude_plugin ) !== false ) {
+                        return;
+                    }
+                }
+
+                return $plugins_path . $plugin_base;
+            },
+            $active_plugins
+        );
+
+        foreach ( $active_plugin_dirs as $active_plugin_dir ) {
+
+            if ( is_dir( $active_plugin_dir ) ) {
+                $iterator = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator(
+                        $active_plugin_dir,
+                        RecursiveDirectoryIterator::SKIP_DOTS
+                    )
+                );
+
+                foreach ( $iterator as $filename => $file_object ) {
+                    if ( strpos( strtolower( $filename ), 'vendor' ) !== false ) {
+                        continue;
+                    }
+
+                    $path_crawlable = strpos( strtolower( $filename ), 'css' ) !== false;
+
+                    if ( ! $path_crawlable ) {
+                        continue;
+                    }
+
+                    // Standardise all paths to use / (Windows support)
+                    // TODO: should come earlier in chain
+                    $filename = wp_normalize_path( $filename );
+
+                    $detected_filename =
+                        str_replace(
+                            $plugins_path,
+                            $plugins_url,
+                            $filename
+                        );
+
+                    $detected_filename =
+                        str_replace(
+                            get_home_url(),
+                            '',
+                            $detected_filename
+                        );
+
+                    if ( is_string( $detected_filename ) ) {
+                        array_push(
+                            $files,
+                            $detected_filename
+                        );
+                    }
+                }
+            }
+        }
+
+        return $files;
+    }
+
+    /**
      * @return string[] list of URLs
      */
     public static function getThemeFiles( string $theme_type ) : array {
@@ -63,7 +149,9 @@ class FilesHelper {
             );
 
             foreach ( $iterator as $filename => $file_object ) {
-                $path_crawlable = self::filePathLooksCrawlable( $filename );
+                // $path_crawlable = self::filePathLooksCrawlable( $filename );
+                // for theme files, let's just grab CSS files, as these will yield other link
+                $path_crawlable = strpos( strtolower( $filename ), 'css' ) !== false;
 
                 $detected_filename =
                     str_replace(
@@ -438,6 +526,7 @@ class FilesHelper {
                     $url_queue,
                     self::getThemeFiles( 'parent' ),
                     self::getThemeFiles( 'child' ),
+                    self::getPluginCSSURLs(),
                     self::detectVendorFiles( $wp_site->site_url ),
                     self::getListOfLocalFilesByUrl( $uploads_url ),
                     self::getAllWPPostURLs( $base_url )
