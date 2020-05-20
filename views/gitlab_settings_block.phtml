@@ -16,7 +16,7 @@
           <label for="glToken">Personl Access Token</label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'glToken', 'GitLab Personal Access Token', '<a href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html" target="_blank">Get one here (with API access)</a>', 'password'); ?>
+          <?php $tpl->displayTextfield($this, 'glToken', 'GitLab Personal Access Token', '<a href="https://gitlab.com/profile/personal_access_tokens" target="_blank">Get new one</a>', 'password'); ?>
         </td>
       </tr>
       <tr>
@@ -32,7 +32,7 @@
           <label for="glBranch">Branch</label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'glBranch', 'Branch', ''); ?>
+          <?php $tpl->displayTextfield($this, 'glBranch', 'Branch', 'Usually <code>master</code> for GitLab Pages'); ?>
         </td>
       </tr>
       <tr>
@@ -40,7 +40,7 @@
           <label for="glPath">Subdirectory</label>
         </th>
         <td>
-          <?php $tpl->displayTextfield($this, 'glPath', 'Path within repository', 'Usually the repository root (leave this blank) or the \'doc\' folder'); ?>
+          <?php $tpl->displayTextfield($this, 'glPath', 'Path within repository', 'Usually leave blank for GitLab Pages and plugin will create a <code>.gitlab-ci.yml</code> file for you'); ?>
         </td>
       </tr>
       <tr>

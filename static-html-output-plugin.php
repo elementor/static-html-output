@@ -108,6 +108,24 @@ function static_html_output_ajax() {
     } elseif ( strpos( $ajax_method, 'gitlab' ) !== false ) {
         $class = new StaticHTMLOutput\GitLab();
 
+        switch ( $ajax_method ) {
+            case 'gitlab_prepare_export':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->getListOfFilesInRepo();
+                $class->prepareDeploy( true );
+                $class->createGitLabPagesConfig();
+                break;
+            case 'gitlab_upload_files':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->upload_files();
+                break;
+            case 'test_gitlab':
+                $class->test_file_create();
+                break;
+        }
+
         wp_die();
         return null;
     } elseif ( strpos( $ajax_method, 'github' ) !== false ) {

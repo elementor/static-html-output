@@ -22,24 +22,6 @@ class GitLab extends SitePublisher {
 
         if ( defined( 'WP_CLI' ) ) {
             return; }
-
-        switch ( $_POST['ajax_action'] ) {
-            case 'gitlab_prepare_export':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->getListOfFilesInRepo();
-
-                $this->prepareDeploy( true );
-                break;
-            case 'gitlab_upload_files':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->upload_files();
-                break;
-            case 'test_gitlab':
-                $this->test_file_create();
-                break;
-        }
     }
 
     public function upload_files() : void {
@@ -176,7 +158,6 @@ class GitLab extends SitePublisher {
         }
 
         if ( $this->uploadsCompleted() ) {
-            $this->createGitLabPagesConfig();
             $this->finalizeDeployment();
         }
     }
