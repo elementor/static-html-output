@@ -662,6 +662,7 @@ final class HTMLProcessorTest extends TestCase {
                 '<link rel="pingback" href="https://example.com">' .
                 '<link rel="preconnect" href="https://example.com">' .
                 '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="dns-prefetch" href="//s.w.org">' .
                 '<link rel="preload" href="https://example.com">' .
                 '<link rel="prerender" href="https://example.com">' .
                 '<link rel="prev" href="https://example.com">' .
@@ -725,6 +726,7 @@ final class HTMLProcessorTest extends TestCase {
                 '<link rel="pingback" href="https://example.com">' .
                 '<link rel="preconnect" href="https://example.com">' .
                 '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="dns-prefetch" href="//s.w.org">' .
                 '<link rel="preload" href="https://example.com">' .
                 '<link rel="prerender" href="https://example.com">' .
                 '<link rel="prev" href="https://example.com">' .
@@ -758,6 +760,7 @@ final class HTMLProcessorTest extends TestCase {
                 '<link rel="pingback" href="https://example.com">' .
                 '<link rel="preconnect" href="https://example.com">' .
                 '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="dns-prefetch" href="//s.w.org">' .
                 '<link rel="preload" href="https://example.com">' .
                 '<link rel="prerender" href="https://example.com">' .
                 '<link rel="prev" href="https://example.com">' .

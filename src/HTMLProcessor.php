@@ -307,6 +307,11 @@ class HTMLProcessor extends StaticHTMLOutput {
                 $element_parent->removeChild( $element );
             } elseif ( strpos( $link_rel, '.w.org' ) !== false ) {
                 $element_parent->removeChild( $element );
+            } elseif (
+                $link_rel === 'dns-prefetch' &&
+                strpos( $element->getAttribute( 'href' ), 's.w.org' ) !== false
+            ) {
+                $element_parent->removeChild( $element );
             }
         }
     }
