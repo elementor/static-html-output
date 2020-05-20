@@ -131,6 +131,9 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 = 6.6.13 =
 
  * preserve desired link elements when using "Remove WP Tags" option
+ * fix for detecting common missing assets
+ * fix for PLACEHOLDER.wpsho URLs remaining
+ * fix for mixed-content protocols when deploying to https
 
 = 6.6.12 =
 
