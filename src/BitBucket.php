@@ -47,22 +47,6 @@ class BitBucket extends SitePublisher {
 
         if ( defined( 'WP_CLI' ) ) {
             return; }
-
-        switch ( $_POST['ajax_action'] ) {
-            case 'bitbucket_prepare_export':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->prepareDeploy( true );
-                break;
-            case 'bitbucket_upload_files':
-                $this->bootstrap();
-                $this->loadArchive();
-                $this->upload_files();
-                break;
-            case 'test_bitbucket':
-                $this->test_upload();
-                break;
-        }
     }
 
     public function upload_files() : void {

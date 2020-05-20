@@ -85,9 +85,31 @@ function static_html_output_ajax() {
             $ajax_method = 'crawl_discovered_links';
         }
     } elseif ( strpos( $ajax_method, 'bitbucket' ) !== false ) {
-        $class = new StaticHTMLOutput\Bitbucket();
+        $class = new StaticHTMLOutput\BitBucket();
+
+        switch ( $ajax_method ) {
+            case 'bitbucket_prepare_export':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->prepareDeploy( true );
+                break;
+            case 'bitbucket_upload_files':
+                $class->bootstrap();
+                $class->loadArchive();
+                $class->upload_files();
+                break;
+            case 'test_bitbucket':
+                $class->test_upload();
+                break;
+        }
+
+        wp_die();
+        return null;
     } elseif ( strpos( $ajax_method, 'gitlab' ) !== false ) {
         $class = new StaticHTMLOutput\GitLab();
+
+        wp_die();
+        return null;
     } elseif ( strpos( $ajax_method, 'github' ) !== false ) {
         $class = new StaticHTMLOutput\GitHub();
 
