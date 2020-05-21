@@ -11,105 +11,23 @@ WordPress plugin to generate a static copy of your site and deploy to GitHub Pag
  - [WP2Static](https://github.com/WP2Static/wp2static)
  - [SimplerStatic](https://github.com/WP2Static/simplerstatic)
 
-## Table of contents
-
-* [External resources](#external-resources)
-* [Opinionated software](#opinionated-software)
-* [WP-CLI commands](#wp-cli-commands)
-* [Hooks](#hooks)
-  * [Modify the initial list of URLs to crawl](#modify-the-initial-list-of-urls-to-crawl)
-  * [Post-deployment hook](#post-deployment-hook)
-* [Development](#development)
-* [Localisation / translations](#localisation--translations)
-* [Support](#support)
-
-## External resources
-
  - [Static HTML Output on wordpress.org](https://wordpress.org/plugins/static-html-output-plugin)
  - [Homepage](https://statichtmloutput.com)
  - [Documentation](https://statichtmloutput.com/docs/)
  - [Forum](https://forum.wp2static.com)
 
-
 ## WP-CLI commands
 
- - `wp statichtmloutput options --help`
-```
-NAME
+ - `wp statichtmloutput COMMAND`
 
-  wp statichtmloutput options
+Where `COMMAND` can be any of:
 
-DESCRIPTION
+ - `options`
+ - `generate`
+ - `deploy`
+ - `deploy_cache`
 
-  Read / write plugin options
-
-SYNOPSIS
-
-  wp statichtmloutput options
-
-OPTIONS
-
-  <list> [--reveal-sensitive-values]
-
-  Get all option names and values (explicitly reveal sensitive values)
-
-  <get> <option-name>
-
-  Get or set a specific option via name
-
-  <set> <option-name> <value>
-
-  Set a specific option via name
-
-
-EXAMPLES
-
-  List all options
-
-    wp statichtmloutput options list
-
-  List all options (revealing sensitive values)
-
-    wp statichtmloutput options list --reveal_sensitive_values
-
-  Get option
-
-    wp statichtmloutput options get selected_deployment_option
-
-  Set option
-
-    wp statichtmloutput options set baseUrl 'https://mystaticsite.com'
-```
- - `wp statichtmloutput generate`
-
-```
-Generating static copy of WordPress site
-Success: Generated static site archive in 00:00:04
-```
-
- - `wp statichtmloutput deploy --test`
- - `wp statichtmloutput deploy`
- - `wp statichtmloutput generate`
-
-```
-Generating static copy of WordPress site
-Success: Generated static site archive in 00:00:04
-```
-
- - `wp statichtmloutput deploy --test`
- - `wp statichtmloutput deploy`
-
-```
-Deploying static site via: zip
-Success: Deployed to: zip in 00:00:01
-Sending confirmation email...
-```
-
-Delete deploy cache
-
-`wp statichtmloutput deploy_cache delete`
-
-With option `--force`, else will prompt for confirmation.
+Get help for any command by appending `--help`
 
 ## Hooks
 
@@ -214,5 +132,5 @@ Localisation within the plugin isn't supported. Rather, it's recommended to use 
 
 ## Support
 
-Please [raise an issue](https://github.com/WP2Static/static-html-output-plugin/issues/new) here on GitHub or on the plugin's [support forum](https://forum.statichtmloutput.com).
+Please [raise an issue](https://github.com/WP2Static/static-html-output-plugin/issues/new) here on GitHub or on the plugin's [support forum](https://forum.wp2static.com).
 
