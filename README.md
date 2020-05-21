@@ -4,24 +4,17 @@
 
 WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify, etc.  Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
 
-**Note: This is the continuation of what was originally named "WP Static HTML Output Plugin". A new approach is available in [WP2Static](https://github.com/WP2Static/wp2static)**
-
-
 [![CircleCI](https://circleci.com/gh/WP2Static/static-html-output-plugin.svg?style=svg)](https://circleci.com/gh/WP2Static/static-html-output-plugin)
 
+### Other WordPress SSGs I mantain
 
-## WordPress as a Static Site Generator
-
-Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/watch?v=HPc4JjBvkrU)
-
-[![WordPress as a Static Site Generator](http://img.youtube.com/vi/HPc4JjBvkrU/0.jpg)](http://www.youtube.com/watch?v=HPc4JjBvkrU)
-
+ - [WP2Static](https://github.com/WP2Static/wp2static)
+ - [SimplerStatic](https://github.com/WP2Static/simplerstatic)
 
 ## Table of contents
 
 * [External resources](#external-resources)
 * [Opinionated software](#opinionated-software)
-* [Installation](#installation)
 * [WP-CLI commands](#wp-cli-commands)
 * [Hooks](#hooks)
   * [Modify the initial list of URLs to crawl](#modify-the-initial-list-of-urls-to-crawl)
@@ -29,24 +22,13 @@ Watch Leon Stafford's [talk from WordCamp Brisbane 2018](http://www.youtube.com/
 * [Development](#development)
 * [Localisation / translations](#localisation--translations)
 * [Support](#support)
-* [Notes](#notes)
 
 ## External resources
 
- - [WordPress.org plugin page](https://wordpress.org/plugins/static-html-output-plugin)
- - [Marketing site](https://statichtmloutput.com)
- - [Documentation](https://statichtmloutput.com)
- - [Forum](https://forum.statichtmloutput.com)
- - [CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput) *master* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/master) *develop* [![CircleCI](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop.svg?style=svg)](https://circleci.com/gh/leonstafford/statichtmloutput/tree/develop)
-
-## Opinionated software
-
- - speed over beautiful code
- - human readable code over short variable names
- - own-code vs adding libraries
- - benchmarking over opinions (performance)
- - less clicks == better UX
- - user configurable options vs developer opinions
+ - [Static HTML Output on wordpress.org](https://wordpress.org/plugins/static-html-output-plugin)
+ - [Homepage](https://statichtmloutput.com)
+ - [Documentation](https://statichtmloutput.com/docs/)
+ - [Forum](https://forum.wp2static.com)
 
 
 ## WP-CLI commands
@@ -207,19 +189,23 @@ Archive Object
 
     [path] => /srv/www/example.com/current/web/app/uploads/wp-static-html-output-1547668758/
     [name] => wp-static-html-output-1547668758
-    [crawl_list] => 
-    [export_log] => 
+    [crawl_list] =>
+    [export_log] =>
 )
 
 ```
 
-## Development
+## Contributing / development
 
-This repo contains the latest code, which you can clone/download to get the bleeding edge, else install via the [official WordPress Plugin page](https://wordpress.org/plugins/static-html-output-plugin/)
+Contributions are very much welcome! Please don't be intimidated to file an issue, create a Pull Request or email me (Leon) [me@ljs.dev](mailto:me@ljs.dev).
 
-If you'd like to contribute, please follow the usual GitHub procedures (create an Issue, fork repo, submit PR). If you're unsure about any of that, contact me and I'll be happy to help.
+### Developing
 
-In trying to make development/contributing easier, we'll keep requirements to a minimum. If you prefer Docker, Local by FlyWheel, Valet, Bedrock, Linux, BSD, Mac, they're all fine. This is a WordPress plugin, so anywhere you can run WordPress, you can do development on this :)
+ - `git clone git@github.com:WP2Static/static-html-output-plugin.git`
+ - `cd static-html-output-plugin`
+ - `composer install`
+ - `composer test`
+ - `composer coverage` (optional coverage generation, requires [Xdebug](https://xdebug.org))
 
 
 ### Localisation / translations
@@ -229,8 +215,4 @@ Localisation within the plugin isn't supported. Rather, it's recommended to use 
 ## Support
 
 Please [raise an issue](https://github.com/WP2Static/static-html-output-plugin/issues/new) here on GitHub or on the plugin's [support forum](https://forum.statichtmloutput.com).
-
-## Notes
-
-When cloning the repo for direct use, clone it into a dir named after the official WP plugin's slug, `static-html-output-plugin`, this will make life easier.
 
