@@ -145,6 +145,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * Implement code quality tooling
  * Performance optimization for slow hosting providers
  * Minor fix for setting base HREF option
+ * use WP's mime-types lookup for S3 deployer
 
 = 6.6.7 =
 
