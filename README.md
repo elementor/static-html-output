@@ -1,4 +1,4 @@
-[![Static HTML Output](https://statichtmloutput.com/wp-content/uploads/2020/05/cropped-logo.png)](https://statichtmloutput.com)
+[![Static HTML Output](https://cdn.statically.io/img/statichtmloutput.com/wp-content/uploads/2020/05/cropped-logo.png?w=200&f=auto)](https://statichtmloutput.com)
 
 # StaticHTMLOutput
 
