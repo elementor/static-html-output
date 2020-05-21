@@ -4,7 +4,7 @@ Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.4.1
 Requires PHP: 7.2
-Stable tag: 6.6.13
+Stable tag: 6.6.14
 
 Publish your website as static HTML for improved performance and security.
 
@@ -127,6 +127,10 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 7. Ways to support the plugin
 
 == Changelog ==
+
+= 6.6.13 =
+
+ * TBC
 
 = 6.6.13 =
 
