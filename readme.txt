@@ -128,29 +128,16 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
 == Changelog ==
 
-= 6.6.13 =
-
- * TBC
-
-= 6.6.13 =
+= 6.6.14 =
 
  * preserve desired link elements when using "Remove WP Tags" option
  * fix for detecting common missing assets
  * fix for PLACEHOLDER.wpsho URLs remaining
  * fix for mixed-content protocols when deploying to https
-
-= 6.6.12 =
-
  * fix deployment test button giving false positives
-
-= 6.6.10 =
-
  * fix ZIP download URL when dev site's protocol doesn't match Site URL's
  * fix protocol relative URLs in stylesheet rewriting
  * support BunnyCDN's BETA API endpoint regions
-
-= 6.6.9 =
-
  * Tested with WP 5.4.1
  * Requires minimum PHP 7.3
  * Matching project name to wp.org slug
