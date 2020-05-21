@@ -1,3 +1,5 @@
+[![Static HTML Output](https://statichtmloutput.com/wp-content/uploads/2020/05/cropped-logo.png)](https://statichtmloutput.com)
+
 # StaticHTMLOutput
 
 WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify, etc.  Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
