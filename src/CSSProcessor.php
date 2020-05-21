@@ -242,8 +242,58 @@ class CSSProcessor extends StaticHTMLOutput {
         return $is_internal_link;
     }
 
+    /**
+     *  Return rewritten CSS
+     *
+     *  We don't use the CSSParser's output, as it
+     *  mangles the output too much. We simply do placeholder URL
+     *  rewrites to destination URL. This may need to be improved
+     *  for URL format transformations (relative/offline URLs), at
+     *  which point, we may store a list of each file's URLs and how
+     *  they need to be transformed, then do that on the raw CSS here.
+     *
+     *  TL;DR - Use CSS parser for link detecion but not rewriting
+     */
     public function getCSS() : string {
-        return $this->css_doc->render();
+        $destination_protocol = $this->getTargetSiteProtocol( $this->base_url );
+        $destination_host = (string) parse_url( $this->base_url, PHP_URL_HOST );
+
+        $processed_css = $this->rewritePlaceholderURLsToDestination(
+            $this->raw_css,
+            $destination_protocol,
+            $destination_host,
+        );
+
+        return $processed_css;
+    }
+
+    public function rewritePlaceholderURLsToDestination(
+        string $raw_css,
+        string $destination_protocol,
+        string $destination_host
+    ) : string {
+        $placeholder_host = 'PLACEHOLDER.wpsho';
+        $processed_css = $raw_css;
+
+        if ( strpos( $raw_css, $placeholder_host ) !== false ) {
+            // bulk replace hosts
+            $processed_css = str_replace(
+                $placeholder_host,
+                $destination_host,
+                $raw_css
+            );
+        }
+
+        // force http -> https if destination is https
+        if ( $destination_protocol === 'https://' ) {
+            $processed_css = str_replace(
+                'http://' . $destination_host,
+                'https://' . $destination_host,
+                $processed_css
+            );
+        }
+
+        return $processed_css;
     }
 
     public function rewriteSiteURLsToPlaceholder(

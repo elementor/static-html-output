@@ -18,6 +18,7 @@ final class CSSProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\CSSProcessor::isInternalLink
      * @covers StaticHTMLOutput\CSSProcessor::rewriteSiteURLsToPlaceholder
      * @covers StaticHTMLOutput\CSSProcessor::writeDiscoveredURLs
+     * @covers StaticHTMLOutput\CSSProcessor::rewritePlaceholderURLsToDestination
 
      * @dataProvider cssSampleContents
      */
@@ -65,16 +66,20 @@ final class CSSProcessorTest extends TestCase {
     public function cssSampleContents() {
         return [
             'background img FQU' => [
-                'body { background-image: url("http://localsite.com/wp-content/uploads/' .
+                'body {background-image: url("http://localsite.com/wp-content/uploads/' .
                 '2020/05/thisguyblogs.jpg");box-sizing: border-box;}',
                 'body {background-image: url("https://deploysite.com/wp-content/uploads/' .
                 '2020/05/thisguyblogs.jpg");box-sizing: border-box;}',
             ],
             'background img protocol relative' => [
-                'body { background-image: url("//localsite.com/wp-content/uploads/' .
+                'body {background-image: url("//localsite.com/wp-content/uploads/' .
                 '2020/05/thisguyblogs.jpg");box-sizing: border-box;}',
                 'body {background-image: url("//deploysite.com/wp-content/uploads/' .
                 '2020/05/thisguyblogs.jpg");box-sizing: border-box;}',
+            ],
+            'icon font hex codes are preserved' => [
+                '.socicon-500px:before { content: "\e056"; }',
+                '.socicon-500px:before { content: "\e056"; }',
             ],
         ];
     }

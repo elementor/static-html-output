@@ -871,6 +871,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             $processed_html
         );
 
+        // TODO: if this still required, do it on individual elements, so we can skip <code>
         $processed_html = html_entity_decode(
             $processed_html,
             ENT_QUOTES,
