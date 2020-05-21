@@ -112,7 +112,10 @@ class Controller {
         $this->setDefaultOptions();
     }
 
-    public static function activate( bool $network_wide ) : void {
+    /**
+     * @param bool|null $network_wide
+     */
+    public static function activate( $network_wide ) : void {
         $instance = self::getInstance();
 
         if ( $network_wide ) {
