@@ -14,10 +14,6 @@ class CSSProcessor extends StaticHTMLOutput {
     /**
      * @var bool
      */
-    public $allow_offline_usage;
-    /**
-     * @var bool
-     */
     public $remove_conditional_head_comments;
     /**
      * @var bool
@@ -89,7 +85,6 @@ class CSSProcessor extends StaticHTMLOutput {
     public $processed_urls;
 
     public function __construct(
-        bool $allow_offline_usage = false,
         bool $remove_conditional_head_comments = false,
         bool $remove_html_comments = false,
         bool $remove_wp_links = false,
@@ -102,7 +97,6 @@ class CSSProcessor extends StaticHTMLOutput {
         string $wp_site_url,
         string $wp_uploads_path
     ) {
-        $this->allow_offline_usage = $allow_offline_usage;
         $this->remove_conditional_head_comments = $remove_conditional_head_comments;
         $this->remove_html_comments = $remove_html_comments;
         $this->remove_wp_links = $remove_wp_links;
@@ -248,7 +242,7 @@ class CSSProcessor extends StaticHTMLOutput {
      *  We don't use the CSSParser's output, as it
      *  mangles the output too much. We simply do placeholder URL
      *  rewrites to destination URL. This may need to be improved
-     *  for URL format transformations (relative/offline URLs), at
+     *  for URL format transformations (relative URLs), at
      *  which point, we may store a list of each file's URLs and how
      *  they need to be transformed, then do that on the raw CSS here.
      *

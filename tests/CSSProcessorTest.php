@@ -36,7 +36,6 @@ final class CSSProcessorTest extends TestCase {
 
         */
         $css_processor = new CSSProcessor(
-            false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false

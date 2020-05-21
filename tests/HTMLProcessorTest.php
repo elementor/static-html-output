@@ -26,7 +26,6 @@ final class HTMLProcessorTest extends TestCase {
 
         */
         $html_processor = new HTMLProcessor(
-            false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
@@ -135,7 +134,6 @@ final class HTMLProcessorTest extends TestCase {
         $element = $links[0];
 
         $html_processor = new HTMLProcessor(
-            false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
@@ -211,7 +209,6 @@ final class HTMLProcessorTest extends TestCase {
         ) {
 
         $html_processor = new HTMLProcessor(
-            false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
@@ -308,7 +305,6 @@ final class HTMLProcessorTest extends TestCase {
         ) {
 
         $html_processor = new HTMLProcessor(
-            false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
@@ -384,7 +380,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
      * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
      * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\HTMLProcessor::convertToOfflineURL
      * @covers StaticHTMLOutput\HTMLProcessor::convertToRelativeURL
      * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
      * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
@@ -398,7 +393,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
      * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateOfflineURLs
      * @covers StaticHTMLOutput\HTMLProcessor::shouldUseRelativeURLs
      * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
      * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
@@ -412,7 +406,6 @@ final class HTMLProcessorTest extends TestCase {
         ) {
 
         $html_processor = new HTMLProcessor(
-            false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
@@ -505,7 +498,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
      * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
      * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\HTMLProcessor::convertToOfflineURL
      * @covers StaticHTMLOutput\HTMLProcessor::convertToRelativeURL
      * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
      * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
@@ -522,7 +514,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
      * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateOfflineURLs
      * @covers StaticHTMLOutput\HTMLProcessor::shouldUseRelativeURLs
      * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
      * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
@@ -535,7 +526,6 @@ final class HTMLProcessorTest extends TestCase {
         ) {
 
         $html_processor = new HTMLProcessor(
-            false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
@@ -579,7 +569,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
      * @covers StaticHTMLOutput\HTMLProcessor::processLink
      * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\HTMLProcessor::convertToOfflineURL
      * @covers StaticHTMLOutput\HTMLProcessor::convertToRelativeURL
      * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
      * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
@@ -597,7 +586,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
      * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateOfflineURLs
      * @covers StaticHTMLOutput\HTMLProcessor::shouldUseRelativeURLs
      * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
      * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
@@ -610,7 +598,6 @@ final class HTMLProcessorTest extends TestCase {
         ) {
 
         $html_processor = new HTMLProcessor(
-            false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             $remove_wp_links_option, // $remove_wp_links = false
@@ -823,7 +810,6 @@ final class HTMLProcessorTest extends TestCase {
         $exp_result
         ) {
         $html_processor = new HTMLProcessor(
-            false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false

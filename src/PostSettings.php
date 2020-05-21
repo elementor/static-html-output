@@ -31,7 +31,6 @@ class PostSettings {
 
         $key_sets['processing'] = [
             'removeConditionalHeadComments',
-            'allowOfflineUsage',
             'baseHREF',
             'rewrite_rules',
             'rename_rules',
@@ -59,7 +58,6 @@ class PostSettings {
 
         $key_sets['zip'] = [
             'baseUrl-zip',
-            'allowOfflineUsage',
         ];
 
         $key_sets['github'] = [
@@ -163,13 +161,6 @@ class PostSettings {
             isset( $_POST['crawl_increment'] ) ?
             (int) $_POST['crawl_increment'] :
             1;
-
-        // any baseUrl required if creating an offline ZIP
-        $settings['baseUrl'] =
-            isset( $_POST['baseUrl'] ) ?
-            rtrim( $_POST['baseUrl'], '/' ) . '/' :
-            'http://OFFLINEZIP.wpsho';
-        // @codingStandardsIgnoreEnd
 
         return array_filter( $settings );
     }

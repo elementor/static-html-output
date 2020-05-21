@@ -33,7 +33,6 @@ class DBSettings {
 
         $key_sets['processing'] = [
             'removeConditionalHeadComments',
-            'allowOfflineUsage',
             'baseHREF',
             'rewrite_rules',
             'rename_rules',
@@ -61,7 +60,6 @@ class DBSettings {
 
         $key_sets['zip'] = [
             'baseUrl-zip',
-            'allowOfflineUsage',
         ];
 
         $key_sets['github'] = [
@@ -160,9 +158,6 @@ class DBSettings {
             isset( $plugin->options->crawl_increment ) ?
             (int) $plugin->options->crawl_increment :
             10;
-
-        // NOTE: any baseUrl required if creating an offline ZIP
-        $settings['baseUrl'] = rtrim( $plugin->options->baseUrl, '/' ) . '/';
 
         return array_filter( $settings );
     }

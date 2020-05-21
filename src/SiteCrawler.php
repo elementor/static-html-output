@@ -497,7 +497,6 @@ class SiteCrawler extends StaticHTMLOutput {
 
                 // prepare bool settings
                 $bool_settings = [
-                    'allowOfflineUsage',
                     'removeConditionalHeadComments',
                     'removeHTMLComments',
                     'removeWPLinks',
@@ -512,7 +511,6 @@ class SiteCrawler extends StaticHTMLOutput {
                 }
 
                 $processor = new HTMLProcessor(
-                    $this->settings['allowOfflineUsage'],
                     $this->settings['removeConditionalHeadComments'],
                     $this->settings['removeHTMLComments'],
                     $this->settings['removeWPLinks'],
@@ -557,7 +555,6 @@ class SiteCrawler extends StaticHTMLOutput {
 
                 // prepare bool settings
                 $bool_settings = [
-                    'allowOfflineUsage',
                     'removeConditionalHeadComments',
                     'removeHTMLComments',
                     'removeWPLinks',
@@ -571,7 +568,6 @@ class SiteCrawler extends StaticHTMLOutput {
                     }
                 }
                 $processor = new CSSProcessor(
-                    $this->settings['allowOfflineUsage'],
                     $this->settings['removeConditionalHeadComments'],
                     $this->settings['removeHTMLComments'],
                     $this->settings['removeWPLinks'],

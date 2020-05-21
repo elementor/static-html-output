@@ -144,6 +144,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * Matching project name to wp.org slug
  * Implement code quality tooling
  * Performance optimization for slow hosting providers
+ * rm offline zip functionality
  * Minor fix for setting base HREF option
  * use WP's mime-types lookup for S3 deployer
 

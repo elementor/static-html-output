@@ -360,14 +360,12 @@ jQuery(document).ready(function($){
       validation_errors += 'Target folder may not be empty. Please adjust your settings.';
     }
 
-    if (( $('#baseUrl').val() === undefined ||
-        $('#baseUrl').val() == '' ) &&
-        !$('#allowOfflineUsage').is(":checked")) {
+    if ( $('#baseUrl').val() === undefined || $('#baseUrl').val() == '' ) {
       validation_errors += "Please set the Base URL field to the address you will host your static site.\n";
     }
 
     // TODO: on new Debian package-managed environment, this was falsely erroring
-    if (!isUrl($('#baseUrl').val()) && !$('#allowOfflineUsage').is(":checked")) {
+    if (!isUrl($('#baseUrl').val())) {
         // TODO: testing / URL as base
         if ($('#baseUrl').val() !== '/') {
           validation_errors += "Please set the Base URL field to a valid URL, ie http://mystaticsite.com.\n";
@@ -658,14 +656,6 @@ jQuery(document).ready(function($){
     $('.selected_deployment_method').val(selected_deployment_method);
   }
 
-  function offlineUsageChangeHandler(checkbox) {
-    if ($(checkbox).is(':checked')) {
-        $('#baseUrl-zip').prop('disabled', true);
-    } else {
-        $('#baseUrl-zip').prop('disabled', false);
-    }
-  }
-
   function setExportSettingDetailsVisibility(changed_checkbox) {
     checkbox_name = $(changed_checkbox).attr('name');
     export_option_name = checkbox_name.replace('sendVia', '').toLowerCase();
@@ -783,11 +773,6 @@ jQuery(document).ready(function($){
 
 	$('input[type="checkbox"]').change(function() {
 		setExportSettingDetailsVisibility(this);
-    });
-
-	// disable zip base url field when offline usage is checked
-	$('#allowOfflineUsage').change(function() {
-      offlineUsageChangeHandler($(this));
     });
 
 	// handler when deployment method is changed
@@ -1181,9 +1166,6 @@ jQuery(document).ready(function($){
   $('#wp_active_theme').val(wp_site.wp_active_theme);
   $('#wp_uploads').val(wp_site.wp_uploads);
   $('.spinner').hide();
-
-  // call change handler on page load, to set correct state
-  offlineUsageChangeHandler($('#allowOfflineUsage'));
 
   updateBaseURLReferences($('#baseUrl').val());
 

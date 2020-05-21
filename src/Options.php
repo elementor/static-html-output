@@ -22,7 +22,6 @@ class Options {
      */
     protected $statichtmloutput_options_keys = [
         'additionalUrls',
-        'allowOfflineUsage',
         'baseHREF',
         'baseUrl',
         'baseUrl-bitbucket',
@@ -99,7 +98,6 @@ class Options {
      */
     protected $whitelisted_keys = [
         'additionalUrls',
-        'allowOfflineUsage',
         'baseHREF',
         'baseUrl',
         'baseUrl-bitbucket',

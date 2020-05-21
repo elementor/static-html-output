@@ -13,10 +13,6 @@ class HTMLProcessor extends StaticHTMLOutput {
     /**
      * @var bool
      */
-    public $allow_offline_usage;
-    /**
-     * @var bool
-     */
     public $remove_conditional_head_comments;
     /**
      * @var bool
@@ -100,7 +96,6 @@ class HTMLProcessor extends StaticHTMLOutput {
     public $processed_urls;
 
     public function __construct(
-        bool $allow_offline_usage = false,
         bool $remove_conditional_head_comments = false,
         bool $remove_html_comments = false,
         bool $remove_wp_links = false,
@@ -113,7 +108,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         string $wp_site_url,
         string $wp_uploads_path
     ) {
-        $this->allow_offline_usage = $allow_offline_usage;
         $this->remove_conditional_head_comments = $remove_conditional_head_comments;
         $this->remove_html_comments = $remove_html_comments;
         $this->remove_wp_links = $remove_wp_links;
@@ -281,7 +275,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
 
         if ( $this->remove_wp_links ) {
             $relative_links_to_rm = [
@@ -405,7 +398,6 @@ class HTMLProcessor extends StaticHTMLOutput {
                 $url = $this->rewriteWPPathsSrcSetURL( (string) $url );
                 $url = $this->rewriteBaseURLSrcSetURL( $url );
                 $url = $this->convertToRelativeURLSrcSetURL( $url );
-                $url = $this->convertToOfflineURLSrcSetURL( $url );
             }
 
             $new_src_set[] = "{$url} {$dimension}";
@@ -421,7 +413,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
     }
 
     public function stripHTMLComments() : void {
@@ -479,7 +470,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
     }
 
     public function processAnchor( DOMElement $element ) : void {
@@ -507,7 +497,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
     }
 
     public function processMeta( DOMElement $element ) : void {
@@ -549,7 +538,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
         $this->convertToRelativeURL( $element );
-        $this->convertToOfflineURL( $element );
     }
 
     public function writeDiscoveredURLs() : void {
@@ -924,91 +912,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function convertToOfflineURLSrcSetURL( string $url_to_change ) : string {
-        if ( ! $this->shouldCreateOfflineURLs() ) {
-            return $url_to_change;
-        }
-
-        $current_page_path_to_root = '';
-        $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
-        $number_of_segments_in_path = explode( '/', (string) $current_page_path );
-        $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
-
-        for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
-            $current_page_path_to_root .= '../';
-        }
-
-        if ( ! $this->isInternalLink(
-            $url_to_change
-        ) ) {
-            return $url_to_change;
-        }
-
-        $rewritten_url = str_replace(
-            $this->placeholder_url,
-            '',
-            $url_to_change
-        );
-
-        $offline_url = $current_page_path_to_root . $rewritten_url;
-
-        // add index.html if no extension
-        if ( substr( $offline_url, -1 ) === '/' ) {
-            // TODO: check XML/RSS case
-            $offline_url .= 'index.html';
-        }
-
-        return $offline_url;
-    }
-
-    public function convertToOfflineURL( DOMElement $element ) : void {
-        if ( ! $this->shouldCreateOfflineURLs() ) {
-            return;
-        }
-
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-        $current_page_path_to_root = '';
-        $current_page_path = parse_url( $this->page_url, PHP_URL_PATH );
-        $number_of_segments_in_path = explode( '/', (string) $current_page_path );
-        $num_dots_to_root = count( $number_of_segments_in_path ) - 2;
-
-        for ( $i = 0; $i < $num_dots_to_root; $i++ ) {
-            $current_page_path_to_root .= '../';
-        }
-
-        if ( ! $this->isInternalLink(
-            $url_to_change
-        ) ) {
-            return;
-        }
-
-        $rewritten_url = str_replace(
-            $this->placeholder_url,
-            '',
-            $url_to_change
-        );
-
-        $offline_url = $current_page_path_to_root . $rewritten_url;
-
-        // add index.html if no extension
-        if ( substr( $offline_url, -1 ) === '/' ) {
-            // TODO: check XML/RSS case
-            $offline_url .= 'index.html';
-        }
-
-        $element->setAttribute( $attribute_to_change, $offline_url );
-    }
-
     // TODO: move some of these URLs into settings to avoid extra calls
     public function getProtocolRelativeURL( string $url ) : string {
         $this->destination_protocol_relative_url = str_replace(
@@ -1118,37 +1021,11 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function shouldUseRelativeURLs() : bool {
-        if ( ! $this->use_relative_urls ) {
-            return false;
-        }
-
-        // NOTE: relative URLs should not be used when creating an offline ZIP
-        if ( $this->allow_offline_usage ) {
-            return false;
-        }
-
-        return true;
+        return $this->use_relative_urls;
     }
 
     public function shouldCreateBaseHREF() : bool {
         if ( empty( $this->base_href ) ) {
-            return false;
-        }
-
-        // NOTE: base HREF should not be set when creating an offline ZIP
-        if ( $this->allow_offline_usage ) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function shouldCreateOfflineURLs() : bool {
-        if ( ! $this->allow_offline_usage ) {
-            return false;
-        }
-
-        if ( $this->selected_deployment_option != 'zip' ) {
             return false;
         }
 
