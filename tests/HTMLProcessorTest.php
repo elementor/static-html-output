@@ -805,6 +805,17 @@ final class HTMLProcessorTest extends TestCase {
 
     /**
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
+     * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
+     * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::getHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
+     * @covers StaticHTMLOutput\HTMLProcessor::processHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
+     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
+     * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
+     * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
      * @dataProvider codeProvider
      */
     public function testCodeProcessing(
