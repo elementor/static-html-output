@@ -567,8 +567,9 @@ final class HTMLProcessorTest extends TestCase {
                 '<!DOCTYPE html><html lang="en-US"><head></head><meta charset="utf-8"/><title>' .
                 'wpnotes | Поредният WordPress сайт</title><body></body></html>',
                 '<!DOCTYPE html>
-<html lang="en-US"><head></head><meta charset="utf-8"><title>wpnotes | Поредният WordPress са' .
-                'йт</title><body></body></html>
+<html lang="en-US"><head></head><meta charset="utf-8"><title>wpnotes | ' .
+                '&#1055;&#1086;&#1088;&#1077;&#1076;&#1085;&#1080;&#1103;&#1090; WordPress ' .
+                '&#1089;&#1072;&#1081;&#1090;</title><body></body></html>
 ',
             ],
         ];
@@ -810,9 +811,6 @@ final class HTMLProcessorTest extends TestCase {
         $test_html_content,
         $exp_result
         ) {
-        // note on HTMLProcessor, we have: $processed_html = html_entity_decode
-        $this->markTestSkipped( 'Need to revisit why we\'re doing entity decoding in output' );
-
         $html_processor = new HTMLProcessor(
             false, // $allow_offline_usage = false
             false, // $remove_conditional_head_comments = false
@@ -844,10 +842,10 @@ final class HTMLProcessorTest extends TestCase {
         return [
             'preserves HTML encoding within <code> el' => [
                 '<!DOCTYPE html><html lang="en-US"><body>' .
-                '<code>&lt;div class="gcse-searchbox-only"&gt;&lt;/div&gt;<code>' .
+                '<code>&lt;div class="gcse-searchbox-only"&gt;&lt;/div&gt;</code>' .
                 '</body></html>',
                 '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><body>' .
-                '<code>&lt;div class="gcse-searchbox-only"&gt;&lt;/div&gt;<code>' .
+                '<code>&lt;div class="gcse-searchbox-only"&gt;&lt;/div&gt;</code>' .
                 '</body></html>' . PHP_EOL,
             ],
         ];
