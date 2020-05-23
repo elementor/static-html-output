@@ -628,7 +628,8 @@ class FilesHelper {
                 continue;
             }
 
-            $post_urls[] = $permalink;
+            // $post_urls[] = $permalink;
+            $post_urls[] = utf8_decode(urldecode($permalink));
 
             /*
                 Get the post's URL and each sub-chunk of the path as a URL
@@ -717,6 +718,9 @@ class FilesHelper {
 
                 $post_urls[] = $permalink;
             }
+
+            error_log(print_r($post_urls, true));
+
         }
 
         // get all pagination links for each category
