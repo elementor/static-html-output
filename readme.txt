@@ -134,6 +134,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * preserve font hex values in parsed stylesheets
  * preserve desired link elements when using "Remove WP Tags" option
  * fix for detecting common missing assets
+ * fix for special characters not being converted properly
  * fix for PLACEHOLDER.wpsho URLs remaining
  * fix for mixed-content protocols when deploying to https
  * fix deployment test button giving false positives
