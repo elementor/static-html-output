@@ -66,19 +66,6 @@ class Deployer extends StaticHTMLOutput {
                 $bunny->upload_files();
                 $bunny->purge_all_cache();
                 break;
-            case 'ftp':
-                $ftp = new FTP();
-
-                if ( $test ) {
-                    $ftp->test_ftp();
-                    return '';
-                }
-
-                $ftp->bootstrap();
-                $ftp->loadArchive();
-                $ftp->prepareDeploy();
-                $ftp->upload_files();
-                break;
             case 'github':
                 $github = new GitHub();
 

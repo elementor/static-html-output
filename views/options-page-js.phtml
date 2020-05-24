@@ -4,7 +4,11 @@ var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNES
 
 var current_archive = {};
 
-var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'folder'; ?>';
+var current_deployment_method = '<?php echo $this->options->selected_deployment_option ? $this->options->selected_deployment_option : 'zip'; ?>';
+
+if ( current_deployment_method === 'ftp' ) {
+    current_deployment_method = 'zip';
+}
 
 // TODO: get the log out of the archive, along with it's meta infos
 var log_file_url = wp_site.uploads_url + '/WP-STATIC-EXPORT-LOG.txt';
@@ -37,8 +41,6 @@ var status_descriptions = {
     'bunnycdn_prepare_export' : 'Preparing files for BunnyCDN deployment',
     'bunnycdn_transfer_files' : 'Deploying files to BunnyCDN',
     'bunnycdn_purge_cache' : 'Purging BunnyCDN cache',
-    'ftp_prepare_export' : 'Preparing files for FTP deployment',
-    'ftp_transfer_files' : 'Deploying files via FTP',
     'github_prepare_export' : 'Preparing files for GitHub deployment',
     'github_upload_files' : 'Deploying files via GitHub',
     'bitbucket_prepare_export' : 'Preparing files for Bitbucket deployment',
@@ -162,14 +164,6 @@ jQuery(document).ready(function($){
             'finalize_deployment'
           );
           break;
-        case 'FTP':
-          doAJAXExport(
-            'ftp_prepare_export',
-            'ftp_transfer_files',
-            'finalize_deployment'
-          );
-          break;
-
         case 'BUNNYCDN':
           doAJAXExport(
             'bunnycdn_prepare_export',
@@ -284,38 +278,34 @@ jQuery(document).ready(function($){
       case 'zip':
         $('#createZip').attr('checked', 'checked');
         export_targets.push('ZIP');
-      break;	
+      break;
       case 'folder':
         export_targets.push('FOLDER');
-      break;	
+      break;
 
       case 'github':
         export_targets.push('GITHUB');
-      break;	
+      break;
 
       case 'bitbucket':
         export_targets.push('BITBUCKET');
-      break;	
+      break;
 
       case 'gitlab':
         export_targets.push('GITLAB');
-      break;	
+      break;
 
       case 'bunnycdn':
         export_targets.push('BUNNYCDN');
-      break;	
+      break;
 
       case 's3':
         export_targets.push('S3');
-      break;	
+      break;
 
       case 'netlify':
         export_targets.push('NETLIFY');
-      break;	
-
-      case 'ftp':
-        export_targets.push('FTP');
-      break;	
+      break;
 
       default:
 
@@ -376,20 +366,6 @@ jQuery(document).ready(function($){
       case 'zip':
       break;
 
-      case 'ftp':
-        required_fields = {
-          ftpServer: 'Please specify the FTP server address needed to transfer your files via FTP',
-          ftpUsername: 'Please input an FTP username in order to authenticate when using the FTP deployment method.',
-          ftpPassword: 'Please input an FTP password in order to authenticate when using the FTP deployment method.',
-        };	
-
-        Object.keys(required_fields).forEach(function(key,index) {
-          if ($('#' + key).val() == '') {
-            validation_errors += required_fields[key] + "\n";
-          }
-        });
-      break; 
-
       case 'folder':
       break;
 
@@ -398,7 +374,7 @@ jQuery(document).ready(function($){
           s3Key: 'Please input an S3 Key in order to authenticate when using the S3 deployment method.',
           s3Secret: 'Please input an S3 Secret in order to authenticate when using the S3 deployment method.',
           s3Bucket: 'Please input the name of the S3 bucket you are trying to deploy to.',
-        };	
+        };
 
         Object.keys(required_fields).forEach(function(key,index) {
           if ($('#' + key).val() == '') {
@@ -411,34 +387,34 @@ jQuery(document).ready(function($){
         required_fields = {
           bunnycdnPullZoneName: 'Please specify your BunnyCDN pull zone name in order to deploy to BunnyCDN.',
           bunnycdnAPIKey: 'Please specify your BunnyCDN API/FTP password in order to deploy to BunnyCDN.',
-        };	
+        };
 
         Object.keys(required_fields).forEach(function(key,index) {
           if ($('#' + key).val() == '') {
             validation_errors += required_fields[key] + "\n";
           }
         });
-      break; 
+      break;
 
       case 'netlify':
         required_fields = {
           netlifyPersonalAccessToken: 'Please specify your Netlify personal access token in order to deploy to Netlify.',
           netlifySiteID: 'Please specify the id of your Netlify site you want to deploy to.',
-        };	
+        };
 
         Object.keys(required_fields).forEach(function(key,index) {
           if ($('#' + key).val() == '') {
             validation_errors += required_fields[key] + "\n";
           }
         });
-      break; 
+      break;
 
       case 'github':
         required_fields = {
           ghToken: 'Please specify your GitHub personal access token in order to deploy to GitHub.',
           ghRepo: 'Please specify your GitHub repository name in order to deploy to GitHub.',
           ghBranch: 'Please specify which branch in your GitHub repository you want to deploy to.',
-        };	
+        };
 
         Object.keys(required_fields).forEach(function(key,index) {
           if ($('#' + key).val() == '') {
@@ -453,14 +429,14 @@ jQuery(document).ready(function($){
             validation_errors += "Please ensure your GitHub repo is specified as USER_OR_ORG_NAME/REPO_NAME\n";
           }
         }
-      break; 
+      break;
 
       case 'bitbucket':
         required_fields = {
           bbToken: 'Please specify your Bitbucket personal access token in order to deploy to Bitbucket.',
           bbRepo: 'Please specify your Bitbucket repository name in order to deploy to Bitbucket.',
           bbBranch: 'Please specify which branch in your Bitbucket repository you want to deploy to.',
-        };	
+        };
 
         Object.keys(required_fields).forEach(function(key,index) {
           if ($('#' + key).val() == '') {
@@ -475,21 +451,21 @@ jQuery(document).ready(function($){
             validation_errors += "Please ensure your Bitbucket repo is specified as USER_OR_ORG_NAME/REPO_NAME\n";
           }
         }
-      break; 
+      break;
 
       case 'gitlab':
         required_fields = {
           glToken: 'Please specify your GitLab personal access token in order to deploy to GitLab.',
           glProject: 'Please specify your GitLab project ID in order to deploy to GitLab.',
           glBranch: 'Please specify which branch in your GitLab repository you want to deploy to.',
-        };	
+        };
 
         Object.keys(required_fields).forEach(function(key,index) {
           if ($('#' + key).val() == '') {
             validation_errors += required_fields[key] + "\n";
           }
         });
-      break; 
+      break;
     }
 
     return validation_errors;
@@ -526,7 +502,7 @@ jQuery(document).ready(function($){
       SUCCESS - action is complete
       > 0 - action is in progress inremental task
       ERROR
-        
+
       if an action is successful, and there are other actions queued up,
       it will call the function again with the remaining arguments/actions
 
@@ -677,7 +653,6 @@ jQuery(document).ready(function($){
   function renderSettingsBlock(selected_deployment_method) {
     deployment_options = [
       'zip',
-      'ftp',
       'folder',
       's3',
       'bunnycdn',
@@ -799,7 +774,7 @@ jQuery(document).ready(function($){
 
 	// update base url previews in realtime
 	$(document).on('input', 
-		'#baseUrl-s3, #baseUrl-ftp, #baseUrl-folder, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-gitlab, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip', 
+		'#baseUrl-s3, #baseUrl-folder, #baseUrl-github, #baseUrl-bitbucket, #baseUrl-gitlab, #baseUrl-netlify, #baseUrl-bunnycdn, #baseUrl-zip', 
 		function() {
 			updateBaseURLReferences();
 		}
@@ -939,43 +914,6 @@ jQuery(document).ready(function($){
           },
           error: function(serverResponse) {
             alert('FAIL: Unable to delete deploy cache');
-
-            spinner.hide();
-          }
-      });
-  });
-
-  $('.wrap').on('click', '#ftp-test-button', function(event) {
-      event.preventDefault();
-      $('.hiddenActionField').val('wp_static_html_output_ajax');
-      $('#hiddenAJAXAction').val('test_ftp');
-
-      button = event.currentTarget;
-      spinner = $('button').siblings('div.spinner')
-      spinner.show();
-
-      data = $(".options-form :input")
-          .filter(function(index, element) {
-              return $(element).val() != '';
-          })
-          .serialize();
-
-      $.ajax({
-          url: ajaxurl,
-          data: data,
-          dataType: 'html',
-          method: 'POST',
-          success: function(serverResponse) {
-            if (serverResponse === 'SUCCESS') {
-                alert('FTP Connection Test Successful');
-            } else {
-                alert('FAIL: Unable to login to FTP server');
-            }
-
-            spinner.hide();
-          },
-          error: function(serverResponse) {
-            alert('FAIL: Unable to login to FTP server');
 
             spinner.hide();
           }

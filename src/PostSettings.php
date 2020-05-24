@@ -85,17 +85,6 @@ class PostSettings {
             'glProject',
         ];
 
-        $key_sets['ftp'] = [
-            'baseUrl-ftp',
-            'ftpPassword',
-            'ftpRemotePath',
-            'ftpServer',
-            'ftpPort',
-            'ftpTLS',
-            'ftpUsername',
-            'useActiveFTP',
-        ];
-
         $key_sets['bunnycdn'] = [
             'baseUrl-bunnycdn',
             'bunnycdnStorageZoneAccessKey',

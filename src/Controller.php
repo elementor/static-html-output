@@ -310,7 +310,8 @@ class Controller {
             '/WP2STATIC-S3-PREVIOUS-HASHES.txt',
             '/WP2STATIC-BUNNYCDN-PREVIOUS-HASHES.txt',
             '/WP2STATIC-BITBUCKET-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-FTP-PREVIOUS-HASHES.txt',
+            // Add to cleanup script when upgrading > 6.6.8
+            // '/WP2STATIC-FTP-PREVIOUS-HASHES.txt',
         ];
 
         foreach ( $cache_files as $cache_file ) {

@@ -192,8 +192,6 @@ function static_html_output_ajax() {
         return null;
     } elseif ( strpos( $ajax_method, 'cloudfront' ) !== false ) {
         $class = new StaticHTMLOutput\S3();
-    } elseif ( strpos( $ajax_method, 'ftp' ) !== false ) {
-        $class = new StaticHTMLOutput\FTP();
     } elseif ( strpos( $ajax_method, 'bunny' ) !== false ) {
         $class = new StaticHTMLOutput\BunnyCDN();
 

@@ -26,7 +26,7 @@ Not compatible with WooCommerce or membership sites, but solutions like [Snipcar
 
  * publishes a standalone, static html copy of your whole WordPress website
  * removes tell-tale signs your site is running WordPress, making it unattractive to hackers
- * auto-deploy to a folder on your server, a ZIP file, FTP server, S3, GitHub, Netlif, BunnyCDN, BitBucket or GitLab
+ * auto-deploy to a folder on your server, a ZIP file, S3, GitHub, Netlify, BunnyCDN, BitBucket or GitLab
  * schedule unattended exports via the WP Crontrol plugin or by hitting the custom hook
  * desktop notifications alert you to when exports are complete
 
@@ -66,7 +66,7 @@ You need 2 URLs of some sort (they can be on the same server, different servers,
 
  - 2nd URL is where you'll "publish" the static version of your site to. This is likely to be your main domain (ie, http://mywordpresssite.com).
 
-That said, you can install the plugin and do an easy test without any other configuration. This will publish a static version to a subdirectory, such as http://mywordpresssite.com/mystatictest/. That's a good way to check the static site is publishing properly, then you can switch to another deployment option, such as FTP or GitHub Pages and deploy to your live site.
+That said, you can install the plugin and do an easy test without any other configuration. This will publish a static version to a subdirectory, such as http://mywordpresssite.com/mystatictest/. That's a good way to check the static site is publishing properly, then you can switch to another deployment option, such as GitHub Pages and deploy to your live site.
 
 As WordPress allows infinite customization and configurations, I don't think any plugin author would be willing to guarantee complete compatibility with every theme, plugin and custom coding on every site. But my aim is to get as high a % of people as possible able to take advantage of static hosting with their WP site.
 
@@ -143,6 +143,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * support BunnyCDN's BETA API endpoint regions
  * Tested with WP 5.4.1
  * Requires minimum PHP 7.3
+ * removed insecure FTP option
  * Matching project name to wp.org slug
  * Implement code quality tooling
  * Performance optimization for slow hosting providers
