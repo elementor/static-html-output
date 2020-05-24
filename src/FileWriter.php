@@ -51,6 +51,9 @@ class FileWriter extends StaticHTMLOutput {
 
         $directory_in_archive = $path_info['dirname'] ? $path_info['dirname'] : '';
 
+        // url decode dirname
+        $directory_in_archive = urldecode( $directory_in_archive );
+
         if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
             $directory_in_archive = str_replace(
                 $this->settings['wp_site_subdir'],
@@ -64,7 +67,7 @@ class FileWriter extends StaticHTMLOutput {
         // set filename to index if no extension && base and filename are  same
         if ( empty( $path_info['extension'] ) &&
             $path_info['basename'] === $path_info['filename'] ) {
-            $file_dir .= '/' . $path_info['basename'];
+            $file_dir .= '/' . urldecode( $path_info['basename'] );
             $path_info['filename'] = 'index';
         }
 
@@ -99,7 +102,7 @@ class FileWriter extends StaticHTMLOutput {
             }
 
             $filename =
-                $file_dir . '/' . $path_info['filename'] .
+                $file_dir . '/' . urldecode( $path_info['filename'] ) .
                 '.' . $file_extension;
         }
 

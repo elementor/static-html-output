@@ -130,6 +130,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
 = 6.6.15 =
 
+ * finally supporting UTF/multibyte URLs!
  * preserve font hex values in parsed stylesheets
  * preserve desired link elements when using "Remove WP Tags" option
  * fix for detecting common missing assets
