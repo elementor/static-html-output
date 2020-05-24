@@ -19,19 +19,19 @@ class FilesHelper {
             return true;
         }
 
-        $files = array_diff( $dir_files, [ '.', '..' ] );
+        foreach ( $dir_files as $file ) {
+            if ( $file === '.' || $file === '..' ) {
+                continue;
+            }
 
-        if ( ! $files ) {
-            return true;
-        }
-
-        foreach ( $files as $file ) {
             ( is_dir( "$dir/$file" ) ) ?
             self::delete_dir_with_files( "$dir/$file" ) :
             unlink( "$dir/$file" );
         }
 
-        return rmdir( $dir );
+        $successfully_removed = rmdir( $dir );
+
+        return $successfully_removed;
     }
 
     /**

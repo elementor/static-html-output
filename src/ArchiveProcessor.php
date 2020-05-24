@@ -299,17 +299,19 @@ class ArchiveProcessor extends StaticHTMLOutput {
     }
 
     public function removeWPCruft() : void {
-        if ( file_exists( $this->archive->path . '/xmlrpc.php' ) ) {
-            unlink( $this->archive->path . '/xmlrpc.php' );
+        if ( file_exists( $this->archive->path . 'xmlrpc.php' ) ) {
+            unlink( $this->archive->path . 'xmlrpc.php' );
         }
 
-        if ( file_exists( $this->archive->path . '/wp-login.php' ) ) {
-            unlink( $this->archive->path . '/wp-login.php' );
+        if ( file_exists( $this->archive->path . 'wp-login.php' ) ) {
+            unlink( $this->archive->path . 'wp-login.php' );
         }
 
-        FilesHelper::delete_dir_with_files(
-            $this->archive->path . '/wp-json/'
-        );
+        if ( is_dir( $this->archive->path . 'wp-json/' ) ) {
+            FilesHelper::delete_dir_with_files(
+                $this->archive->path . 'wp-json/'
+            );
+        }
     }
 
     public function renameArchiveDirectories() : void {
