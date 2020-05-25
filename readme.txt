@@ -133,6 +133,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * finally supporting UTF/multibyte URLs!
  * preserve font hex values in parsed stylesheets
  * preserve desired link elements when using "Remove WP Tags" option
+ * force https on external links when destination protocol is https
  * fix for detecting common missing assets
  * fix for special characters not being converted properly
  * fix for PLACEHOLDER.wpsho URLs remaining
