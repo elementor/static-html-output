@@ -12,7 +12,7 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
      * @dataProvider internalLinkProvider
      */
-    public function testDetectsInternalLink( $link, $domain, $expectation ) {
+    public function testDetectsInternalLink( $link, $expectation ) {
         /*
             $link should match $domain
 
@@ -39,7 +39,7 @@ final class HTMLProcessorTest extends TestCase {
 
         $html_processor->placeholder_url = 'https://PLACEHOLDER.wpsho/';
 
-        $result = $html_processor->isInternalLink( $link, $domain );
+        $result = $html_processor->isInternalLink( $link );
 
         $this->assertEquals(
             $expectation,
@@ -51,63 +51,51 @@ final class HTMLProcessorTest extends TestCase {
         return [
             'FQU site root' => [
                 'https://PLACEHOLDER.wpsho/',
-                '',
                 true,
             ],
             'FQU from site with file in nested subdirs' => [
                 'https://PLACEHOLDER.wpsho//category/travel/photos/001.jpg',
-                '',
                 true,
             ],
-            'external FQU with matching domain as 2nd arg' => [
+            'external FQU' => [
                 'http://someotherdomain.com/category/travel/photos/001.jpg',
-                'http://someotherdomain.com',
-                true,
+                false,
             ],
             'external FQU, protocol relative' => [
                 '//example.com/category/travel/photos/001.jpg',
-                '',
                 false,
             ],
-            'external FQU with matching domain as 2nd arg' => [
+            'external FQU' => [
                 'http://someotherdomain.com/category/travel/photos/001.jpg',
-                'http://someotherdomain.com',
+                false,
+            ],
+            'internal FQU' => [
+                'http://PLACEHOLDER.wpsho/category/travel/photos/001.jpg',
                 true,
-            ],
-            'not external FQU' => [
-                'http://someothersite.com/category/travel/photos/001.jpg',
-                '',
-                false,
-            ],
-            'not internal FQU with different domain as 2nd arg' => [
-                'https://PLACEHOLDER.wpsho//category/travel/photos/001.jpg',
-                'http://someotherdomain.com',
-                false,
             ],
             'subdomain on same domain' => [
                 'https://sub.PLACEHOLDER.wpsho/',
-                '',
                 false,
             ],
             'site root relative URL' => [
                 '/category/travel/photos/001.jpg',
-                '',
                 true,
             ],
             'doc root relative URL' => [
                 './category/travel/photos/001.jpg',
-                '',
                 true,
             ],
             'doc root relative parent URL' => [
                 '../category/travel/photos/001.jpg',
-                '',
                 true,
             ],
             'empty link URL' => [
                 '',
-                '',
                 false,
+            ],
+            'doc relative favicon' => [
+                'favicon.ico',
+                true,
             ],
         ];
     }
@@ -491,136 +479,138 @@ final class HTMLProcessorTest extends TestCase {
             'enabled option strips select rel links' => [
                 true,
                 '<!DOCTYPE html><html lang="en-US"><head>' .
-                '<link rel="alternate" hreflang="es" href="https://example.com">' .
-                '<link rel="appendix" href="https://example.com">' .
-                '<link rel="author" href="https://example.com">' .
-                '<link rel="bookmark" href="https://example.com">' .
-                '<link rel="chapter" href="https://example.com">' .
-                '<link rel="contents" href="https://example.com">' .
-                '<link rel="copyright" href="https://example.com">' .
-                '<link rel="dns-prefetch" href="https://example.com">' .
-                '<link rel="EditURI" href="https://example.com">' .
-                '<link rel="glossary" href="https://example.com">' .
-                '<link rel="help" href="https://example.com">' .
+                '<link rel="alternate" hreflang="es" href="https://mydomain.com">' .
+                '<link rel="appendix" href="https://mydomain.com">' .
+                '<link rel="author" href="https://mydomain.com">' .
+                '<link rel="bookmark" href="https://mydomain.com">' .
+                '<link rel="chapter" href="https://mydomain.com">' .
+                '<link rel="contents" href="https://mydomain.com">' .
+                '<link rel="copyright" href="https://mydomain.com">' .
+                '<link rel="dns-prefetch" href="https://mydomain.com">' .
+                '<link rel="EditURI" href="https://mydomain.com">' .
+                '<link rel="glossary" href="https://mydomain.com">' .
+                '<link rel="help" href="https://mydomain.com">' .
                 '<link rel="icon" href="favicon.ico">' .
-                '<link rel="index" href="https://example.com">' .
-                '<link rel="license" href="https://example.com">' .
-                '<link rel="shortcut icon" href="https://example.com">' .
-                '<link rel="apple-touch-icon" href="https://example.com">' .
-                '<link rel="manifest" href="https://example.com">' .
-                '<link rel="mask-icon" href="https://example.com">' .
-                '<link rel="next" href="https://example.com">' .
-                '<link rel="pingback" href="https://example.com">' .
-                '<link rel="preconnect" href="https://example.com">' .
-                '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="index" href="https://mydomain.com">' .
+                '<link rel="license" href="https://mydomain.com">' .
+                '<link rel="shortcut icon" href="https://mydomain.com">' .
+                '<link rel="apple-touch-icon" href="https://mydomain.com">' .
+                '<link rel="manifest" href="https://mydomain.com">' .
+                '<link rel="mask-icon" href="https://mydomain.com">' .
+                '<link rel="next" href="https://mydomain.com">' .
+                '<link rel="pingback" href="https://mydomain.com">' .
+                '<link rel="preconnect" href="https://mydomain.com">' .
+                '<link rel="prefetch" href="https://mydomain.com">' .
                 '<link rel="dns-prefetch" href="//s.w.org">' .
-                '<link rel="preload" href="https://example.com">' .
-                '<link rel="prerender" href="https://example.com">' .
-                '<link rel="prev" href="https://example.com">' .
-                '<link rel="section" href="https://example.com">' .
-                '<link rel="start" href="https://example.com">' .
+                '<link rel="preload" href="https://mydomain.com">' .
+                '<link rel="prerender" href="https://mydomain.com">' .
+                '<link rel="prev" href="https://mydomain.com">' .
+                '<link rel="section" href="https://mydomain.com">' .
+                '<link rel="start" href="https://mydomain.com">' .
                 '<link rel="stylesheet" href="styles.css">' .
-                '<link rel="subsection" href="https://example.com">' .
-                '<link rel="wlwmanifest" href="https://example.com">' .
-                '<link rel="https://api.w.org/" href="http://example.com/wp-json/" />' .
+                '<link rel="subsection" href="https://mydomain.com">' .
+                '<link rel="wlwmanifest" href="https://mydomain.com">' .
+                '<link rel="https://api.w.org/" href="http://mydomain.com/wp-json/" />' .
                 '</head><title>title</title><body>body</body></html>',
                 '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
-                '<link rel="alternate" hreflang="es" href="https://example.com">' .
-                '<link rel="appendix" href="https://example.com">' .
-                '<link rel="author" href="https://example.com">' .
-                '<link rel="bookmark" href="https://example.com">' .
-                '<link rel="chapter" href="https://example.com">' .
-                '<link rel="contents" href="https://example.com">' .
-                '<link rel="copyright" href="https://example.com">' .
-                '<link rel="dns-prefetch" href="https://example.com">' .
-                '<link rel="glossary" href="https://example.com">' .
-                '<link rel="help" href="https://example.com">' .
+                '<link rel="alternate" hreflang="es" href="https://mynewdomain.com">' .
+                '<link rel="appendix" href="https://mynewdomain.com">' .
+                '<link rel="author" href="https://mynewdomain.com">' .
+                '<link rel="bookmark" href="https://mynewdomain.com">' .
+                '<link rel="chapter" href="https://mynewdomain.com">' .
+                '<link rel="contents" href="https://mynewdomain.com">' .
+                '<link rel="copyright" href="https://mynewdomain.com">' .
+                '<link rel="dns-prefetch" href="https://mynewdomain.com">' .
+                '<link rel="glossary" href="https://mynewdomain.com">' .
+                '<link rel="help" href="https://mynewdomain.com">' .
                 '<link rel="icon" href="favicon.ico">' .
-                '<link rel="license" href="https://example.com">' .
-                '<link rel="shortcut icon" href="https://example.com">' .
-                '<link rel="apple-touch-icon" href="https://example.com">' .
-                '<link rel="manifest" href="https://example.com">' .
-                '<link rel="mask-icon" href="https://example.com">' .
-                '<link rel="next" href="https://example.com">' .
-                '<link rel="preconnect" href="https://example.com">' .
-                '<link rel="prefetch" href="https://example.com">' .
-                '<link rel="preload" href="https://example.com">' .
-                '<link rel="prerender" href="https://example.com">' .
-                '<link rel="prev" href="https://example.com">' .
-                '<link rel="section" href="https://example.com">' .
+                '<link rel="license" href="https://mynewdomain.com">' .
+                '<link rel="shortcut icon" href="https://mynewdomain.com">' .
+                '<link rel="apple-touch-icon" href="https://mynewdomain.com">' .
+                '<link rel="manifest" href="https://mynewdomain.com">' .
+                '<link rel="mask-icon" href="https://mynewdomain.com">' .
+                '<link rel="next" href="https://mynewdomain.com">' .
+                '<link rel="preconnect" href="https://mynewdomain.com">' .
+                '<link rel="prefetch" href="https://mynewdomain.com">' .
+                '<link rel="preload" href="https://mynewdomain.com">' .
+                '<link rel="prerender" href="https://mynewdomain.com">' .
+                '<link rel="prev" href="https://mynewdomain.com">' .
+                '<link rel="section" href="https://mynewdomain.com">' .
                 '<link rel="stylesheet" href="styles.css">' .
-                '<link rel="subsection" href="https://example.com">' .
+                '<link rel="subsection" href="https://mynewdomain.com">' .
                 '</head><title>title</title><body>body</body></html>' . PHP_EOL,
             ],
             'disabled option strips select rel links' => [
                 false,
                 '<!DOCTYPE html><html lang="en-US"><head>' .
-                '<link rel="alternate" hreflang="es" href="https://example.com">' .
-                '<link rel="appendix" href="https://example.com">' .
-                '<link rel="author" href="https://example.com">' .
-                '<link rel="bookmark" href="https://example.com">' .
-                '<link rel="chapter" href="https://example.com">' .
-                '<link rel="contents" href="https://example.com">' .
-                '<link rel="copyright" href="https://example.com">' .
-                '<link rel="dns-prefetch" href="https://example.com">' .
-                '<link rel="EditURI" href="https://example.com">' .
-                '<link rel="glossary" href="https://example.com">' .
-                '<link rel="help" href="https://example.com">' .
+                '<link rel="alternate" hreflang="es" href="https://mydomain.com">' .
+                '<link rel="appendix" href="https://mydomain.com">' .
+                '<link rel="author" href="https://mydomain.com">' .
+                '<link rel="bookmark" href="https://mydomain.com">' .
+                '<link rel="chapter" href="https://mydomain.com">' .
+                '<link rel="contents" href="https://mydomain.com">' .
+                '<link rel="copyright" href="https://mydomain.com">' .
+                '<link rel="dns-prefetch" href="https://mydomain.com">' .
+                '<link rel="EditURI" href="https://mydomain.com">' .
+                '<link rel="glossary" href="https://mydomain.com">' .
+                '<link rel="help" href="https://mydomain.com">' .
                 '<link rel="icon" href="favicon.ico">' .
-                '<link rel="index" href="https://example.com">' .
-                '<link rel="license" href="https://example.com">' .
-                '<link rel="shortcut icon" href="https://example.com">' .
-                '<link rel="apple-touch-icon" href="https://example.com">' .
-                '<link rel="manifest" href="https://example.com">' .
-                '<link rel="mask-icon" href="https://example.com">' .
-                '<link rel="next" href="https://example.com">' .
-                '<link rel="pingback" href="https://example.com">' .
-                '<link rel="preconnect" href="https://example.com">' .
-                '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="apple-touch-icon" sizes="180x180" href="/w/apple-touch-icon.png">' .
+                '<link rel="index" href="https://mydomain.com">' .
+                '<link rel="license" href="https://mydomain.com">' .
+                '<link rel="shortcut icon" href="https://mydomain.com">' .
+                '<link rel="apple-touch-icon" href="https://mydomain.com">' .
+                '<link rel="manifest" href="https://mydomain.com">' .
+                '<link rel="mask-icon" href="https://mydomain.com">' .
+                '<link rel="next" href="https://mydomain.com">' .
+                '<link rel="pingback" href="https://mydomain.com">' .
+                '<link rel="preconnect" href="https://mydomain.com">' .
+                '<link rel="prefetch" href="https://mydomain.com">' .
                 '<link rel="dns-prefetch" href="//s.w.org">' .
-                '<link rel="preload" href="https://example.com">' .
-                '<link rel="prerender" href="https://example.com">' .
-                '<link rel="prev" href="https://example.com">' .
-                '<link rel="section" href="https://example.com">' .
-                '<link rel="start" href="https://example.com">' .
+                '<link rel="preload" href="https://mydomain.com">' .
+                '<link rel="prerender" href="https://mydomain.com">' .
+                '<link rel="prev" href="https://mydomain.com">' .
+                '<link rel="section" href="https://mydomain.com">' .
+                '<link rel="start" href="https://mydomain.com">' .
                 '<link rel="stylesheet" href="styles.css">' .
-                '<link rel="subsection" href="https://example.com">' .
-                '<link rel="wlwmanifest" href="https://example.com">' .
-                '<link rel="https://api.w.org/" href="http://example.com/wp-json/" />' .
+                '<link rel="subsection" href="https://mydomain.com">' .
+                '<link rel="wlwmanifest" href="https://mydomain.com">' .
+                '<link rel="https://api.w.org/" href="http://mydomain.com/wp-json/" />' .
                 '</head><title>title</title><body>body</body></html>',
                 '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
-                '<link rel="alternate" hreflang="es" href="https://example.com">' .
-                '<link rel="appendix" href="https://example.com">' .
-                '<link rel="author" href="https://example.com">' .
-                '<link rel="bookmark" href="https://example.com">' .
-                '<link rel="chapter" href="https://example.com">' .
-                '<link rel="contents" href="https://example.com">' .
-                '<link rel="copyright" href="https://example.com">' .
-                '<link rel="dns-prefetch" href="https://example.com">' .
-                '<link rel="EditURI" href="https://example.com">' .
-                '<link rel="glossary" href="https://example.com">' .
-                '<link rel="help" href="https://example.com">' .
+                '<link rel="alternate" hreflang="es" href="https://mynewdomain.com">' .
+                '<link rel="appendix" href="https://mynewdomain.com">' .
+                '<link rel="author" href="https://mynewdomain.com">' .
+                '<link rel="bookmark" href="https://mynewdomain.com">' .
+                '<link rel="chapter" href="https://mynewdomain.com">' .
+                '<link rel="contents" href="https://mynewdomain.com">' .
+                '<link rel="copyright" href="https://mynewdomain.com">' .
+                '<link rel="dns-prefetch" href="https://mynewdomain.com">' .
+                '<link rel="EditURI" href="https://mynewdomain.com">' .
+                '<link rel="glossary" href="https://mynewdomain.com">' .
+                '<link rel="help" href="https://mynewdomain.com">' .
                 '<link rel="icon" href="favicon.ico">' .
-                '<link rel="index" href="https://example.com">' .
-                '<link rel="license" href="https://example.com">' .
-                '<link rel="shortcut icon" href="https://example.com">' .
-                '<link rel="apple-touch-icon" href="https://example.com">' .
-                '<link rel="manifest" href="https://example.com">' .
-                '<link rel="mask-icon" href="https://example.com">' .
-                '<link rel="next" href="https://example.com">' .
-                '<link rel="pingback" href="https://example.com">' .
-                '<link rel="preconnect" href="https://example.com">' .
-                '<link rel="prefetch" href="https://example.com">' .
+                '<link rel="apple-touch-icon" sizes="180x180" href="/w/apple-touch-icon.png">' .
+                '<link rel="index" href="https://mynewdomain.com">' .
+                '<link rel="license" href="https://mynewdomain.com">' .
+                '<link rel="shortcut icon" href="https://mynewdomain.com">' .
+                '<link rel="apple-touch-icon" href="https://mynewdomain.com">' .
+                '<link rel="manifest" href="https://mynewdomain.com">' .
+                '<link rel="mask-icon" href="https://mynewdomain.com">' .
+                '<link rel="next" href="https://mynewdomain.com">' .
+                '<link rel="pingback" href="https://mynewdomain.com">' .
+                '<link rel="preconnect" href="https://mynewdomain.com">' .
+                '<link rel="prefetch" href="https://mynewdomain.com">' .
                 '<link rel="dns-prefetch" href="//s.w.org">' .
-                '<link rel="preload" href="https://example.com">' .
-                '<link rel="prerender" href="https://example.com">' .
-                '<link rel="prev" href="https://example.com">' .
-                '<link rel="section" href="https://example.com">' .
-                '<link rel="start" href="https://example.com">' .
+                '<link rel="preload" href="https://mynewdomain.com">' .
+                '<link rel="prerender" href="https://mynewdomain.com">' .
+                '<link rel="prev" href="https://mynewdomain.com">' .
+                '<link rel="section" href="https://mynewdomain.com">' .
+                '<link rel="start" href="https://mynewdomain.com">' .
                 '<link rel="stylesheet" href="styles.css">' .
-                '<link rel="subsection" href="https://example.com">' .
-                '<link rel="wlwmanifest" href="https://example.com">' .
-                '<link rel="https://api.w.org/" href="http://example.com/wp-json/">' .
+                '<link rel="subsection" href="https://mynewdomain.com">' .
+                '<link rel="wlwmanifest" href="https://mynewdomain.com">' .
+                '<link rel="https://api.w.org/" href="http://mynewdomain.com/wp-json/">' .
                 '</head><title>title</title><body>body</body></html>' . PHP_EOL,
             ],
             'protocol relative link always rewritten to destination protocol' => [
@@ -720,6 +710,14 @@ final class HTMLProcessorTest extends TestCase {
                 '</head><body>body</body></html>',
                 '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
                 '<link rel="dns-prefetch" href="https://mynewdomain.com">' .
+                '</head><body>body</body></html>' . PHP_EOL,
+            ],
+            'rewrites relative link hrefs' => [
+                '<!DOCTYPE html><html lang="en-US"><head>' .
+                '<link rel="apple-touch-icon" sizes="180x180" href="/w/apple-touch-icon.png">' .
+                '</head><body>body</body></html>',
+                '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
+                '<link rel="apple-touch-icon" sizes="180x180" href="https://mynewdomain.com/w/apple-touch-icon.png">' .
                 '</head><body>body</body></html>' . PHP_EOL,
             ],
         ];

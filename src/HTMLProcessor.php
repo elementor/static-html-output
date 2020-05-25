@@ -513,7 +513,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function isInternalLink( string $link, string $domain = '' ) : bool {
+    public function isInternalLink( string $link ) : bool {
         if ( ! $link ) {
             return false;
         }
@@ -530,19 +530,22 @@ class HTMLProcessor extends StaticHTMLOutput {
             }
         }
 
-        if ( ! $domain ) {
+        // is there a hostname in our link to compare to site URL's host?
+        $link_host = parse_url( $link, PHP_URL_HOST );
+
+        if ( $link_host ) {
             $domain = $this->placeholder_url;
+
+            // check link is same host as $this->url and not a subdomain
+            return $link_host === parse_url( $domain, PHP_URL_HOST );
         }
 
-        // TODO: apply only to links starting with .,..,/,
-        // or any with just a path, like banana.png
-        // check link is same host as $this->url and not a subdomain
-        $is_internal_link = parse_url( $link, PHP_URL_HOST ) === parse_url(
-            $domain,
-            PHP_URL_HOST
-        );
+        // match anything without a colon, ie favicon.ico, not mailto:
+        if ( strpos( $link, ':' ) === false ) {
+            return true;
+        }
 
-        return $is_internal_link;
+        return false;
     }
 
     public function removeQueryStringFromInternalLink( DOMElement $element ) : void {
