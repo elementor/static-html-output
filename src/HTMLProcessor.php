@@ -55,10 +55,6 @@ class HTMLProcessor extends StaticHTMLOutput {
      */
     public $harvest_new_urls;
     /**
-     * @var bool
-     */
-    public $base_tag_exists;
-    /**
      * @var string
      */
     public $destination_protocol;
@@ -136,10 +132,6 @@ class HTMLProcessor extends StaticHTMLOutput {
             $placeholder_url
         );
 
-        // detect if a base tag exists while in the loop
-        // use in later base href creation to decide: append or create
-        $this->base_tag_exists = false;
-
         // rewrite page_url to placeholder URL host
         $page_url = $this->rewriteSiteURLsToPlaceholder(
             $page_url,
@@ -189,9 +181,34 @@ class HTMLProcessor extends StaticHTMLOutput {
                     // and escaped urls
                     $this->processScript( $element );
                     break;
+                // process other elements
+                default:
+                    $elements_with_src_tags = [
+                        'amp-img',
+                        'audio',
+                        'bgsound',
+                        'embed',
+                        'frame',
+                        'iframe',
+                        'ilayer',
+                        'layer',
+                        'script',
+                        'source',
+                        'video',
+                        'xml',
+                    ];
 
-                    // TODO: how about other places that can contain URLs
-                    // data attr, reacty stuff, etc?
+                    if ( in_array( $element->tagName, $elements_with_src_tags ) ) {
+                        $this->processGenericSrc( $element );
+                    }
+
+                    $elements_with_href_tags = [ 'base', 'area' ];
+
+                    if ( in_array( $element->tagName, $elements_with_src_tags ) ) {
+                        $this->processGenericHref( $element );
+                    }
+
+                    break;
             }
         }
 
@@ -374,6 +391,24 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->rewriteBaseURL( $element );
     }
 
+    public function processGenericSrc( DOMElement $element ) : void {
+        $this->normalizeURL( $element, 'src' );
+        $this->forceHTTPS( $element, 'src' );
+        $this->removeQueryStringFromInternalLink( $element );
+        $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
+        $this->rewriteWPPaths( $element );
+        $this->rewriteBaseURL( $element );
+    }
+
+    public function processGenericHref( DOMElement $element ) : void {
+        $this->normalizeURL( $element, 'href' );
+        $this->forceHTTPS( $element, 'href' );
+        $this->removeQueryStringFromInternalLink( $element );
+        $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
+        $this->rewriteWPPaths( $element );
+        $this->rewriteBaseURL( $element );
+    }
+
     public function stripHTMLComments() : void {
         if ( $this->remove_html_comments ) {
             $xpath = new DOMXPath( $this->xml_doc );
@@ -411,12 +446,6 @@ class HTMLProcessor extends StaticHTMLOutput {
                     }
 
                     $element_parent->removeChild( $node );
-                }
-            } elseif ( isset( $node->tagName ) ) {
-                if ( $node->tagName === 'base' ) {
-                    // as smaller iteration to run conditional
-                    // against here
-                    $this->base_tag_exists = true;
                 }
             }
         }

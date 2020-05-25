@@ -396,6 +396,8 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::processImage
      * @covers StaticHTMLOutput\HTMLProcessor::processImageSrcSet
      * @covers StaticHTMLOutput\HTMLProcessor::processAnchor
+     * @covers StaticHTMLOutput\HTMLProcessor::processGenericHref
+     * @covers StaticHTMLOutput\HTMLProcessor::processGenericSrc
      * @dataProvider processHTMLProvider
      */
     public function testProcessHTML(
