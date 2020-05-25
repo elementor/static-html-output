@@ -107,6 +107,10 @@ final class HTMLProcessorTest extends TestCase {
                 'favicon.ico',
                 true,
             ],
+            'content directive within meta' => [
+                'width=device-width, initial-scale=1.0',
+                false,
+            ],
         ];
     }
 
@@ -492,6 +496,20 @@ final class HTMLProcessorTest extends TestCase {
                 'http://mydomain.com/',
                 $this->loadTestHTML( 'input_process_links_with_stripping' ),
                 $this->loadTestHTML( 'output_process_links_with_stripping' ),
+            ],
+            'forces https on safe external URLs if destination protocol is https' => [
+                false, // $remove_conditional_head_comments = false
+                false, // $remove_html_comments = false
+                false, // $remove_wp_links = false
+                false, // $remove_wp_meta = false
+                '', // $rewrite_rules = ''
+                'https://mynewdomain.com', // $base_url
+                '', // $selected_deployment_option = 'folder'
+                'http://localhost', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
+                'http://localhost/',
+                $this->loadTestHTML( 'input_force_external_urls_to_https_to_match_destination' ),
+                $this->loadTestHTML( 'output_force_external_urls_to_https_to_match_destination' ),
             ],
         ];
     }

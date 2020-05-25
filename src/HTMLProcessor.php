@@ -547,8 +547,12 @@ class HTMLProcessor extends StaticHTMLOutput {
             return $link_host === parse_url( $domain, PHP_URL_HOST );
         }
 
-        // match anything without a colon, ie favicon.ico, not mailto:
-        if ( strpos( $link, ':' ) === false ) {
+        // match anything without a colon, comma or space ie favicon.ico, not mailto:, viewport
+        if (
+            ( strpos( $link, ':' ) === false ) &&
+            ( strpos( $link, ' ' ) === false ) &&
+            ( strpos( $link, ',' ) === false )
+        ) {
             return true;
         }
 
