@@ -783,10 +783,9 @@ class FilesHelper {
      */
     public static function getPaginationURLsForPosts( array $post_types ) : array {
         global $wpdb, $wp_rewrite;
-
+        $wp_site = new WPSite();
         $pagination_base = $wp_rewrite->pagination_base;
         $default_posts_per_page = get_option( 'posts_per_page' );
-
         $urls_to_include = [];
 
         foreach ( $post_types as $post_type ) {
@@ -812,17 +811,22 @@ class FilesHelper {
             }
 
             $plural_form = strtolower( $post_type_obj->labels->name );
-
             $count = $wpdb->num_rows;
-
             $total_pages = ceil( $count / $default_posts_per_page );
+            $archive_link = get_post_type_archive_link( $post_type );
 
+            // only use pagination base when post type is page
             for ( $page = 1; $page <= $total_pages; $page++ ) {
-                $pagination_url =
-                    "/{$plural_form}/{$pagination_base}/{$page}";
+                if ( $post_type === 'page' ) {
+                    $pagination_url =
+                        "/{$plural_form}/{$pagination_base}/{$page}";
+                } else {
+                    $pagination_url =
+                        "$archive_link/{$page}";
+                }
 
                 $urls_to_include[] = str_replace(
-                    '/posts/',
+                    $wp_site->site_url,
                     '/',
                     $pagination_url
                 );
