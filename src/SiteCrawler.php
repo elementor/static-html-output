@@ -481,7 +481,6 @@ class SiteCrawler extends StaticHTMLOutput {
                 // temp workaround while refactoring settings
                 // prepare string settings
                 $string_settings = [
-                    'baseHREF',
                     'baseUrl',
                     'rewrite_rules',
                     'selected_deployment_option',
@@ -501,7 +500,6 @@ class SiteCrawler extends StaticHTMLOutput {
                     'removeHTMLComments',
                     'removeWPLinks',
                     'removeWPMeta',
-                    'useRelativeURLs',
                 ];
 
                 foreach ( $bool_settings as $setting ) {
@@ -516,8 +514,6 @@ class SiteCrawler extends StaticHTMLOutput {
                     $this->settings['removeWPLinks'],
                     $this->settings['removeWPMeta'],
                     $this->settings['rewrite_rules'],
-                    $this->settings['useRelativeURLs'],
-                    $this->settings['baseHREF'],
                     $this->settings['baseUrl'],
                     $this->settings['selected_deployment_option'],
                     $this->settings['wp_site_url'],
@@ -539,7 +535,6 @@ class SiteCrawler extends StaticHTMLOutput {
                 // temp workaround while refactoring settings
                 // prepare string settings
                 $string_settings = [
-                    'baseHREF',
                     'baseUrl',
                     'rewrite_rules',
                     'selected_deployment_option',
@@ -559,7 +554,6 @@ class SiteCrawler extends StaticHTMLOutput {
                     'removeHTMLComments',
                     'removeWPLinks',
                     'removeWPMeta',
-                    'useRelativeURLs',
                 ];
 
                 foreach ( $bool_settings as $setting ) {
@@ -573,8 +567,6 @@ class SiteCrawler extends StaticHTMLOutput {
                     $this->settings['removeWPLinks'],
                     $this->settings['removeWPMeta'],
                     $this->settings['rewrite_rules'],
-                    $this->settings['useRelativeURLs'],
-                    $this->settings['baseHREF'],
                     $this->settings['baseUrl'],
                     $this->settings['selected_deployment_option'],
                     $this->settings['wp_site_url'],

@@ -38,8 +38,6 @@ class DBSettings {
             'rename_rules',
             'removeWPMeta',
             'removeWPLinks',
-            'useBaseHref',
-            'useRelativeURLs',
             'removeConditionalHeadComments',
             'removeWPMeta',
             'removeWPLinks',

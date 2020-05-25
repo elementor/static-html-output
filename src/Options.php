@@ -22,7 +22,6 @@ class Options {
      */
     protected $statichtmloutput_options_keys = [
         'additionalUrls',
-        'baseHREF',
         'baseUrl',
         'baseUrl-bitbucket',
         'baseUrl-bunnycdn',
@@ -75,9 +74,7 @@ class Options {
         's3Secret',
         'selected_deployment_option',
         'targetFolder',
-        'useBaseHref',
         'useBasicAuth',
-        'useRelativeURLs',
     ];
 
     /**
@@ -85,7 +82,6 @@ class Options {
      */
     protected $whitelisted_keys = [
         'additionalUrls',
-        'baseHREF',
         'baseUrl',
         'baseUrl-bitbucket',
         'baseUrl-bunnycdn',
@@ -129,9 +125,7 @@ class Options {
         's3Region',
         'selected_deployment_option',
         'targetFolder',
-        'useBaseHref',
         'useBasicAuth',
-        'useRelativeURLs',
     ];
 
     public function __construct( string $option_key ) {

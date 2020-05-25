@@ -31,8 +31,6 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            false, // $use_relative_urls = false
-            '', // $base_href
             '', // $base_url
             '', // $selected_deployment_option = 'folder'
             '', // $wp_site_url
@@ -139,8 +137,6 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            false, // $use_relative_urls = false
-            '', // $base_href
             '', // $base_url
             '', // $selected_deployment_option = 'folder'
             '', // $wp_site_url
@@ -214,8 +210,6 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            false, // $use_relative_urls = false
-            '', // $base_href
             '', // $base_url
             '', // $selected_deployment_option = 'folder'
             $site_url, // $wp_site_url
@@ -310,8 +304,6 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            false, // $use_relative_urls = false
-            '', // $base_href
             '', // $base_url
             '', // $selected_deployment_option = 'folder'
             '', // $wp_site_url
@@ -380,125 +372,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
      * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
      * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\HTMLProcessor::convertToRelativeURL
-     * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
-     * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
-     * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
-     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
-     * @covers StaticHTMLOutput\HTMLProcessor::processHTML
-     * @covers StaticHTMLOutput\HTMLProcessor::processHead
-     * @covers StaticHTMLOutput\HTMLProcessor::processLink
-     * @covers StaticHTMLOutput\HTMLProcessor::removeQueryStringFromInternalLink
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldUseRelativeURLs
-     * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
-     * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
-     * @dataProvider baseHREFProvider
-     */
-    public function testSetBaseHREF(
-        $test_html_content,
-        $base_href,
-        $exp_detect_existing,
-        $exp_result
-        ) {
-
-        $html_processor = new HTMLProcessor(
-            false, // $remove_conditional_head_comments = false
-            false, // $remove_html_comments = false
-            false, // $remove_wp_links = false
-            false, // $remove_wp_meta = false
-            '', // $rewrite_rules = false
-            false, // $use_relative_urls = false
-            $base_href, // $base_href
-            'https://mynewdomain.com', // $base_url
-            '', // $selected_deployment_option = 'folder'
-            'http://mydomain.com', // $wp_site_url
-            '/tmp/' // $wp_uploads_path - temp write file during test while refactoring
-        );
-
-        $html_processor->processHTML(
-            $test_html_content,
-            'http://mywpsite.com/a-page/'
-        );
-
-        $this->assertEquals(
-            $exp_detect_existing,
-            $html_processor->base_tag_exists
-        );
-
-        $this->assertEquals(
-            $exp_result,
-            $html_processor->xml_doc->saveHTML()
-        );
-
-    }
-
-    public function baseHREFProvider() {
-        return [
-            // FAILING
-            'base HREF of "/" with none existing in source' => [
-                '<!DOCTYPE html><html lang="en-US"><head></head><body></body></html>',
-                '/',
-                false,
-                '<!DOCTYPE html>
-<html lang="en-US"><head><base href="/"></head><body></body></html>
-',
-            ],
-            // FAILING
-            'base HREF with none existing in source' => [
-                '<!DOCTYPE html><html lang="en-US"><head></head><body></body></html>',
-                'https://mynewdomain.com',
-                false,
-                '<!DOCTYPE html>
-<html lang="en-US"><head><base href="https://mynewdomain.com"></head><body></body></html>
-',
-            ],
-            'base HREF to change existing in source' => [
-                '<!DOCTYPE html><html lang="en-US"><head><base href="https://mydomain.com">' .
-                '</head><body></body></html>',
-                'https://mynewdomain.com',
-                true,
-                '<!DOCTYPE html>
-<html lang="en-US"><head><base href="https://mynewdomain.com"></head><body></body></html>
-',
-            ],
-            'empty base HREF removes existing in source' => [
-                '<!DOCTYPE html><html lang="en-US"><head><base href="https://mydomain.com">' .
-                '</head><body></body></html>',
-                '',
-                true,
-                '<!DOCTYPE html>
-<html lang="en-US"><head></head><body></body></html>
-',
-            ],
-            'no base HREF and none existing in source' => [
-                '<!DOCTYPE html><html lang="en-US"><head></head><body></body></html>',
-                '',
-                false,
-                '<!DOCTYPE html>
-<html lang="en-US"><head></head><body></body></html>
-',
-            ],
-            'new base HREF becomes first child of <head>' => [
-                '<!DOCTYPE html><html lang="en-US"><head><link rel="stylesheet" ' .
-                'href="#"></head><body></body></html>',
-                '/',
-                false,
-                '<!DOCTYPE html>
-<html lang="en-US"><head><base href="/"><link rel="stylesheet" href="#"></head><body></body></html>
-',
-            ],
-        ];
-    }
-
-    /**
-     * @covers StaticHTMLOutput\HTMLProcessor::__construct
-     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
-     * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\HTMLProcessor::convertToRelativeURL
      * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
      * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
      * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
@@ -510,14 +383,11 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::processHead
      * @covers StaticHTMLOutput\HTMLProcessor::processMeta
      * @covers StaticHTMLOutput\HTMLProcessor::removeQueryStringFromInternalLink
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldUseRelativeURLs
      * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
      * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
-
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
      * @dataProvider unicodeProvider
      */
     public function testUnicodeOutput(
@@ -531,8 +401,6 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            false, // $use_relative_urls = false
-            '', // $base_href
             'https://mynewdomain.com', // $base_url
             '', // $selected_deployment_option = 'folder'
             'http://mydomain.com', // $wp_site_url
@@ -569,11 +437,9 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
      * @covers StaticHTMLOutput\HTMLProcessor::processLink
      * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\HTMLProcessor::convertToRelativeURL
      * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
      * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
      * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
-     * @covers StaticHTMLOutput\HTMLProcessor::getBaseURLRewritePatterns
      * @covers StaticHTMLOutput\HTMLProcessor::getHTML
      * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
      * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
@@ -582,13 +448,12 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::processHTML
      * @covers StaticHTMLOutput\HTMLProcessor::processHead
      * @covers StaticHTMLOutput\HTMLProcessor::removeQueryStringFromInternalLink
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldUseRelativeURLs
      * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
      * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
+     * @covers StaticHTMLOutput\HTMLProcessor::getBaseURLRewritePatterns
      * @dataProvider processlinkProvider
      */
     public function testProcessLink(
@@ -603,8 +468,6 @@ final class HTMLProcessorTest extends TestCase {
             $remove_wp_links_option, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            false, // $use_relative_urls = false
-            '', // $base_href
             'https://mynewdomain.com', // $base_url
             '', // $selected_deployment_option = 'folder'
             'http://mydomain.com', // $wp_site_url
@@ -800,9 +663,9 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
      * @covers StaticHTMLOutput\HTMLProcessor::processHTML
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
-     * @covers StaticHTMLOutput\HTMLProcessor::shouldCreateBaseHREF
      * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
      * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
      * @dataProvider codeProvider
      */
     public function testCodeProcessing(
@@ -815,8 +678,6 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            false, // $use_relative_urls = false
-            '', // $base_href
             'https://mynewdomain.com', // $base_url
             '', // $selected_deployment_option = 'folder'
             'http://mydomain.com', // $wp_site_url

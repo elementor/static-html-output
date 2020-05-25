@@ -31,13 +31,10 @@ class PostSettings {
 
         $key_sets['processing'] = [
             'removeConditionalHeadComments',
-            'baseHREF',
             'rewrite_rules',
             'rename_rules',
             'removeWPMeta',
             'removeWPLinks',
-            'useBaseHref',
-            'useRelativeURLs',
             'removeConditionalHeadComments',
             'removeWPMeta',
             'removeWPLinks',

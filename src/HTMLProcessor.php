@@ -31,14 +31,6 @@ class HTMLProcessor extends StaticHTMLOutput {
      */
     public $rewrite_rules;
     /**
-     * @var bool
-     */
-    public $use_relative_urls;
-    /**
-     * @var string
-     */
-    public $base_href;
-    /**
      * @var string Destination URL
      */
     public $base_url;
@@ -101,8 +93,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         bool $remove_wp_links = false,
         bool $remove_wp_meta = false,
         string $rewrite_rules = '',
-        bool $use_relative_urls = false,
-        string $base_href,
         string $base_url,
         string $selected_deployment_option = 'folder',
         string $wp_site_url,
@@ -113,8 +103,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->remove_wp_links = $remove_wp_links;
         $this->remove_wp_meta = $remove_wp_meta;
         $this->rewrite_rules = $rewrite_rules;
-        $this->use_relative_urls = $use_relative_urls;
-        $this->base_href = $base_href;
         $this->base_url = $base_url;
         $this->selected_deployment_option = $selected_deployment_option;
         $this->wp_site_url = $wp_site_url;
@@ -200,54 +188,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             }
         }
 
-        if ( $this->base_tag_exists ) {
-            $base_element =
-                $this->xml_doc->getElementsByTagName( 'base' )->item( 0 );
-
-            if ( $base_element ) {
-                if ( $this->shouldCreateBaseHREF() ) {
-                    $base_element->setAttribute(
-                        'href',
-                        $this->base_href
-                    );
-                } else {
-                    $element_parent = $base_element->parentNode;
-
-                    if ( $element_parent ) {
-                        $element_parent->removeChild( $base_element );
-                    }
-                }
-            }
-        } elseif ( $this->shouldCreateBaseHREF() ) {
-            $base_element = $this->xml_doc->createElement( 'base' );
-            $base_element->setAttribute(
-                'href',
-                $this->base_href
-            );
-            $head_element =
-                $this->xml_doc->getElementsByTagName( 'head' )->item( 0 );
-            if ( $head_element ) {
-                $first_head_child = $head_element->firstChild;
-
-                if ( $first_head_child ) {
-                    $head_element->insertBefore(
-                        $base_element,
-                        $first_head_child
-                    );
-                } else {
-                    $head_element->appendChild( $base_element );
-                }
-            } else {
-                WsLog::l(
-                    'WARNING: no valid head elemnent to attach base to: ' .
-                        $this->page_url
-                );
-            }
-        }
-
-        // strip comments
         $this->stripHTMLComments();
-
         $this->writeDiscoveredURLs();
 
         return true;
@@ -274,7 +215,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
 
         if ( $this->remove_wp_links ) {
             $relative_links_to_rm = [
@@ -397,7 +337,6 @@ class HTMLProcessor extends StaticHTMLOutput {
                 $this->addDiscoveredURL( (string) $url );
                 $url = $this->rewriteWPPathsSrcSetURL( (string) $url );
                 $url = $this->rewriteBaseURLSrcSetURL( $url );
-                $url = $this->convertToRelativeURLSrcSetURL( $url );
             }
 
             $new_src_set[] = "{$url} {$dimension}";
@@ -412,7 +351,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
     }
 
     public function stripHTMLComments() : void {
@@ -469,7 +407,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
     }
 
     public function processAnchor( DOMElement $element ) : void {
@@ -496,7 +433,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
     }
 
     public function processMeta( DOMElement $element ) : void {
@@ -537,7 +473,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
-        $this->convertToRelativeURL( $element );
     }
 
     public function writeDiscoveredURLs() : void {
@@ -862,56 +797,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $processed_html;
     }
 
-    public function convertToRelativeURLSrcSetURL( string $url_to_change ) : string {
-        if ( ! $this->shouldUseRelativeURLs() ) {
-            return $url_to_change;
-        }
-
-        $site_root = '';
-
-        $relative_url = str_replace(
-            $this->base_url,
-            $site_root,
-            $url_to_change
-        );
-
-        return $relative_url;
-    }
-
-    public function convertToRelativeURL( DOMElement $element ) : void {
-        if ( ! $this->shouldUseRelativeURLs() ) {
-            return;
-        }
-
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-
-        $site_root = '';
-
-        // check it actually needs to be changed
-        if ( $this->isInternalLink(
-            $url_to_change,
-            $this->base_url
-        ) ) {
-            $rewritten_url = str_replace(
-                $this->base_url,
-                $site_root,
-                $url_to_change
-            );
-
-            $element->setAttribute( $attribute_to_change, $rewritten_url );
-        }
-    }
-
     // TODO: move some of these URLs into settings to avoid extra calls
     public function getProtocolRelativeURL( string $url ) : string {
         $this->destination_protocol_relative_url = str_replace(
@@ -1018,18 +903,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         );
 
         return $rewritten_source;
-    }
-
-    public function shouldUseRelativeURLs() : bool {
-        return $this->use_relative_urls;
-    }
-
-    public function shouldCreateBaseHREF() : bool {
-        if ( empty( $this->base_href ) ) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

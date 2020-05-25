@@ -145,6 +145,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * Tested with WP 5.4.1
  * Requires minimum PHP 7.3
  * removed insecure FTP option
+ * removed relative link conversion and base element processing
  * Matching project name to wp.org slug
  * Implement code quality tooling
  * Performance optimization for slow hosting providers

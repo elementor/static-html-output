@@ -41,8 +41,6 @@ final class CSSProcessorTest extends TestCase {
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            false, // $use_relative_urls = false
-            '', // $base_href
             'https://deploysite.com/', // $base_url
             '', // $selected_deployment_option = 'folder'
             'http://localsite.com/', // $wp_site_url

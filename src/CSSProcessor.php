@@ -32,14 +32,6 @@ class CSSProcessor extends StaticHTMLOutput {
      */
     public $rewrite_rules;
     /**
-     * @var bool
-     */
-    public $use_relative_urls;
-    /**
-     * @var string
-     */
-    public $base_href;
-    /**
      * @var string Destination URL
      */
     public $base_url;
@@ -90,8 +82,6 @@ class CSSProcessor extends StaticHTMLOutput {
         bool $remove_wp_links = false,
         bool $remove_wp_meta = false,
         string $rewrite_rules = '',
-        bool $use_relative_urls = false,
-        string $base_href,
         string $base_url,
         string $selected_deployment_option = 'folder',
         string $wp_site_url,
@@ -102,8 +92,6 @@ class CSSProcessor extends StaticHTMLOutput {
         $this->remove_wp_links = $remove_wp_links;
         $this->remove_wp_meta = $remove_wp_meta;
         $this->rewrite_rules = $rewrite_rules;
-        $this->use_relative_urls = $use_relative_urls;
-        $this->base_href = $base_href;
         $this->base_url = $base_url;
         $this->selected_deployment_option = $selected_deployment_option;
         $this->wp_site_url = $wp_site_url;
