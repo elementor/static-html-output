@@ -218,6 +218,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     public function processLink( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'href' );
+        $this->forceHTTPS( $element, 'href' );
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
@@ -339,11 +340,23 @@ class HTMLProcessor extends StaticHTMLOutput {
             if ( $this->isInternalLink( $url ) ) {
                 $url = $this->page_url->resolve( $url );
 
+                // TODO: preserve query string when reforming
                 // rm query string
                 $url = strtok( $url, '?' );
                 $this->addDiscoveredURL( (string) $url );
                 $url = $this->rewriteWPPathsSrcSetURL( (string) $url );
                 $url = $this->rewriteBaseURLSrcSetURL( $url );
+            } else {
+                if ( $this->destination_protocol === 'https://' ) {
+                    // force https, don't remove query string
+                    if ( strpos( $url, 'http://' ) !== false ) {
+                        $url = str_replace(
+                            'http://',
+                            'https://',
+                            $url
+                        );
+                    }
+                }
             }
 
             $new_src_set[] = "{$url} {$dimension}";
@@ -354,6 +367,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     public function processImage( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'src' );
+        $this->forceHTTPS( $element, 'src' );
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
@@ -410,6 +424,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     public function processScript( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'src' );
+        $this->forceHTTPS( $element, 'src' );
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
@@ -476,6 +491,7 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $url = $element->getAttribute( 'content' );
         $this->normalizeURL( $element, 'content' );
+        $this->forceHTTPS( $element, 'content' );
         $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
@@ -518,6 +534,30 @@ class HTMLProcessor extends StaticHTMLOutput {
             $abs = $this->page_url->resolve( $original_link );
             $element->setAttribute( $attribute, $abs );
         }
+    }
+
+    public function forceHTTPS( DOMElement $element, string $attribute ) : void {
+        if ( $this->destination_protocol !== 'https://' ) {
+            return;
+        }
+
+        $original_link = $element->getAttribute( $attribute );
+
+        if ( $this->isInternalLink( $original_link ) ) {
+            return;
+        }
+
+        if ( strpos( $original_link, 'http://' ) === false ) {
+            return;
+        }
+
+        $https_link = str_replace(
+            'http://',
+            'https://',
+            $original_link
+        );
+
+        $element->setAttribute( $attribute, $https_link );
     }
 
     public function isInternalLink( string $link ) : bool {

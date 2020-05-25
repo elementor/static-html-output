@@ -392,6 +392,9 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::processMeta
      * @covers StaticHTMLOutput\HTMLProcessor::removeQueryStringFromInternalLink
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
+     * @covers StaticHTMLOutput\HTMLProcessor::forceHTTPS
+     * @covers StaticHTMLOutput\HTMLProcessor::processImage
+     * @covers StaticHTMLOutput\HTMLProcessor::processImageSrcSet
      * @dataProvider processHTMLProvider
      */
     public function testProcessHTML(
@@ -510,6 +513,20 @@ final class HTMLProcessorTest extends TestCase {
                 'http://localhost/',
                 $this->loadTestHTML( 'input_force_external_urls_to_https_to_match_destination' ),
                 $this->loadTestHTML( 'output_force_external_urls_to_https_to_match_destination' ),
+            ],
+            'no force https on external URLs if destination protocol is http' => [
+                false, // $remove_conditional_head_comments = false
+                false, // $remove_html_comments = false
+                false, // $remove_wp_links = false
+                false, // $remove_wp_meta = false
+                '', // $rewrite_rules = ''
+                'http://mynewdomain.com', // $base_url
+                '', // $selected_deployment_option = 'folder'
+                'http://localhost', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
+                'http://localhost/',
+                $this->loadTestHTML( 'input_no_force_https_external_urls_for_http_destination' ),
+                $this->loadTestHTML( 'output_no_force_https_external_urls_for_http_destination' ),
             ],
         ];
     }
