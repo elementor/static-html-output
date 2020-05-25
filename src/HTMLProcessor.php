@@ -140,6 +140,13 @@ class HTMLProcessor extends StaticHTMLOutput {
         // use in later base href creation to decide: append or create
         $this->base_tag_exists = false;
 
+        // rewrite page_url to placeholder URL host
+        $page_url = $this->rewriteSiteURLsToPlaceholder(
+            $page_url,
+            $site_url,
+            $placeholder_url
+        );
+
         $this->page_url = new Net_URL2( $page_url );
 
         $this->detectIfURLsShouldBeHarvested();
