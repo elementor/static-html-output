@@ -666,6 +666,14 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
      * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
+     * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
+     * @covers StaticHTMLOutput\HTMLProcessor::getBaseURLRewritePatterns
+     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::processHead
+     * @covers StaticHTMLOutput\HTMLProcessor::processLink
+     * @covers StaticHTMLOutput\HTMLProcessor::removeQueryStringFromInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
      * @dataProvider codeProvider
      */
     public function testCodeProcessing(
@@ -705,6 +713,14 @@ final class HTMLProcessorTest extends TestCase {
                 '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><body>' .
                 '<code>&lt;div class="gcse-searchbox-only"&gt;&lt;/div&gt;</code>' .
                 '</body></html>' . PHP_EOL,
+            ],
+            'rewrites WP DNS prefetch' => [
+                '<!DOCTYPE html><html lang="en-US"><head>' .
+                "<link rel='dns-prefetch' href='//mydomain.com' />" .
+                '</head><body>body</body></html>',
+                '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
+                '<link rel="dns-prefetch" href="https://mynewdomain.com">' .
+                '</head><body>body</body></html>' . PHP_EOL,
             ],
         ];
     }
