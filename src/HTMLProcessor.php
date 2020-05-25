@@ -115,6 +115,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->xml_doc = new DOMDocument( '1.0', 'UTF-8' );
         $this->xml_doc->formatOutput = false;
         $this->xml_doc->preserveWhiteSpace = true;
+        $this->xml_doc->strictErrorChecking = false;
 
         // NOTE: set placeholder_url to same protocol as target
         // making it easier to rewrite URLs without considering protocol
@@ -150,7 +151,14 @@ class HTMLProcessor extends StaticHTMLOutput {
         // PERF: 70% of function time
         // prevent warnings, via https://stackoverflow.com/a/9149241/1668057
         libxml_use_internal_errors( true );
-        $this->xml_doc->loadHTML( $this->raw_html );
+
+        $this->xml_doc->loadHTML(
+            $this->raw_html,
+            LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR |
+            LIBXML_NOWARNING | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_PARSEHUGE |
+            LIBXML_ERR_NONE
+        );
+
         libxml_use_internal_errors( false );
 
         // start the full iterator here, along with copy of dom

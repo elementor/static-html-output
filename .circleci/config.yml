@@ -6,6 +6,7 @@ jobs:
     steps:
 #    - run: sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     - checkout
+    - run: php -i
     - run: composer validate --strict
     - run: composer install --no-interaction --no-suggest
     - run: composer test
