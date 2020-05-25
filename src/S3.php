@@ -59,11 +59,6 @@ class S3 extends SitePublisher {
             if ( ! is_file( $local_file ) ) {
                 continue; }
 
-            if ( isset( $this->settings['s3RemotePath'] ) ) {
-                $this->target_path =
-                    $this->settings['s3RemotePath'] . '/' . $this->target_path;
-            }
-
             $this->local_file_contents = (string) file_get_contents( $local_file );
 
             if ( ! $this->local_file_contents ) {
@@ -99,7 +94,10 @@ class S3 extends SitePublisher {
                     );
 
                 } catch ( StaticHTMLOutputException $e ) {
-                    $this->handleException( $e );
+                    $mime_type = MimeTypes::guess_type( $local_file );
+                    $error = $local_file . PHP_EOL . $e;
+
+                    $this->handleException( $error );
                 }
             }
 
@@ -142,7 +140,6 @@ class S3 extends SitePublisher {
         string $content,
         string $content_type
     ) : void {
-        // NOTE: quick fix for #287
         $s3_path = str_replace( '@', '%40', $s3_path );
 
         $host_name = $this->settings['s3Bucket'] . '.s3.' .

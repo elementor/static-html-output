@@ -36,30 +36,34 @@
           <label for="s3Region">Region</label>
         </th>
         <td>
-        <?php 
+        <?php
 
-        // TODO: shift to S3 model/helper
-        $s3_regions = array(
-          "us-east-1" => "US East (N. Virginia)",
-          "us-east-2" => "US East (Ohio)",
-          "us-west-1" => "US West (N. California)",
-          "us-west-2" => "US West (Oregon)",
-          "ca-central-1" => "Canada (Central)",
-          "ap-south-1" => "Asia Pacific (Mumbai)",
-          "ap-northeast-2" => "Asia Pacific (Seoul)",
-          "ap-southeast-1" => "Asia Pacific (Singapore)",
-          "ap-southeast-2" => "Asia Pacific (Sydney)",
-          "ap-northeast-1" => "Asia Pacific (Tokyo)",
-          "ap-northeast-3" => "Asia Pacific (Osaka-Local)",
-          "eu-central-1" => "EU (Frankfurt)",
-          "eu-west-1" => "EU (Ireland)",
-          "eu-west-2" => "EU (London)",
-          "eu-west-3" => "EU (Paris)",
-          "eu-north-1" => "EU (Stockholm)",
-          "sa-east-1" => "South America (São Paulo)",
-          "cn-north-1" => "China (Beijing)",
-          "cn-northwest-1" => "China (Ningxia)",
-        );
+            $s3_regions = [
+              "us-east-1" => "US East (N. Virginia)",
+              "us-east-2" => "US East (Ohio)",
+              "us-west-1" => "US West (N. California)",
+              "us-west-2" => "US West (Oregon)",
+              "ca-central-1" => "Canada (Central)",
+              "af-south-1" => "Africa (Cape Town)",
+              "ap-south-1" => "Asia Pacific (Mumbai)",
+              "ap-east-1" => "Asia Pacific (Hong Kong)",
+              "ap-northeast-2" => "Asia Pacific (Seoul)",
+              "ap-southeast-1" => "Asia Pacific (Singapore)",
+              "ap-southeast-2" => "Asia Pacific (Sydney)",
+              "ap-northeast-1" => "Asia Pacific (Tokyo)",
+              "ap-northeast-3" => "Asia Pacific (Osaka-Local)",
+              "eu-central-1" => "EU (Frankfurt)",
+              "eu-south-1" => "Europe (Milan)",
+              "eu-west-1" => "EU (Ireland)",
+              "eu-west-2" => "EU (London)",
+              "eu-west-3" => "EU (Paris)",
+              "eu-north-1" => "EU (Stockholm)",
+              "sa-east-1" => "South America (São Paulo)",
+              "cn-north-1" => "China (Beijing)",
+              "cn-northwest-1" => "China (Ningxia)",
+              "cn-northwest-1" => "China (Ningxia)",
+              "me-south-1" => "Middle East (Bahrain)",
+            ];
         ?>
 
           <?php $tpl->displaySelectMenu($this, $s3_regions, 's3Region', 'Region', 'ie, my-static-site'); ?><br>
@@ -75,16 +79,6 @@
           <?php $tpl->displayTextfield($this, 's3Bucket', 'S3 Bucket', 'ie, my-static-site'); ?><br>
 
           <p><i>Your bucket name as it appears in your <a href="https://s3.console.aws.amazon.com/s3/home" target="_blank">AWS Console for S3</a>.</i></p>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          <label for="s3RemotePath">Subdirectory</label>
-        </th>
-        <td>
-          <?php $tpl->displayTextfield($this, 's3RemotePath', 'Subfolder in your bucket', 'ie, static-website'); ?><br>
-
-          <p><i>In case you want to put your site in a sub directory of a bucket, this will deploy all the static website files into the folder name you specify here.</i></p> 
         </td>
       </tr>
       <tr>
@@ -107,6 +101,4 @@
       </tr>
     </tbody>
   </table>
-
-<a href="https://docs.statichtmloutput.com/en/deploying/deployment-options/amazon-s3/" target="_blank">Read the docs</a> for more on deploying your WordPress site to S3
 </div>

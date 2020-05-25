@@ -81,12 +81,6 @@ class BunnyCDN extends SitePublisher {
             if ( ! is_file( $this->local_file ) ) {
                 continue; }
 
-            if ( isset( $this->settings['bunnycdnRemotePath'] ) ) {
-                $this->target_path =
-                    $this->settings['bunnycdnRemotePath'] . '/' .
-                        $this->target_path;
-            }
-
             $this->local_file_contents = (string) file_get_contents( $this->local_file );
 
             if ( ! $this->local_file_contents ) {

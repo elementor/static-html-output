@@ -65,10 +65,6 @@ class GitLab extends SitePublisher {
             if ( ! is_file( $local_file ) ) {
                 continue; }
 
-            if ( isset( $this->settings['glPath'] ) ) {
-                $target_path = $this->settings['glPath'] . '/' . $target_path;
-            }
-
             $local_file_contents = file_get_contents( $local_file );
 
             if ( ! $local_file_contents ) {

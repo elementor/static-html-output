@@ -86,22 +86,19 @@ $tpl = new StaticHTMLOutput\TemplateHelper();
     <?php
 
     function generateDeploymentMethodOptions() {
-      $options = array(
-        "folder" => array('Subdirectory on current server', 'free'),
-        "blank1" => array("--- Manual Deployment ---", 'free'),
-        "zip" => array('ZIP archive (.zip)'),
-        "blank2" => array("--- Automated Deployment ---"),
-        "s3" => array("Amazon S3"),
-        "bitbucket" => array("Bitbucket"),
-        "bunnycdn" => array("BunnyCDN"),
-        "github" => array("GitHub Pages"),
-        "gitlab" => array("GitLab"),
-        "netlify" => array("Netlify"),
-        "blank3" => array("--- Other Automated Deployments ---"),
-      );
+      $options = [
+        'zip' => 'ZIP archive (.zip)',
+        'folder' => 'Subdirectory on current server',
+        's3' => 'Amazon S3',
+        'bitbucket' => 'Bitbucket',
+        'bunnycdn' => 'BunnyCDN',
+        'github' => 'GitHub Pages',
+        'gitlab' => 'GitLab',
+        'netlify' => 'Netlify',
+      ];
 
       foreach ($options as $key => $value) {
-            echo "<option value='$key'>$value[0]</option>";
+            echo "<option value='$key'>$value</option>";
       }
     }
 

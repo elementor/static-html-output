@@ -10,7 +10,7 @@
         <select name="crawl_increment" id="crawl_increment">
 <?php 
   // TODO: shift this into helper function for select
-  $increments = array(5, 10, 25, 50, 100, 500, 1000, 999999);
+  $increments = [ 5, 10, 25, 50, 100, 500, 1000, 999999 ];
 
   foreach($increments as $increment) :
      if ($increment == 999999): ?>
@@ -34,7 +34,7 @@
           <select name="deployBatchSize" id="deployBatchSize">
 <?php 
   // TODO: shift this into helper function for select
-  $increments = array(1, 5, 10, 25, 50, 100, 500, 1000, 999999);
+  $increments = [ 1, 5, 10, 25, 50, 100, 500, 1000, 999999 ];
 
   foreach($increments as $increment) :
        if ($increment == 999999): ?>
@@ -58,7 +58,7 @@
           <select name="delayBetweenAPICalls" id="delayBetweenAPICalls">
 <?php 
   // TODO: shift this into helper function for select
-  $increments = array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10);
+  $increments = [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 10 ];
 
   foreach($increments as $increment) : ?>
             <option value="<?php echo $increment; ?>"<?php echo $this->options->delayBetweenAPICalls == $increment ? ' selected' : ''; ?>><?php echo $increment; ?></option>

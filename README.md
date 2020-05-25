@@ -47,10 +47,10 @@ apply_filters(
 *example usage*
 ```php
 function add_additional_urls( $url_queue ) {
-    $additional_urls = array(
+    $additional_urls = [
         'http://mydomain.com/custom_link_1/',
         'http://mydomain.com/custom_link_2/',
-    );
+    ];
 
     $url_queue = array_merge(
         $url_queue,

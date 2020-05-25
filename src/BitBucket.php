@@ -131,11 +131,6 @@ class BitBucket extends SitePublisher {
         if ( ! is_file( $local_file ) ) {
             return; }
 
-        if ( isset( $this->settings['bbPath'] ) ) {
-            $this->target_path =
-                $this->settings['bbPath'] . '/' . $this->target_path;
-        }
-
         $this->local_file_contents = (string) file_get_contents( $local_file );
 
         if ( ! $this->local_file_contents ) {

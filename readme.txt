@@ -141,6 +141,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * fix ZIP download URL when dev site's protocol doesn't match Site URL's
  * fix protocol relative URLs in stylesheet rewriting
  * support BunnyCDN's BETA API endpoint regions
+ * update S3 region endpoints
  * Tested with WP 5.4.1
  * Requires minimum PHP 7.3
  * removed insecure FTP option

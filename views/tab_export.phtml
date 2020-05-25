@@ -25,7 +25,7 @@
 <?php
 
   // load up each deployment settings block
-  $deployment_options = array(
+  $deployment_options = [
     'zip',
     'folder',
     's3',
@@ -34,7 +34,7 @@
     'github',
     'gitlab',
     'bitbucket',
-  );
+  ];
 
   foreach($deployment_options as $deployment_option) {
     require_once(__DIR__ . '/' . $deployment_option . '_settings_block.phtml');

@@ -65,7 +65,6 @@ class DBSettings {
         $key_sets['github'] = [
             'baseUrl-github',
             'ghBranch',
-            'ghPath',
             'ghToken',
             'ghRepo',
             'ghCommitMessage',
@@ -74,7 +73,6 @@ class DBSettings {
         $key_sets['bitbucket'] = [
             'baseUrl-bitbucket',
             'bbBranch',
-            'bbPath',
             'bbToken',
             'bbRepo',
         ];
@@ -82,7 +80,6 @@ class DBSettings {
         $key_sets['gitlab'] = [
             'baseUrl-gitlab',
             'glBranch',
-            'glPath',
             'glToken',
             'glProject',
         ];
@@ -93,7 +90,6 @@ class DBSettings {
             'bunnycdnPullZoneAccessKey',
             'bunnycdnPullZoneID',
             'bunnycdnStorageZoneName',
-            'bunnycdnRemotePath',
             'bunnycdn_api_host',
         ];
 
@@ -103,7 +99,6 @@ class DBSettings {
             's3Bucket',
             's3Key',
             's3Region',
-            's3RemotePath',
             's3Secret',
         ];
 

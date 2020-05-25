@@ -45,25 +45,17 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="bunnycdnRemotePath">Subdirectory</label>
-        </th>
-        <td>
-          <?php $tpl->displayTextfield($this, 'bunnycdnRemotePath', 'BunnyCDN Remote Path', 'will attempt to create folder recursively if non-existent'); ?>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
           <label for="bunnycdn_api_host">API Region</label>
         </th>
         <td>
         <?php 
 
         // TODO: shift to S3 model/helper
-        $bunny_regions = array(
+        $bunny_regions = [
           "sg.storage.bunnycdn.com" => "Asia Singapore",
           "storage.bunnycdn.com" => "Europe (Falkenstein)",
           "ny.storage.bunnycdn.com" => "US West (New York)",
-        );
+        ];
         ?>
 
           <?php $tpl->displaySelectMenu($this, $bunny_regions, 'bunnycdn_api_host', 'API Region', '(BETA)'); ?><br>

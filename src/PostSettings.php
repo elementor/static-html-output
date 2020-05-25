@@ -63,7 +63,6 @@ class PostSettings {
         $key_sets['github'] = [
             'baseUrl-github',
             'ghBranch',
-            'ghPath',
             'ghToken',
             'ghRepo',
             'ghCommitMessage',
@@ -72,7 +71,6 @@ class PostSettings {
         $key_sets['bitbucket'] = [
             'baseUrl-bitbucket',
             'bbBranch',
-            'bbPath',
             'bbToken',
             'bbRepo',
         ];
@@ -80,7 +78,6 @@ class PostSettings {
         $key_sets['gitlab'] = [
             'baseUrl-gitlab',
             'glBranch',
-            'glPath',
             'glToken',
             'glProject',
         ];
@@ -91,7 +88,6 @@ class PostSettings {
             'bunnycdnPullZoneAccessKey',
             'bunnycdnPullZoneID',
             'bunnycdnStorageZoneName',
-            'bunnycdnRemotePath',
             'bunnycdn_api_host',
         ];
 
@@ -101,7 +97,6 @@ class PostSettings {
             's3Bucket',
             's3Key',
             's3Region',
-            's3RemotePath',
             's3Secret',
         ];
 

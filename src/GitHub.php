@@ -86,11 +86,6 @@ class GitHub extends SitePublisher {
             if ( ! is_file( $local_file ) ) {
                 continue; }
 
-            if ( isset( $this->settings['ghPath'] ) ) {
-                $this->target_path =
-                    $this->settings['ghPath'] . '/' . $this->target_path;
-            }
-
             $this->local_file_contents = (string) file_get_contents( $local_file );
 
             if ( ! $this->local_file_contents ) {
