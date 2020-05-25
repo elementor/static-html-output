@@ -724,4 +724,84 @@ final class HTMLProcessorTest extends TestCase {
             ],
         ];
     }
+
+    /**
+     * @covers StaticHTMLOutput\HTMLProcessor::__construct
+     * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
+     * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::getHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
+     * @covers StaticHTMLOutput\HTMLProcessor::processHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
+     * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
+     * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
+     * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
+     * @covers StaticHTMLOutput\HTMLProcessor::getBaseURLRewritePatterns
+     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::processHead
+     * @covers StaticHTMLOutput\HTMLProcessor::processLink
+     * @covers StaticHTMLOutput\HTMLProcessor::removeQueryStringFromInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
+     * @dataProvider localHostProvider
+     */
+    public function testLocalHostWithPort(
+        $test_html_content,
+        $exp_result
+        ) {
+        $html_processor = new HTMLProcessor(
+            false, // $remove_conditional_head_comments = false
+            false, // $remove_html_comments = false
+            false, // $remove_wp_links = false
+            false, // $remove_wp_meta = false
+            '', // $rewrite_rules = false
+            'https://mynewdomain.com', // $base_url
+            '', // $selected_deployment_option = 'folder'
+            'http://localhost:4040', // $wp_site_url
+            '/tmp/' // $wp_uploads_path - temp write file during test while refactoring
+        );
+
+        $html_processor->processHTML(
+            $test_html_content,
+            'http://mywpsite.com/a-page/'
+        );
+
+        $this->assertEquals(
+            $exp_result,
+            $html_processor->getHTML()
+        );
+
+    }
+
+    public function localHostProvider() {
+        return [
+            'preserves HTML encoding within <code> el' => [
+                '<!DOCTYPE html><html lang="en-US"><body>' .
+                '<code>&lt;div class="gcse-searchbox-only"&gt;&lt;/div&gt;</code>' .
+                '</body></html>',
+                '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><body>' .
+                '<code>&lt;div class="gcse-searchbox-only"&gt;&lt;/div&gt;</code>' .
+                '</body></html>' . PHP_EOL,
+            ],
+            'doesnt rewrite DNS prefetch without port in WP Site URL' => [
+                '<!DOCTYPE html><html lang="en-US"><head>' .
+                "<link rel='dns-prefetch' href='//localhost' />" .
+                '</head><body>body</body></html>',
+                '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
+                '<link rel="dns-prefetch" href="//localhost">' .
+                '</head><body>body</body></html>' . PHP_EOL,
+            ],
+            'rewrites DNS prefetch with port in WP Site URL' => [
+                '<!DOCTYPE html><html lang="en-US"><head>' .
+                "<link rel='dns-prefetch' href='//localhost:4040' />" .
+                '</head><body>body</body></html>',
+                '<!DOCTYPE html>' . PHP_EOL . '<html lang="en-US"><head>' .
+                '<link rel="dns-prefetch" href="https://mynewdomain.com">' .
+                '</head><body>body</body></html>' . PHP_EOL,
+            ],
+        ];
+    }
 }
