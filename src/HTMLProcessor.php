@@ -112,7 +112,9 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         // instantiate the XML body here
-        $this->xml_doc = new DOMDocument();
+        $this->xml_doc = new DOMDocument( '1.0', 'UTF-8' );
+        $this->xml_doc->formatOutput = false;
+        $this->xml_doc->preserveWhiteSpace = true;
 
         // NOTE: set placeholder_url to same protocol as target
         // making it easier to rewrite URLs without considering protocol
