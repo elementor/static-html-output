@@ -677,6 +677,24 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $processed_html;
     }
 
+    public function rewriteEncodedSiteURLAndHostName( string $processed_html ) : string {
+        $encoded_wp_site_url = urlencode( $this->wp_site_url );
+        $encoded_destination_url = '';
+
+        if ( $this->destination_protocol === 'https://' ) {
+            $encoded_destination_url =
+                urlencode( str_replace( 'http://', 'https://', $this->base_url ) );
+        } else {
+            $encoded_destination_url = urlencode( $this->base_url );
+        }
+
+        return str_replace(
+            $encoded_wp_site_url,
+            $encoded_destination_url,
+            $processed_html,
+        );
+    }
+
     public function detectUnchangedPlaceholderURLs( string $processed_html ) : string {
         // run just on the hostname of each
         $placeholder_host = 'PLACEHOLDER.wpsho';
@@ -879,15 +897,13 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function getHTML() : string {
-        $processed_html = $this->xml_doc->saveHtml();
+        $processed_html = (string) $this->xml_doc->saveHtml();
 
-        // process the resulting HTML as text
-        $processed_html = $this->detectEscapedSiteURLs( (string) $processed_html );
-        $processed_html = $this->detectUnchangedPlaceholderURLs(
-            $processed_html
+        return $this->rewriteEncodedSiteURLAndHostName(
+            $this->detectUnchangedPlaceholderURLs(
+                $this->detectEscapedSiteURLs( $processed_html )
+            )
         );
-
-        return $processed_html;
     }
 
     // TODO: move some of these URLs into settings to avoid extra calls
