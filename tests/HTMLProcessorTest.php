@@ -546,6 +546,24 @@ final class HTMLProcessorTest extends TestCase {
                 $this->loadTestHTML( 'input_encoded_site_url_with_custom_port' ),
                 $this->loadTestHTML( 'output_encoded_site_url_with_custom_port' ),
             ],
+
+            /*
+                WIP #66
+            'rewrites inline styles' => [
+                false, // $remove_conditional_head_comments = false
+                false, // $remove_html_comments = false
+                false, // $remove_wp_links = false
+                false, // $remove_wp_meta = false
+                '', // $rewrite_rules = ''
+                'https://mynewdomain.com', // $base_url
+                '', // $selected_deployment_option = 'folder'
+                'http://localhost:4444', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
+                'http://localhost:4444/',
+                $this->loadTestHTML( 'input_inline_style_processing' ),
+                $this->loadTestHTML( 'output_inline_style_processing' ),
+            ],
+            */
         ];
     }
 }

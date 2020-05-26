@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-US">
+ <head>
+    <meta charset="UTF-8">
+    <title>Static HTML Output Testing &#8211; test html processer</title>
+
+    <style>
+
+    .fqurl {
+      background-image: url('http://localhost:4444/fqurl.jpg)';
+    }
+
+    .fqurl {
+      background-image: url('http://somedomain.com/external.jpg');
+    }
+
+    .fqurl {
+      background-image: url('doc_relative.jpg');
+    }
+
+    .fqurl {
+      background-image: url('root_relative.jpg');
+    }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <p style="background-image: url('http://localhost:4444/fqurl.jpg');"></p>
+
+    <p style="background-image: url('http://somedomain.com/external.jpg');"></p>
+
+    <p style="background-image: url('doc_relative.jpg');"></p>
+
+    <p style="background-image: url('root_relative.jpg');"></p>
+
+ </body>
+</html>
+
