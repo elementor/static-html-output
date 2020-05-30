@@ -14,7 +14,7 @@ WordPress plugin to generate a static copy of your site and deploy to GitHub Pag
  - [Static HTML Output on wordpress.org](https://wordpress.org/plugins/static-html-output-plugin)
  - [Homepage](https://statichtmloutput.com)
  - [Documentation](https://statichtmloutput.com/docs/)
- - [Forum](https://forum.wp2static.com)
+ - [Support Forum](https://www.staticword.press/c/wordpress-static-site-generators/static-html-output/7)
 
 ## WP-CLI commands
 

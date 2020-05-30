@@ -13,8 +13,8 @@
     "type": "wordpress-plugin",
     "support": {
         "issues": "https://github.com/WP2Static/static-html-output-plugin/issues",
-        "forum": "https://statichtmloutput.com",
-        "docs": "https://wstatichtmloutput.com",
+        "forum": "https://www.staticword.press/c/wordpress-static-site-generators/static-html-output/7",
+        "docs": "https://statichtmloutput.com",
         "source": "https://github.com/WP2Static/static-html-output-plugin"
     },
     "require": {
