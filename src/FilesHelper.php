@@ -822,7 +822,7 @@ class FilesHelper {
                         "/{$plural_form}/{$pagination_base}/{$page}";
                 } else {
                     $pagination_url =
-                        "$archive_link/{$page}";
+                        "/{$archive_link}/{$pagination_base}/{$page}";
                 }
 
                 $urls_to_include[] = str_replace(
