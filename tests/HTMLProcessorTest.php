@@ -399,6 +399,20 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::processGenericHref
      * @covers StaticHTMLOutput\HTMLProcessor::processGenericSrc
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteEncodedSiteURLAndHostName
+     * @covers StaticHTMLOutput\HTMLProcessor::processStyle
+     * @covers StaticHTMLOutput\HTMLProcessor::processStyleAttribute
+     * @covers StaticHTMLOutput\CSSProcessor::__construct
+     * @covers StaticHTMLOutput\CSSProcessor::addDiscoveredURL
+     * @covers StaticHTMLOutput\CSSProcessor::detectIfURLsShouldBeHarvested
+     * @covers StaticHTMLOutput\CSSProcessor::getCSS
+     * @covers StaticHTMLOutput\CSSProcessor::getProtocolRelativeURL
+     * @covers StaticHTMLOutput\CSSProcessor::getTargetSiteProtocol
+     * @covers StaticHTMLOutput\CSSProcessor::isInternalLink
+     * @covers StaticHTMLOutput\CSSProcessor::processCSS
+     * @covers StaticHTMLOutput\CSSProcessor::rewritePlaceholderURLsToDestination
+     * @covers StaticHTMLOutput\CSSProcessor::rewriteSiteURLsToPlaceholder
+     * @covers StaticHTMLOutput\CSSProcessor::writeDiscoveredURLs
+
      * @dataProvider processHTMLProvider
      */
     public function testProcessHTML(
@@ -546,10 +560,7 @@ final class HTMLProcessorTest extends TestCase {
                 $this->loadTestHTML( 'input_encoded_site_url_with_custom_port' ),
                 $this->loadTestHTML( 'output_encoded_site_url_with_custom_port' ),
             ],
-
-            /*
-                WIP #66
-            'rewrites inline styles' => [
+            'rewrites inline styles forcing https to match destination' => [
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
@@ -563,7 +574,6 @@ final class HTMLProcessorTest extends TestCase {
                 $this->loadTestHTML( 'input_inline_style_processing' ),
                 $this->loadTestHTML( 'output_inline_style_processing' ),
             ],
-            */
         ];
     }
 }

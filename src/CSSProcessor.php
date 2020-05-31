@@ -75,6 +75,13 @@ class CSSProcessor extends StaticHTMLOutput {
      * @var string[]
      */
     public $processed_urls;
+    /**
+     * Build rewrite patterns while iterating elements. Rewrite at end with str_replace
+     * Sort by longest URLs first to improve accuracy
+     *
+     * @var mixed[]
+     */
+    public $urls_to_rewrite;
 
     public function __construct(
         bool $remove_conditional_head_comments = false,
@@ -121,11 +128,11 @@ class CSSProcessor extends StaticHTMLOutput {
         $this->page_url = new Net_URL2( $page_url );
         $this->detectIfURLsShouldBeHarvested();
         $this->discovered_urls = [];
+        $this->urls_to_rewrite = [];
 
         foreach ( $this->css_doc->getAllValues() as $node_value ) {
             if ( $node_value instanceof Sabberworm\CSS\Value\URL ) {
                 $original_link = $node_value->getURL();
-
                 $original_link = trim( trim( $original_link, "'" ), '"' );
 
                 $inline_img =
@@ -178,11 +185,30 @@ class CSSProcessor extends StaticHTMLOutput {
                         $original_link
                     );
 
-                    $rewritten_url = new Sabberworm\CSS\Value\CSSString(
-                        $rewritten_url
-                    );
+                    // TODO: determine if this internal URL needs rewriting
+                    $this->urls_to_rewrite[] = [
+                        $original_link,
+                        $rewritten_url,
+                    ];
+                    // force https on external links
+                } else {
+                    $destination_protocol = $this->getTargetSiteProtocol( $this->base_url );
 
-                    $node_value->setURL( $rewritten_url );
+                    if ( $destination_protocol === 'https://' ) {
+                        // force external http urls to https
+                        if ( strpos( $original_link, 'http://' ) !== false ) {
+                            $https_link = str_replace(
+                                'http://',
+                                'https://',
+                                $original_link
+                            );
+
+                            $this->urls_to_rewrite[] = [
+                                $original_link,
+                                $https_link,
+                            ];
+                        }
+                    }
                 }
             }
         }
@@ -245,6 +271,18 @@ class CSSProcessor extends StaticHTMLOutput {
             $destination_protocol,
             $destination_host,
         );
+
+        // rewrite every detected URL we want to process from this CSS file
+        foreach ( $this->urls_to_rewrite as $rewrite_pair ) {
+            $original_url = $rewrite_pair[0];
+            $replace_url = $rewrite_pair[1];
+
+            $processed_css = str_replace(
+                $original_url,
+                $replace_url,
+                $processed_css
+            );
+        }
 
         return $processed_css;
     }

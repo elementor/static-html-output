@@ -40,6 +40,7 @@
         <element value="ownerDocument"/>
         <element value="nodeType"/>
         <element value="nodeText"/>
+        <element value="nodeValue"/>
         <element value="textContent"/>
         <element value="tagName"/>
         <element value="firstChild"/>

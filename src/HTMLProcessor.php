@@ -191,6 +191,9 @@ class HTMLProcessor extends StaticHTMLOutput {
                     // and escaped urls
                     $this->processScript( $element );
                     break;
+                case 'style':
+                    $this->processStyle( $element );
+                    break;
                 // process other elements
                 default:
                     $elements_with_src_tags = [
@@ -216,6 +219,12 @@ class HTMLProcessor extends StaticHTMLOutput {
 
                     if ( in_array( $element->tagName, $elements_with_src_tags ) ) {
                         $this->processGenericHref( $element );
+                    }
+
+                    $elements_with_style_attributes = [ 'p', 'div', 'a', 'img', 'b', 'i' ];
+
+                    if ( in_array( $element->tagName, $elements_with_style_attributes ) ) {
+                        $this->processStyleAttribute( $element );
                     }
 
                     break;
@@ -417,6 +426,37 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
+    }
+
+    public function processStyle( DOMElement $element ) : void {
+        $inline_stylesheet = $element->nodeValue;
+
+        if ( ! $inline_stylesheet ) {
+            return;
+        }
+
+        $processor = new CSSProcessor(
+            $this->remove_conditional_head_comments,
+            $this->remove_html_comments,
+            $this->remove_wp_links,
+            $this->remove_wp_meta,
+            $this->rewrite_rules,
+            $this->base_url,
+            $this->selected_deployment_option,
+            $this->wp_site_url,
+            $this->wp_uploads_path
+        );
+
+        $processed = $processor->processCSS(
+            $inline_stylesheet,
+            $this->page_url
+        );
+
+        if ( $processed ) {
+            $rewritten_css = $processor->getCSS();
+
+            $element->nodeValue = $rewritten_css;
+        }
     }
 
     public function stripHTMLComments() : void {
@@ -1060,6 +1100,47 @@ class HTMLProcessor extends StaticHTMLOutput {
         ];
 
         return $replacements;
+    }
+
+    public function processStyleAttribute( DOMElement $element ) : void {
+        $style_attribute = $element->getAttribute( 'style' );
+
+        if ( ! $style_attribute ) {
+            return;
+        }
+
+        // convert element rule into parsable CSS document (wrap in * selector)
+        $css_doc = '* {' . PHP_EOL;
+        $css_doc .= $style_attribute . PHP_EOL;
+        $css_doc .= '}' . PHP_EOL;
+
+        $processor = new CSSProcessor(
+            $this->remove_conditional_head_comments,
+            $this->remove_html_comments,
+            $this->remove_wp_links,
+            $this->remove_wp_meta,
+            $this->rewrite_rules,
+            $this->base_url,
+            $this->selected_deployment_option,
+            $this->wp_site_url,
+            $this->wp_uploads_path
+        );
+
+        $processed = $processor->processCSS(
+            $css_doc,
+            $this->page_url
+        );
+
+        if ( $processed ) {
+            $rewritten_css = $processor->getCSS();
+
+            // trim our fake selector from rule
+            $parts = explode( PHP_EOL, $rewritten_css );
+
+            $rewritten_script_attribute = $parts[1];
+
+            $element->setAttribute( 'style', $rewritten_script_attribute );
+        }
     }
 }
 
