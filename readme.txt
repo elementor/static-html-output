@@ -136,6 +136,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
  * fix detection of URLs within inline styles
  * fix rewriting of urlencoded WP site URL
  * preserve desired link elements when using "Remove WP Tags" option
+ * preserve query strings in URLs
  * preserve whitespace in generated HTML
  * force https on external links when destination protocol is https
  * fix for detecting common missing assets
