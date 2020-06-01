@@ -255,7 +255,6 @@ class HTMLProcessor extends StaticHTMLOutput {
     public function processLink( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'href' );
         $this->forceHTTPS( $element, 'href' );
-        $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
@@ -375,10 +374,6 @@ class HTMLProcessor extends StaticHTMLOutput {
             // normalize urls
             if ( $this->isInternalLink( $url ) ) {
                 $url = $this->page_url->resolve( $url );
-
-                // TODO: preserve query string when reforming
-                // rm query string
-                $url = strtok( $url, '?' );
                 $this->addDiscoveredURL( (string) $url );
                 $url = $this->rewriteWPPathsSrcSetURL( (string) $url );
                 $url = $this->rewriteBaseURLSrcSetURL( $url );
@@ -404,7 +399,6 @@ class HTMLProcessor extends StaticHTMLOutput {
     public function processImage( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'src' );
         $this->forceHTTPS( $element, 'src' );
-        $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
@@ -413,7 +407,6 @@ class HTMLProcessor extends StaticHTMLOutput {
     public function processGenericSrc( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'src' );
         $this->forceHTTPS( $element, 'src' );
-        $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
@@ -422,7 +415,6 @@ class HTMLProcessor extends StaticHTMLOutput {
     public function processGenericHref( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'href' );
         $this->forceHTTPS( $element, 'href' );
-        $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'href' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
@@ -504,7 +496,6 @@ class HTMLProcessor extends StaticHTMLOutput {
     public function processScript( DOMElement $element ) : void {
         $this->normalizeURL( $element, 'src' );
         $this->forceHTTPS( $element, 'src' );
-        $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $element->getAttribute( 'src' ) );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
@@ -530,7 +521,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         $this->normalizeURL( $element, 'href' );
-        $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
@@ -571,7 +561,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $url = $element->getAttribute( 'content' );
         $this->normalizeURL( $element, 'content' );
         $this->forceHTTPS( $element, 'content' );
-        $this->removeQueryStringFromInternalLink( $element );
         $this->addDiscoveredURL( $url );
         $this->rewriteWPPaths( $element );
         $this->rewriteBaseURL( $element );
@@ -676,32 +665,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         return false;
-    }
-
-    public function removeQueryStringFromInternalLink( DOMElement $element ) : void {
-        $attribute_to_change = '';
-        $url_to_change = '';
-
-        if ( $element->hasAttribute( 'href' ) ) {
-            $attribute_to_change = 'href';
-        } elseif ( $element->hasAttribute( 'src' ) ) {
-            $attribute_to_change = 'src';
-        } elseif ( $element->hasAttribute( 'content' ) ) {
-            $attribute_to_change = 'content';
-        } else {
-            return;
-        }
-
-        $url_to_change = $element->getAttribute( $attribute_to_change );
-
-        if ( $this->isInternalLink( $url_to_change ) ) {
-            // strip anything from the ? onwards
-            // https://stackoverflow.com/a/42476194/1668057
-            $element->setAttribute(
-                $attribute_to_change,
-                (string) strtok( $url_to_change, '?' )
-            );
-        }
     }
 
     public function detectEscapedSiteURLs( string $processed_html ) : string {

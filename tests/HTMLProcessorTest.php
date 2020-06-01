@@ -307,7 +307,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::processHead
      * @covers StaticHTMLOutput\HTMLProcessor::processLink
      * @covers StaticHTMLOutput\HTMLProcessor::processMeta
-     * @covers StaticHTMLOutput\HTMLProcessor::removeQueryStringFromInternalLink
      * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
      * @covers StaticHTMLOutput\HTMLProcessor::forceHTTPS
      * @covers StaticHTMLOutput\HTMLProcessor::processImage
@@ -329,7 +328,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\CSSProcessor::rewritePlaceholderURLsToDestination
      * @covers StaticHTMLOutput\CSSProcessor::rewriteSiteURLsToPlaceholder
      * @covers StaticHTMLOutput\CSSProcessor::writeDiscoveredURLs
-
      * @dataProvider processHTMLProvider
      */
     public function testProcessHTML(
