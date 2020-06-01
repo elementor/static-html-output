@@ -397,6 +397,13 @@ class CSSProcessor extends StaticHTMLOutput {
                         $url
                     );
 
+                $discovered_url_without_site_url =
+                    str_replace(
+                        rtrim( $this->placeholder_url, '/' ),
+                        '',
+                        $discovered_url_without_site_url
+                    );
+
                 if ( is_string( $discovered_url_without_site_url ) ) {
                     $this->discovered_urls[] = $discovered_url_without_site_url;
                 }
