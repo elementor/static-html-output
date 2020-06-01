@@ -34,7 +34,7 @@ cp -r $EXEC_DIR/src $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/vendor $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
 cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/wpassets $TMP_DIR/static-html-output-plugin/
+#cp -r $EXEC_DIR/wpassets $TMP_DIR/static-html-output-plugin/
 
 cd $TMP_DIR
 
