@@ -771,45 +771,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         return $processed_html;
     }
 
-    // TODO: kill this fn, should not be needed anymore
-    public function rewriteUnchangedPlaceholderURLs(
-        string $processed_html,
-        string $placeholder_url,
-        string $destination_url,
-        string $rewrite_rules
-    ) : string {
-        // add base URL to rewrite_rules
-        $rewrite_rules .=
-            PHP_EOL .
-                $placeholder_url . ',' .
-                $destination_url;
-
-        $rewrite_from = [];
-        $rewrite_to = [];
-
-        $rewrite_rules = explode(
-            "\n",
-            str_replace( "\r", '', $rewrite_rules )
-        );
-
-        foreach ( $rewrite_rules as $rewrite_rule_line ) {
-            if ( $rewrite_rule_line ) {
-                list($from, $to) = explode( ',', $rewrite_rule_line );
-
-                $rewrite_from[] = $from;
-                $rewrite_to[] = $to;
-            }
-        }
-
-        $rewritten_source = str_replace(
-            $rewrite_from,
-            $rewrite_to,
-            $processed_html
-        );
-
-        return $rewritten_source;
-    }
-
     public function rewriteEscapedURLs( string $processed_html ) : string {
         // NOTE: fix input HTML, which can have \ slashes modified to %5C
         $processed_html = str_replace(
