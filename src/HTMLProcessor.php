@@ -718,14 +718,23 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function rewriteEncodedSiteURLAndHostName( string $processed_html ) : string {
-        $encoded_wp_site_url = urlencode( $this->wp_site_url );
+        $site_url = rtrim( $this->wp_site_url, '/\\' );
+        $destination_url = rtrim( $this->base_url, '/\\' );
+
+        $encoded_wp_site_url = urlencode( $site_url );
         $encoded_destination_url = '';
 
         if ( $this->destination_protocol === 'https://' ) {
             $encoded_destination_url =
-                urlencode( str_replace( 'http://', 'https://', $this->base_url ) );
+                urlencode(
+                    str_replace(
+                        'http://',
+                        'https://',
+                        $destination_url
+                    )
+                );
         } else {
-            $encoded_destination_url = urlencode( $this->base_url );
+            $encoded_destination_url = urlencode( $destination_url );
         }
 
         return str_replace(
@@ -733,6 +742,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             $encoded_destination_url,
             $processed_html,
         );
+
     }
 
     public function detectUnchangedPlaceholderURLs( string $processed_html ) : string {
