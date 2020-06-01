@@ -3,7 +3,7 @@
  * Plugin Name: Static HTML Output
  * Plugin URI:  https://statichtmloutput.com
  * Description: Security & Performance via static website publishing.
- * Version:     6.6.15
+ * Version:     6.6.16
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin

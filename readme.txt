@@ -4,7 +4,7 @@ Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.4.1
 Requires PHP: 7.2
-Stable tag: 6.6.15
+Stable tag: 6.6.16
 
 Publish your website as static HTML for improved performance and security.
 
@@ -128,11 +128,12 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
 == Changelog ==
 
-= 6.6.15 =
+= 6.6.16 =
 
  * finally supporting UTF/multibyte URLs!
  * preserve font hex values in parsed stylesheets
  * fix detection of posts pagination pages
+ * fix detection of URLs within inline styles
  * fix rewriting of urlencoded WP site URL
  * preserve desired link elements when using "Remove WP Tags" option
  * preserve whitespace in generated HTML
