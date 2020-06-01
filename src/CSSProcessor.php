@@ -269,7 +269,7 @@ class CSSProcessor extends StaticHTMLOutput {
         $processed_css = $this->rewritePlaceholderURLsToDestination(
             $this->raw_css,
             $destination_protocol,
-            $destination_host,
+            $destination_host
         );
 
         // rewrite every detected URL we want to process from this CSS file

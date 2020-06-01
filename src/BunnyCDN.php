@@ -131,7 +131,7 @@ class BunnyCDN extends SitePublisher {
                 '/api/pullzone/' . $this->settings['bunnycdnPullZoneID'] . '/purgeCache',
                 [
                     'headers' => $headers,
-                ],
+                ]
             );
 
             $result = json_decode( (string) $res->getBody() );
@@ -165,7 +165,7 @@ class BunnyCDN extends SitePublisher {
                 [
                     'headers' => $this->account_headers,
                     'body' => 'Testing Static HTML Output settings',
-                ],
+                ]
             );
 
             $result = json_decode( (string) $res->getBody() );
@@ -200,7 +200,7 @@ class BunnyCDN extends SitePublisher {
                 [
                     'headers' => $this->account_headers,
                     'body' => file_get_contents( $this->local_file ),
-                ],
+                ]
             );
 
             $result = json_decode( (string) $res->getBody() );

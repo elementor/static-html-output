@@ -703,7 +703,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         return str_replace(
             $encoded_wp_site_url,
             $encoded_destination_url,
-            $processed_html,
+            $processed_html
         );
 
     }
