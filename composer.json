@@ -31,6 +31,7 @@
         "phpunit/phpunit": "*",
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "wp-coding-standards/wpcs": "*",
+        "phpcompatibility/php-compatibility": "*",
         "php-parallel-lint/php-parallel-lint": "*"
     },
     "autoload": {
@@ -56,6 +57,7 @@
     "scripts": {
         "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan analyse",
         "phpcs": "vendor/bin/phpcs --standard=./tools/phpcs.xml --ignore=*/oldtests/*,*/tests/phpstan/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
+        "phpcs72": "vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 7.2 --ignore=*/oldtests/*,*/tests/phpstan/*,*/admin/*,**/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
         "phpcbf": "vendor/bin/phpcbf --standard=./tools/phpcs.xml --ignore=*/oldtests/*,*/js/*,*/tests/phpstan/*,*/admin/*,*/coverage/*,*.js,*/vendor/*,*/views/*.php ./",
         "phpunit": "vendor/bin/phpunit",
         "coverage": "php -d zend_extension=xdebug.so vendor/bin/phpunit --coverage-html coverage --whitelist src/",
@@ -64,6 +66,7 @@
             "composer validate --strict",
             "@lint",
             "@phpcs",
+            "@phpcs72",
             "@phpstan",
             "@phpunit"
         ],
