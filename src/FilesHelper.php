@@ -513,7 +513,7 @@ class FilesHelper {
             self::detectVendorFiles( $wp_site->site_url ),
             self::getListOfLocalFilesByUrl( $uploads_url ),
             self::getAllWPPostURLs( $base_url ),
-            self::getDateArchiveURLs( $base_url ),
+            self::getDateArchiveURLs()
         );
 
         $url_queue = self::cleanDetectedURLs( $url_queue );
@@ -546,8 +546,8 @@ class FilesHelper {
     /**
      * @return string[] list of URLs
      */
-    public static function getDateArchiveURLs( string $wp_site_url ) : array {
-        $archive_urls = DetectArchiveURLs::detect( $wp_site_url );
+    public static function getDateArchiveURLs() : array {
+        $archive_urls = DetectArchiveURLs::detect();
 
         return $archive_urls;
     }

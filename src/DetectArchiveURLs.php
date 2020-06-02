@@ -2,6 +2,8 @@
 
 namespace StaticHTMLOutput;
 
+use DOMDocument;
+
 class DetectArchiveURLs {
 
     /**
@@ -11,12 +13,13 @@ class DetectArchiveURLs {
      * ie
      *      /2020/04/
      *      /2020/05/
+     *      /2020/05/page/2/
      *      /2020/
      *
      * @return string[] list of archive URLs
      */
-    public static function detect( string $wp_site_url ) : array {
-        global $wpdb;
+    public static function detect() : array {
+        global $wpdb, $wp_rewrite;
 
         $archive_urls = [];
 
@@ -26,9 +29,9 @@ class DetectArchiveURLs {
             [
                 'type'            => 'yearly',
                 'echo'            => 0,
+                'show_post_count' => true,
             ]
         );
-
 
         $archive_urls_with_markup .=
             is_string( $yearly_archives ) ? $yearly_archives : '';
@@ -52,33 +55,33 @@ class DetectArchiveURLs {
             ]
         );
 
-        $archive_urls_with_markup .=
-            is_string( $daily_archives ) ? $daily_archives : '';
+        $archive_urls_with_markup .= is_string( $daily_archives ) ? $daily_archives : '';
 
-        error_log( print_r( $archive_urls_with_markup, true ) );
+        $archive_lists = explode( '</li>', $archive_urls_with_markup );
 
-        /*
-            returns each url, title and total post count
+        $pagination_base = $wp_rewrite->pagination_base;
 
-            from this, we can extract the URL and calculate the pagination by the total / post per page
+        foreach ( $archive_lists as $list_element ) {
+            // capture first page of archives
+            $main_url = explode( "'", $list_element )[1];
+            $main_url = parse_url( $main_url, PHP_URL_PATH );
 
-            <li><a href='http://localhost/2020/'>2020</a></li>
-            <li><a href='http://localhost/2020/05/'>May 2020</a>&nbsp;(3)</li>
-            <li><a href='http://localhost/2020/04/'>April 2020</a>&nbsp;(1)</li>
-            <li><a href='http://localhost/2020/05/23/'>May 23, 2020</a>&nbsp;(1)</li>
-            <li><a href='http://localhost/2020/05/13/'>May 13, 2020</a>&nbsp;(2)</li>
-            <li><a href='http://localhost/2020/04/03/'>April 3, 2020</a>&nbsp;(1)</li>
-        */
+            $archive_urls[] = (string) $main_url;
+            // get total count for archive
+            preg_match( '#\((.*?)\)#', $list_element, $count_match );
+            $count = $count_match[1];
 
-        $url_matching_regex = '#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#';
-        preg_match_all( $url_matching_regex, $archive_urls_with_markup, $matches );
+            // build pagination URLs
+            $default_posts_per_page = get_option( 'posts_per_page' );
+            $total_pages = ceil( $count / $default_posts_per_page );
 
-        foreach ( $matches[0] as $url ) {
-            $archive_urls[] = str_replace(
-                $wp_site_url,
-                '/',
-                $url
-            );
+            // first page is canonical to archive page, so skip that
+            if ( $total_pages > 1 ) {
+                for ( $page = 2; $page <= $total_pages; $page++ ) {
+                    $pagination_url = $main_url . $pagination_base . '/' . $page . '/';
+                    $archive_urls[] = (string) $pagination_url;
+                }
+            }
         }
 
         return $archive_urls;
