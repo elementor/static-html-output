@@ -10,7 +10,6 @@ class DBSettings {
      */
     public static function get( array $sets = [] ) {
         $plugin = Controller::getInstance();
-
         $settings = [];
         $key_sets = [];
         $target_keys = [];
@@ -127,7 +126,7 @@ class DBSettings {
         }
 
         foreach ( $target_keys as $key ) {
-            $settings[ $key ] = $plugin->options->{ $key };
+            $settings[ $key ] = $plugin->options->getOption( $key );
         }
 
         $wp_site = new WPSite();

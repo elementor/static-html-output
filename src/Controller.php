@@ -28,7 +28,7 @@ class Controller {
      */
     public $wp_site;
 
-    const VERSION = '6.6.16';
+    const VERSION = '6.6.17';
     const OPTIONS_KEY = 'statichtmloutput-options';
     const HOOK = 'statichtmloutput';
 
@@ -302,6 +302,7 @@ class Controller {
             $this->settings =
                 PostSettings::get( $target_settings );
         }
+
         $uploads_dir = $this->settings['wp_uploads_path'];
 
         $cache_files = [

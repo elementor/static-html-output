@@ -327,10 +327,6 @@ class FilesHelper {
                         $filename,
                         FILE_APPEND | LOCK_EX
                     );
-
-                    // TODO: check into permissions we should be trying to set vs
-                    // rely on server setup. Test against UI & CLI. Log error if call fails
-                    chmod( $list_path, 0664 );
                 }
             }
         }
@@ -552,14 +548,10 @@ class FilesHelper {
             $str
         );
 
-        chmod( $uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST.txt', 0664 );
-
         file_put_contents(
             $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt',
             $initial_crawl_list_total
         );
-
-        chmod( $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt', 0664 );
 
         return count( $url_queue );
     }
