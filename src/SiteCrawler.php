@@ -7,6 +7,10 @@ use Net_URL2;
 class SiteCrawler extends StaticHTMLOutput {
 
     /**
+     * @var mixed
+     */
+    public $progress_bar;
+    /**
      * @var string
      */
     public $processed_file;
@@ -159,6 +163,14 @@ class SiteCrawler extends StaticHTMLOutput {
             $unique_discovered_links,
             $already_crawled
         );
+
+        if ( ! empty( $this->progress_bar ) ) {
+            $this->progress_bar->finish();
+            $this->progress_bar = \WP_ClI\Utils\make_progress_bar(
+                'Crawling discovered links',
+                count( $discovered_links )
+            );
+        }
 
         file_put_contents(
             $second_crawl_file_path,
@@ -332,6 +344,11 @@ class SiteCrawler extends StaticHTMLOutput {
 
             $total_urls_to_crawl = (int) file_get_contents( $total_urls_path );
 
+            if ( defined( 'WP_CLI' ) && empty( $this->progress_bar ) ) {
+                $this->progress_bar =
+                    \WP_CLI\Utils\make_progress_bar( 'Crawling site', $total_urls_to_crawl );
+            }
+
             $batch_index = 0;
 
             $exclusions = [ 'wp-json' ];
@@ -367,6 +384,10 @@ class SiteCrawler extends StaticHTMLOutput {
                                 ' because of rule ' . $exclusion
                             );
 
+                            if ( ! empty( $this->progress_bar ) ) {
+                                $this->progress_bar->tick();
+                            }
+
                             // skip the outer foreach loop
                             continue 2;
                         }
@@ -388,6 +409,10 @@ class SiteCrawler extends StaticHTMLOutput {
                     $batch_index;
 
                 ProgressLog::l( $completed_urls, $total_urls_to_crawl );
+
+                if ( ! empty( $this->progress_bar ) ) {
+                    $this->progress_bar->tick();
+                }
             }
         }
 
