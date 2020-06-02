@@ -132,6 +132,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
  * finally supporting UTF/multibyte URLs!
  * preserve font hex values in parsed stylesheets
+ * fix detection of archives pagination pages
  * fix detection of posts pagination pages
  * fix detection of URLs within inline styles
  * fix rewriting of urlencoded WP site URL
