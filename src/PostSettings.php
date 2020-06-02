@@ -24,7 +24,6 @@ class PostSettings {
             'useBasicAuth',
             'basicAuthPassword',
             'basicAuthUser',
-            'detection_level',
             'crawl_delay',
             'crawlPort',
         ];
