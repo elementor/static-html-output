@@ -505,29 +505,16 @@ class FilesHelper {
             [ '/sitemap.xml' ]
         );
 
-        switch ( $settings['detection_level'] ) {
-            case 'homepage':
-                break;
-            case 'posts_and_pages':
-                $url_queue = array_merge(
-                    $url_queue,
-                    self::getAllWPPostURLs( $base_url )
-                );
-
-                break;
-
-            case 'everything':
-            default:
-                $url_queue = array_merge(
-                    $url_queue,
-                    self::getThemeFiles( 'parent' ),
-                    self::getThemeFiles( 'child' ),
-                    self::getPluginCSSURLs(),
-                    self::detectVendorFiles( $wp_site->site_url ),
-                    self::getListOfLocalFilesByUrl( $uploads_url ),
-                    self::getAllWPPostURLs( $base_url )
-                );
-        }
+        $url_queue = array_merge(
+            $url_queue,
+            self::getThemeFiles( 'parent' ),
+            self::getThemeFiles( 'child' ),
+            self::getPluginCSSURLs(),
+            self::detectVendorFiles( $wp_site->site_url ),
+            self::getListOfLocalFilesByUrl( $uploads_url ),
+            self::getAllWPPostURLs( $base_url ),
+            self::getDateArchiveURLs( $base_url ),
+        );
 
         $url_queue = self::cleanDetectedURLs( $url_queue );
 
@@ -554,6 +541,15 @@ class FilesHelper {
         );
 
         return count( $url_queue );
+    }
+
+    /**
+     * @return string[] list of URLs
+     */
+    public static function getDateArchiveURLs( string $wp_site_url ) : array {
+        $archive_urls = DetectArchiveURLs::detect( $wp_site_url );
+
+        return $archive_urls;
     }
 
     /**

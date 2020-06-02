@@ -55,30 +55,6 @@
       </tr>
       <tr>
         <th scope="row">
-          <label for="detection_level">Detection level</label>
-        </th>
-        <td>
-            <select name="detection_level" id="detection_level">
-    <?php 
-      // TODO: shift this into helper function for select
-      $detection_levels = [
-            'everything' => 'As much as possible',
-            'posts_and_pages' => 'Posts and pages only',
-            'homepage' => 'Homepage only'      
-      ];
-
-      foreach($detection_levels as $key => $level) : ?>
-              <option value="<?php echo $key; ?>"<?php echo $this->options->detection_level == $key ? ' selected' : ''; ?>><?php echo $level; ?></option>
-
-           <?php endforeach; ?>
-            </select>
-
-        <button class="button button-secondary" id="save-and-reload">Save and reload</button>
-
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
           <label>Exclude certain URLs</label>
         </th>
         <td>

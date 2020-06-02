@@ -25,7 +25,6 @@ class DBSettings {
             'useBasicAuth',
             'basicAuthPassword',
             'basicAuthUser',
-            'detection_level',
             'crawl_delay',
             'crawlPort',
         ];
