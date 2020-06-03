@@ -130,6 +130,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
 = 6.6.17 =
 
+ * progress indicator on WP_CLI generate cmd
  * finally supporting UTF/multibyte URLs!
  * preserve font hex values in parsed stylesheets
  * fix detection of archives pagination pages
