@@ -803,10 +803,12 @@ class FilesHelper {
             $archive_link = get_post_type_archive_link( $post_type );
 
             // only use pagination base when post type is page
-            for ( $page = 1; $page <= $total_pages; $page++ ) {
+            for ( $page = 2; $page <= $total_pages; $page++ ) {
                 if ( $post_type === 'page' ) {
                     $pagination_url =
-                        "/{$plural_form}/{$pagination_base}/{$page}";
+                        // TODO: check this against custom post types
+                        // "/{$plural_form}/{$pagination_base}/{$page}";
+                        "/{$pagination_base}/{$page}";
                 } else {
                     $pagination_url =
                         "/{$archive_link}/{$pagination_base}/{$page}";
@@ -841,7 +843,7 @@ class FilesHelper {
         foreach ( $categories as $term => $total_posts ) {
             $total_pages = ceil( $total_posts / $default_posts_per_page );
 
-            for ( $page = 1; $page <= $total_pages; $page++ ) {
+            for ( $page = 2; $page <= $total_pages; $page++ ) {
                 $urls_to_include[] =
                     "{$term}/{$pagination_base}/{$page}";
             }
