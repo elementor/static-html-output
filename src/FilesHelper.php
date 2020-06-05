@@ -79,13 +79,19 @@ class FilesHelper {
                 );
 
                 foreach ( $iterator as $filename => $file_object ) {
+                    // exclude vendor dirs
                     if ( strpos( strtolower( $filename ), 'vendor' ) !== false ) {
                         continue;
                     }
 
-                    $path_crawlable = strpos( strtolower( $filename ), 'css' ) !== false;
+                    // exclude likely admin area assets
+                    if ( strpos( strtolower( $filename ), 'admin' ) !== false ) {
+                        continue;
+                    }
 
-                    if ( ! $path_crawlable ) {
+                    $extension = pathinfo( $filename, PATHINFO_EXTENSION );
+
+                    if ( $extension !== 'css' ) {
                         continue;
                     }
 
@@ -151,7 +157,11 @@ class FilesHelper {
             foreach ( $iterator as $filename => $file_object ) {
                 // $path_crawlable = self::filePathLooksCrawlable( $filename );
                 // for theme files, let's just grab CSS files, as these will yield other link
-                $path_crawlable = strpos( strtolower( $filename ), 'css' ) !== false;
+                $extension = pathinfo( $filename, PATHINFO_EXTENSION );
+
+                if ( $extension !== 'css' ) {
+                    continue;
+                }
 
                 $detected_filename =
                     str_replace(
@@ -167,7 +177,7 @@ class FilesHelper {
                         $detected_filename
                     );
 
-                if ( $path_crawlable && is_string( $detected_filename ) ) {
+                if ( is_string( $detected_filename ) ) {
                     array_push(
                         $files,
                         $detected_filename
@@ -208,17 +218,6 @@ class FilesHelper {
             ];
 
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
-        }
-
-        if ( is_dir( WP_PLUGIN_DIR . '/soliloquy/' ) ) {
-            $soliloquy_assets = WP_PLUGIN_DIR .
-                '/soliloquy/assets/css/images/';
-
-            $soliloquy_urls = self::getListOfLocalFilesByUrl(
-                $soliloquy_assets
-            );
-
-            $vendor_files = array_merge( $vendor_files, $soliloquy_urls );
         }
 
         if ( class_exists( 'autoptimizeMain' ) ) {
