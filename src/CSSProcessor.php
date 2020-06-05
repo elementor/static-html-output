@@ -373,6 +373,13 @@ class CSSProcessor extends StaticHTMLOutput {
     }
 
     public function addDiscoveredURL( string $url ) : void {
+        // only discover assets, not HTML/XML. etc
+        $extension = pathinfo( $url, PATHINFO_EXTENSION );
+
+        if ( ! $extension ) {
+            return;
+        }
+
         // trim any query strings or anchors
         $url = strtok( $url, '#' );
         $url = trim( (string) strtok( (string) $url, '?' ) );

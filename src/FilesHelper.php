@@ -510,7 +510,6 @@ class FilesHelper {
             self::getThemeFiles( 'child' ),
             self::getPluginCSSURLs(),
             self::detectVendorFiles( $wp_site->site_url ),
-            self::getListOfLocalFilesByUrl( $uploads_url ),
             self::getAllWPPostURLs( $base_url ),
             self::getDateArchiveURLs()
         );
