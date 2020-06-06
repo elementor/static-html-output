@@ -317,13 +317,6 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function addDiscoveredURL( string $url ) : void {
-        // only discover assets, not HTML/XML. etc
-        $extension = pathinfo( $url, PATHINFO_EXTENSION );
-
-        if ( ! $extension ) {
-            return;
-        }
-
         // trim any query strings or anchors
         $url = strtok( (string) $url, '#' );
         $url = strtok( (string) $url, '?' );
@@ -344,14 +337,13 @@ class HTMLProcessor extends StaticHTMLOutput {
             }
 
             if ( $this->isInternalLink( (string) $url ) ) {
-                $discovered_url_without_site_url =
-                    str_replace(
-                        rtrim( $this->placeholder_url, '/' ),
-                        '',
-                        (string) $url
-                    );
+                $path = (string) parse_url( (string) $url, PHP_URL_PATH );
 
-                $this->discovered_urls[] = $discovered_url_without_site_url;
+                if ( $path[0] !== '/' ) {
+                    return;
+                }
+
+                $this->discovered_urls[] = $path;
             }
         }
     }
