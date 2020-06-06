@@ -69,7 +69,8 @@ class DetectArchiveURLs {
             $archive_urls[] = (string) $main_url;
             // get total count for archive
             preg_match( '#\((.*?)\)#', $list_element, $count_match );
-            $count = $count_match[1];
+
+            $count = count( $count_match ) > 1 ? $count_match[1] : 0;
 
             // build pagination URLs
             $default_posts_per_page = get_option( 'posts_per_page' );
