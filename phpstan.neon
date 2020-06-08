@@ -7,10 +7,9 @@ parameters:
     inferPrivatePropertyTypeFromConstructor: true
     paths:
         - %currentWorkingDirectory%/src/
-    autoload_files:
-        - %currentWorkingDirectory%/tests/phpstan/bootstrap.php
+    scanFiles:
+        - %currentWorkingDirectory%/tests/phpstan/constants.php
         - %currentWorkingDirectory%/tests/phpstan/wp-cli-stubs-2.2.0.php
     ignoreErrors:
         - '#[a-zA-Z0-9\\_]+superglobal[a-zA-Z0-9\\_]+#'
-
     excludes_analyse:
