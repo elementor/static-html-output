@@ -65,7 +65,6 @@ abstract class SitePublisher {
 
     public function loadArchive() : void {
         $this->archive = new Archive();
-        $this->archive->setToCurrentArchive();
     }
 
     public function bootstrap() : void {
@@ -73,10 +72,7 @@ abstract class SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-FILES-TO-DEPLOY.txt';
 
-        $this->archive_dir = (string) file_get_contents(
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-CURRENT-ARCHIVE.txt'
-        );
+        $this->archive_dir = $this->settings['wp_uploads_path'] . '/static-html-output/';
     }
 
     public function pauseBetweenAPICalls() : void {

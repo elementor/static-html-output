@@ -125,7 +125,6 @@ class Deployer extends StaticHTMLOutput {
 
     public function triggerPostDeployHooks() : void {
         $this->archive = new Archive();
-        $this->archive->setToCurrentArchive();
 
         do_action( 'statichtmloutput_post_deploy_trigger', $this->archive );
     }

@@ -19,7 +19,6 @@ class ArchiveProcessor extends StaticHTMLOutput {
 
     public function __construct() {
         $this->archive = new Archive();
-        $this->archive->setToCurrentArchive();
 
         $this->loadSettings(
             [

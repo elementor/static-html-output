@@ -41,25 +41,6 @@ class Exporter extends StaticHTMLOutput {
     }
 
     public function cleanup_working_files() : void {
-        // keep log files here for debugging
-        // skip first export state
-        if ( is_file(
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-CURRENT-ARCHIVE.txt'
-        ) ) {
-
-            $handle = fopen(
-                $this->settings['wp_uploads_path'] .
-                    '/WP2STATIC-CURRENT-ARCHIVE.txt',
-                'r'
-            );
-
-            if ( is_resource( $handle ) ) {
-                // TODO: looks like a random place for this...
-                $this->settings['archive_dir'] = stream_get_line( $handle, 0 );
-            }
-        }
-
         $files_to_clean = [
             '/WP-STATIC-2ND-CRAWL-LIST.txt',
             '/WP-STATIC-CRAWLED-LINKS.txt',
@@ -111,7 +92,7 @@ class Exporter extends StaticHTMLOutput {
             );
 
         foreach ( $leftover_files as $filename ) {
-            if ( strpos( $filename, 'wp-static-html-output-' ) !== false ) {
+            if ( strpos( $filename, 'static-html-output' ) !== false ) {
                 $deletion_target = $this->settings['wp_uploads_path'] .
                     '/' . $filename;
                 if ( is_dir( $deletion_target ) ) {

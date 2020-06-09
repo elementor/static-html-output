@@ -307,24 +307,7 @@ class SiteCrawler extends StaticHTMLOutput {
 
             chmod( $this->list_of_urls_to_crawl_path, 0664 );
 
-            // TODO: required in saving/copying, but not here? optimize...
-            $handle = fopen(
-                $this->settings['wp_uploads_path'] .
-                    '/WP2STATIC-CURRENT-ARCHIVE.txt',
-                'r'
-            );
-
-            if ( ! is_resource( $handle ) ) {
-                return;
-            }
-
-            $line = stream_get_line( $handle, 0 );
-
-            if ( ! is_string( $line ) ) {
-                return;
-            }
-
-            $this->archive_dir = $line;
+            $this->archive_dir = $this->settings['wp_uploads_path'] . '/static-html-output/';
 
             $total_urls_path = $this->settings['wp_uploads_path'] .
                 '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt';

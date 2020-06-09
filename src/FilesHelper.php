@@ -243,7 +243,8 @@ class FilesHelper {
             'wp2static-crawled-site',
             'thumbs.db',
             'vendor',
-            'wp-static-html-output', // exclude earlier version exports
+            'wp-static-html-output',
+            'static-html-output',
         ];
 
         foreach ( $filenames_to_ignore as $ignorable ) {
