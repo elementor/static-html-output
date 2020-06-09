@@ -35,178 +35,12 @@ class FilesHelper {
     }
 
     /**
-     * Detect Active Plugin CSS URLs
-     *
-     * @return string[] list of URLs
-     */
-    public static function getPluginCSSURLs() : array {
-        $files = [];
-
-        $plugins_path = trailingslashit( WP_PLUGIN_DIR );
-        $plugins_url = trailingslashit( plugins_url() );
-        $active_plugins = get_option( 'active_plugins' );
-
-        $active_plugin_dirs = array_map(
-            function ( $active_plugin ) use ( $plugins_path ) {
-                $plugin_base = dirname( $active_plugin );
-
-                // exclude SSG plugin dirs and known uploads dir excludables
-                $exclude_plugins = [
-                    'simplerstatic',
-                    'static-html-output-plugin',
-                    'wp2static',
-                ];
-
-                foreach ( $exclude_plugins as $exclude_plugin ) {
-                    if ( strpos( $plugin_base, $exclude_plugin ) !== false ) {
-                        return;
-                    }
-                }
-
-                return $plugins_path . $plugin_base;
-            },
-            $active_plugins
-        );
-
-        foreach ( $active_plugin_dirs as $active_plugin_dir ) {
-
-            if ( is_dir( $active_plugin_dir ) ) {
-                $iterator = new RecursiveIteratorIterator(
-                    new RecursiveDirectoryIterator(
-                        $active_plugin_dir,
-                        RecursiveDirectoryIterator::SKIP_DOTS
-                    )
-                );
-
-                foreach ( $iterator as $filename => $file_object ) {
-                    // exclude vendor dirs
-                    if ( strpos( strtolower( $filename ), 'vendor' ) !== false ) {
-                        continue;
-                    }
-
-                    // exclude likely admin area assets
-                    if ( strpos( strtolower( $filename ), 'admin' ) !== false ) {
-                        continue;
-                    }
-
-                    $extension = pathinfo( $filename, PATHINFO_EXTENSION );
-
-                    if ( $extension !== 'css' ) {
-                        continue;
-                    }
-
-                    // Standardise all paths to use / (Windows support)
-                    // TODO: should come earlier in chain
-                    $filename = wp_normalize_path( $filename );
-
-                    $detected_filename =
-                        str_replace(
-                            $plugins_path,
-                            $plugins_url,
-                            $filename
-                        );
-
-                    $detected_filename =
-                        str_replace(
-                            get_home_url(),
-                            '',
-                            $detected_filename
-                        );
-
-                    if ( is_string( $detected_filename ) ) {
-                        array_push(
-                            $files,
-                            $detected_filename
-                        );
-                    }
-                }
-            }
-        }
-
-        return $files;
-    }
-
-    /**
-     * @return string[] list of URLs
-     */
-    public static function getThemeFiles( string $theme_type ) : array {
-        $wp_site = new WPSite();
-
-        $files = [];
-        $template_path = '';
-        $template_url = '';
-
-        if ( $theme_type === 'parent' ) {
-            $template_path = $wp_site->parent_theme_path;
-            $template_url = get_template_directory_uri();
-        } else {
-            $template_path = $wp_site->child_theme_path;
-            $template_url = get_stylesheet_directory_uri();
-        }
-
-        $directory = $template_path;
-
-        if ( is_dir( $directory ) ) {
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator(
-                    $directory,
-                    RecursiveDirectoryIterator::SKIP_DOTS
-                )
-            );
-
-            foreach ( $iterator as $filename => $file_object ) {
-                // $path_crawlable = self::filePathLooksCrawlable( $filename );
-                // for theme files, let's just grab CSS files, as these will yield other link
-                $extension = pathinfo( $filename, PATHINFO_EXTENSION );
-
-                if ( $extension !== 'css' ) {
-                    continue;
-                }
-
-                $detected_filename =
-                    str_replace(
-                        $template_path,
-                        $template_url,
-                        $filename
-                    );
-
-                $detected_filename =
-                    str_replace(
-                        get_home_url(),
-                        '',
-                        $detected_filename
-                    );
-
-                if ( is_string( $detected_filename ) ) {
-                    array_push(
-                        $files,
-                        $detected_filename
-                    );
-                }
-            }
-        }
-
-        return $files;
-    }
-
-    /**
      * @return string[] list of URLs
      */
     public static function detectVendorFiles( string $wp_site_url ) : array {
         $wp_site = new WPSite();
 
         $vendor_files = [];
-
-        if ( class_exists( '\\Elementor\Api' ) ) {
-            $elementor_font_dir = WP_PLUGIN_DIR .
-                '/elementor/assets/lib/font-awesome';
-
-            $elementor_urls = self::getListOfLocalFilesByUrl(
-                $elementor_font_dir
-            );
-
-            $vendor_files = array_merge( $vendor_files, $elementor_urls );
-        }
 
         if ( defined( 'WPSEO_VERSION' ) ) {
             $yoast_sitemaps = [
@@ -218,26 +52,6 @@ class FilesHelper {
             ];
 
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
-        }
-
-        if ( class_exists( 'autoptimizeMain' ) ) {
-            $autoptimize_cache_dir =
-                $wp_site->wp_content_path . '/cache/autoptimize';
-
-            // get difference between home and wp-contents URL
-            $prefix = str_replace(
-                $wp_site->site_url,
-                '/',
-                $wp_site->wp_content_url
-            );
-
-            $autoptimize_urls = self::getAutoptimizeCacheFiles(
-                $autoptimize_cache_dir,
-                $wp_site->wp_content_path,
-                $prefix
-            );
-
-            $vendor_files = array_merge( $vendor_files, $autoptimize_urls );
         }
 
         if ( class_exists( 'Custom_Permalinks' ) ) {
@@ -269,16 +83,6 @@ class FilesHelper {
                     $custom_permalinks
                 );
             }
-        }
-
-        if ( class_exists( 'molongui_authorship' ) ) {
-            $molongui_path = WP_PLUGIN_DIR . '/molongui-authorship';
-
-            $molongui_urls = self::getListOfLocalFilesByUrl(
-                $molongui_path
-            );
-
-            $vendor_files = array_merge( $vendor_files, $molongui_urls );
         }
 
         return $vendor_files;
@@ -506,9 +310,6 @@ class FilesHelper {
 
         $url_queue = array_merge(
             $url_queue,
-            self::getThemeFiles( 'parent' ),
-            self::getThemeFiles( 'child' ),
-            self::getPluginCSSURLs(),
             self::detectVendorFiles( $wp_site->site_url ),
             self::getAllWPPostURLs( $base_url ),
             self::getDateArchiveURLs()
