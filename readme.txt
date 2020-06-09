@@ -3,7 +3,7 @@ Contributors: leonstafford
 Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.4.1
-Requires PHP: 7.2
+Requires PHP: 7.3
 Stable tag: 6.6.17
 
 Publish your website as static HTML for improved performance and security.
