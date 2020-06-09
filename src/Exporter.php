@@ -111,44 +111,13 @@ class Exporter extends StaticHTMLOutput {
     }
 
     public function generateModifiedFileList() : void {
-        // preserve the initial crawl list, to be used in debugging + more
-        copy(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-MODIFIED-CRAWL-LIST.txt'
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-MODIFIED-CRAWL-LIST.txt',
-            0664
-        );
-
-        // if no excludes or includes, just copy to new target
+        // if no excludes or includes, no changes to CrawlLog
         if ( ! isset( $this->settings['excludeURLs'] ) &&
             ! isset( $this->settings['additionalUrls'] ) ) {
-            copy(
-                $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
-                $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-FINAL-CRAWL-LIST.txt'
-            );
-
             return;
         }
 
-        $modified_crawl_list = [];
-
-        // load crawl list into array
-        $crawl_list = file(
-            $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-MODIFIED-CRAWL-LIST.txt'
-        );
-
-        if ( ! $crawl_list ) {
-            return;
-        }
+        // TODO: inclusions get added to CrawlQueue if not in CrawlLog
 
         // applying exclusions before inclusions
         if ( isset( $this->settings['excludeURLs'] ) ) {
@@ -157,64 +126,29 @@ class Exporter extends StaticHTMLOutput {
                 str_replace( "\r", '', $this->settings['excludeURLs'] )
             );
 
-            // iterate through crawl list and add any that aren't excluded
-            foreach ( $crawl_list as $url_to_crawl ) {
-                $url_to_crawl = trim( $url_to_crawl );
-                $match = false;
-
-                foreach ( $exclusions as $exclusion ) {
-                    $exclusion = trim( $exclusion );
-
-                    if ( $exclusion != '' ) {
-                        if ( strpos( $url_to_crawl, $exclusion ) !== false ) {
-                            WsLog::l( "Excluding $url_to_crawl because of rule $exclusion" );
-
-                            $match = true;
-                        }
-                    }
-
-                    if ( ! $match ) {
-                        $modified_crawl_list[] = $url_to_crawl;
-                    }
-                }
-            }
-        } else {
-            $modified_crawl_list = $crawl_list;
+            Exclusions::addPatterns( $exclusions );
         }
 
         if ( isset( $this->settings['additionalUrls'] ) ) {
-            $inclusions = explode(
+            $inclusion_cadidates = explode(
                 "\n",
                 str_replace( "\r", '', $this->settings['additionalUrls'] )
             );
 
+            // check inclusion isn't already in CrawlLog, else inesert unique into CrawlQueue
+            $inclusions = [];
+
             foreach ( $inclusions as $inclusion ) {
                 $inclusion = trim( $inclusion );
-                $inclusion = $inclusion;
 
-                $modified_crawl_list[] = $inclusion;
+                if ( ! CrawlLog::hasUrl( $inclusion ) ) {
+                    $inclusions[] = $inclusion;
+                }
             }
+
+            CrawlLog::addUrls( $inclusions, 'Included by user' );
+            CrawlQueue::addUrls( $inclusions );
         }
-
-        if ( ! is_array( $modified_crawl_list ) ) {
-            return;
-        }
-
-        $modified_crawl_list = array_unique( $modified_crawl_list );
-
-        $str = implode( PHP_EOL, $modified_crawl_list );
-
-        file_put_contents(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-FINAL-CRAWL-LIST.txt',
-            $str
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-FINAL-CRAWL-LIST.txt',
-            0664
-        );
     }
 }
 

@@ -110,6 +110,9 @@ class Controller {
 
     public function activate_for_single_site() : void {
         $this->setDefaultOptions();
+        CrawlQueue::createTable();
+        CrawlLog::createTable();
+        Exclusions::createTable();
     }
 
     /**

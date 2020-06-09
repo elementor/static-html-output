@@ -431,19 +431,13 @@ class CSSProcessor extends StaticHTMLOutput {
             }
         }
 
-        file_put_contents(
-            $this->wp_uploads_path .
-                '/WP-STATIC-DISCOVERED-URLS.txt',
-            PHP_EOL .
-                implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
-            FILE_APPEND | LOCK_EX
-        );
+        // TODO: check for existing URLs in CrawlLog and only add non-processed to CrawlQueue
+        $unique_urls = array_unique( $this->discovered_urls );
+        array_filter( $unique_urls );
+        sort( $unique_urls );
 
-        chmod(
-            $this->wp_uploads_path .
-                '/WP-STATIC-DISCOVERED-URLS.txt',
-            0664
-        );
+        // TODO: also add new URLs to CrawlLog
+        CrawlQueue::addUrls( $unique_urls );
     }
 
     public function isValidURL( string $url ) : bool {

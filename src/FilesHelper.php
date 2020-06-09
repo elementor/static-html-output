@@ -324,16 +324,13 @@ class FilesHelper {
         );
 
         $unique_urls = array_unique( $url_queue );
+        array_filter( $unique_urls );
         sort( $unique_urls );
 
         $initial_crawl_list_total = count( $unique_urls );
 
-        $str = implode( "\n", $unique_urls );
-
-        file_put_contents(
-            $uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
-            $str
-        );
+        // TODO: also add to CrawlLog
+        CrawlQueue::addUrls( $unique_urls );
 
         file_put_contents(
             $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt',
