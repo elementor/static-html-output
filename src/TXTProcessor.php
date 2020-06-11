@@ -38,7 +38,6 @@ class TXTProcessor extends StaticHTMLOutput {
                 'advanced',
             ]
         );
-
     }
 
     public function processTXT( string $txt_document, string $page_url ) : bool {
@@ -63,6 +62,7 @@ class TXTProcessor extends StaticHTMLOutput {
         $processed_txt = $this->txt_doc;
 
         $processed_txt = $this->detectEscapedSiteURLs( $processed_txt );
+
         $processed_txt = $this->detectUnchangedURLs( $processed_txt );
 
         return $processed_txt;
@@ -99,14 +99,14 @@ class TXTProcessor extends StaticHTMLOutput {
         // add base URL to rewrite_rules
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
-                $this->placeholder_url . ',' .
+                untrailingslashit( $this->placeholder_url ) . ',' .
                 $this->settings['baseUrl'];
 
         // add protocol relative URL to rewrite_rules
         $this->settings['rewrite_rules'] .=
             PHP_EOL .
-                $this->getProtocolRelativeURL( $this->placeholder_url ) . ',' .
-                $this->getProtocolRelativeURL( $this->settings['baseUrl'] );
+                $this->getProtocolRelativeURL( untrailingslashit( $this->placeholder_url ) ) .
+                ',' . $this->getProtocolRelativeURL( $this->settings['baseUrl'] );
 
         $rewrite_from = [];
         $rewrite_to = [];
