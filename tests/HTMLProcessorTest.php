@@ -489,7 +489,7 @@ final class HTMLProcessorTest extends TestCase {
                 $this->loadTestHTML( 'input_inline_style_processing' ),
                 $this->loadTestHTML( 'output_inline_style_processing' ),
             ],
-            'preserves non-URI meta content values' => [
+            'preserves non-URI meta content values, rewrites Site URL without port' => [
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false

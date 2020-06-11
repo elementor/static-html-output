@@ -958,12 +958,17 @@ class HTMLProcessor extends StaticHTMLOutput {
         string $site_url,
         string $placeholder_url
     ) : string {
+
+        // WP creates Canonical links which don't include the Site URL's custom port
+        $site_url_host_without_port = parse_url( $site_url, PHP_URL_HOST );
+
         $patterns = [
             $site_url,
             addcslashes( $site_url, '/' ),
             $this->getProtocolRelativeURL(
                 $site_url
             ),
+            '//' . $site_url_host_without_port,
             $this->getProtocolRelativeURL(
                 $site_url . '//'
             ),
@@ -978,6 +983,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             $this->getProtocolRelativeURL(
                 $placeholder_url
             ),
+            $placeholder_url,
             $this->getProtocolRelativeURL(
                 $placeholder_url . '/'
             ),
