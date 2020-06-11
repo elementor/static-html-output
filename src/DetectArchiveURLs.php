@@ -63,8 +63,13 @@ class DetectArchiveURLs {
 
         foreach ( $archive_lists as $list_element ) {
             // capture first page of archives
-            $main_url = explode( "'", $list_element )[1];
-            $main_url = parse_url( $main_url, PHP_URL_PATH );
+            $pieces = explode( "'", $list_element );
+
+            if ( ! isset( $pieces[1] ) ) {
+                continue;
+            }
+
+            $main_url = parse_url( $pieces[1], PHP_URL_PATH );
 
             $archive_urls[] = (string) $main_url;
             // get total count for archive
