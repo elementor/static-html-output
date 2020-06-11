@@ -109,12 +109,14 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->wp_uploads_path = $wp_uploads_path;
         $this->processed_urls = [];
         $this->tlds = [
+            'app',
             'aero',
             'asia',
             'biz',
             'cat',
             'com',
             'coop',
+            'dev',
             'info',
             'int',
             'jobs',
