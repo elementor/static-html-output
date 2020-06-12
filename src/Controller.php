@@ -109,6 +109,7 @@ class Controller {
     }
 
     public function activate_for_single_site() : void {
+        Logger::createTable();
         $this->setDefaultOptions();
         CrawlQueue::createTable();
         CrawlLog::createTable();
@@ -197,8 +198,6 @@ class Controller {
                 PostSettings::get( $target_settings );
         }
 
-        $plugin_hook = 'statichtmloutput';
-
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
@@ -206,14 +205,12 @@ class Controller {
                 $this->wp_site->uploads_url,
                 $this->settings
             );
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            echo $initial_file_list_count;
-        }
     }
 
     public static function renderOptionsPage() : void {
         $instance = self::getInstance();
+        $instance->generate_filelist_preview();
+        $instance->total_detected_urls = CrawlQueue::getTotal();
         $instance->wp_site = new WPSite();
         $instance->current_archive = '';
 

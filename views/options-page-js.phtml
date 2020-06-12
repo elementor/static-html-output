@@ -52,44 +52,6 @@ var status_descriptions = {
 
 
 jQuery(document).ready(function($){
-  function prepareInitialFileList() {
-    $('.hiddenActionField').val('wp_static_html_output_ajax');
-    $('#hiddenAJAXAction').val('generate_filelist_preview');
-
-    status_text = 'Analyzing site... this may take a few minutes (but it\'s worth it!)';
-    $('#current_action').html( status_text );    
-    $('#progress').show();    
-
-    data = $(".options-form :input")
-        .filter(function(index, element) {
-            return $(element).val() != '';
-        })
-        .serialize();
-
-    $.ajax({
-        url: ajaxurl,
-        data: data,
-        dataType: 'html',
-        method: 'POST',
-        success: function(serverResponse) {
-            $('#initial_crawl_list_loader').hide();
-            $('#initial_crawl_list_count').text(serverResponse + ' URLs were detected on your site that will be used to initiate the crawl. Other URLs will be discovered while crawling.');
-            $('#preview_initial_crawl_list_button').show();
-
-            $('#startExportButton').prop('disabled', false);
-            $('.saveSettingsButton').prop('disabled', false);
-            $('.resetDefaultSettingsButton').prop('disabled', false);
-            $('#progress').hide();    
-        },
-        error: function(serverResponse) {
-          $('#initial_crawl_list_loader').hide();
-        }
-    });
-
-    // on result, hide progress and show error or update with number of files found
-    
-  }
-
   function saveOptions( reload ) {
     $('.hiddenActionField').val('wp_static_html_output_ajax');
     $('#hiddenAJAXAction').val('save_options');
@@ -1109,9 +1071,6 @@ jQuery(document).ready(function($){
 
   // hide all but StaticHTMLOutput messages
   hideOtherVendorMessages();
-
-  prepareInitialFileList();
-
 });
 </script>
 
