@@ -955,16 +955,16 @@
         },
         {
             "name": "php-stubs/wordpress-stubs",
-            "version": "v5.4.1",
+            "version": "v5.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "726e541337276f1648ef860efcfe7298bce3a1c5"
+                "reference": "38b0963698ca5858658a5b09198062411f22932a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/726e541337276f1648ef860efcfe7298bce3a1c5",
-                "reference": "726e541337276f1648ef860efcfe7298bce3a1c5",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/38b0963698ca5858658a5b09198062411f22932a",
+                "reference": "38b0963698ca5858658a5b09198062411f22932a",
                 "shasum": ""
             },
             "replace": {
@@ -991,7 +991,7 @@
                 "static analysis",
                 "wordpress"
             ],
-            "time": "2020-04-29T23:43:44+00:00"
+            "time": "2020-06-11T14:56:54+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
@@ -1264,16 +1264,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.27",
+            "version": "0.12.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "2abbd3253e38a258137f647f4e5fdbcb13142c3e"
+                "reference": "76c0c4ec90b1eed66fa4855b8b4b53fa9054353f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/2abbd3253e38a258137f647f4e5fdbcb13142c3e",
-                "reference": "2abbd3253e38a258137f647f4e5fdbcb13142c3e",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/76c0c4ec90b1eed66fa4855b8b4b53fa9054353f",
+                "reference": "76c0c4ec90b1eed66fa4855b8b4b53fa9054353f",
                 "shasum": ""
             },
             "require": {
@@ -1316,7 +1316,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-08T21:28:12+00:00"
+            "time": "2020-06-10T06:20:14+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
