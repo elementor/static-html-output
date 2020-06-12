@@ -210,7 +210,6 @@ class Controller {
     public static function renderOptionsPage() : void {
         $instance = self::getInstance();
         $instance->generate_filelist_preview();
-        $instance->total_detected_urls = CrawlQueue::getTotal();
         $instance->wp_site = new WPSite();
         $instance->current_archive = '';
 
@@ -225,6 +224,7 @@ class Controller {
             ->setTemplate( 'options-page' )
             ->assign( 'wp_site', $instance->wp_site )
             ->assign( 'options', $instance->options )
+            ->assign( 'total_detected_urls', CrawlQueue::getTotal() )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
     }

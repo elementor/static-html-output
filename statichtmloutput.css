@@ -51,10 +51,6 @@ div.postbox div.inside {
     width: 100%;
 }
 
-#progress {
-    display: none;
-}
-
 #progress-container {
   min-height: 40px;
   position: absolute;
@@ -90,7 +86,7 @@ div.postbox div.inside {
     height: 18px;
     width: 18px;
     position: relative;
-    display: inline-block;
+    display: none;
     margin-top: 0px;
     margin-right: 10px;
     text-align: center;
