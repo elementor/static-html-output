@@ -62,10 +62,6 @@ class SiteCrawler extends StaticHTMLOutput {
      * @var string
      */
     public $crawled_links_file;
-    /**
-     * @var int
-     */
-    public $remaining_urls_to_crawl;
 
     public function __construct() {
         $this->loadSettings(
@@ -499,9 +495,11 @@ class SiteCrawler extends StaticHTMLOutput {
     }
 
     public function checkIfMoreCrawlingNeeded() : void {
-        if ( $this->remaining_urls_to_crawl > 0 ) {
+        $remaining_urls_to_crawl = CrawlQueue::getTotal();
+
+        if ( $remaining_urls_to_crawl > 0 ) {
             if ( ! defined( 'WP_CLI' ) ) {
-                echo $this->remaining_urls_to_crawl;
+                echo $remaining_urls_to_crawl;
             } else {
                 $this->crawl_site();
             }

@@ -848,12 +848,29 @@ class HTMLProcessor extends StaticHTMLOutput {
 
     public function writeDiscoveredURLs() : void {
         // TODO: check for existing URLs in CrawlLog and only add non-processed to CrawlQueue
-        $unique_urls = array_unique( $this->discovered_urls );
-        array_filter( $unique_urls );
-        sort( $unique_urls );
+        $discovered_urls = array_unique( $this->discovered_urls );
+        array_filter( $discovered_urls );
+        sort( $discovered_urls );
+
+        if ( ! $discovered_urls ) {
+            return;
+        }
+
+        // get all from CrawlLog
+        $known_urls = CrawlLog::getCrawlablePaths();  
+
+        // filter only new URLs 
+        $new_urls = array_diff( $discovered_urls, $known_urls );
+
+        if ( ! $new_urls ) {
+            return;
+        }
+
+        $page_url = (string) parse_url( $this->page_url, PHP_URL_PATH );
 
         // TODO: also add new URLs to CrawlLog
-        CrawlQueue::addUrls( $unique_urls );
+        CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url , 0 );
+        CrawlQueue::addUrls( $new_urls );
     }
 
     // make link absolute, using current page to determine full path

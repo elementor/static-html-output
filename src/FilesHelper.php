@@ -299,6 +299,7 @@ class FilesHelper {
         ) : int {
         // clear CrawlQueue before rebuilding list
         CrawlQueue::truncate();
+        CrawlLog::truncate();
 
         $wp_site = new WPSite();
 
@@ -334,6 +335,7 @@ class FilesHelper {
 
         // TODO: also add to CrawlLog
         CrawlQueue::addUrls( $unique_urls );
+        CrawlLog::addUrls( $unique_urls, 'initial_crawl_list', 0 );
 
         file_put_contents(
             $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt',

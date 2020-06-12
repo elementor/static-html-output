@@ -45,16 +45,14 @@ class CrawlLog {
                 continue;
             }
 
-            $placeholders[] = '(%s)';
+            $placeholders[] = '(%s, %s, %d)';
             $values[] = rawurldecode( $url );
-            $placeholders[] = '(%s)';
             $values[] = $note;
-            $placeholders[] = '(%d)';
             $values[] = $status;
         }
 
         $query_string =
-            'INSERT INTO ' . $table_name . ' (url) VALUES ' .
+            'INSERT INTO ' . $table_name . ' (url, note, status) VALUES ' .
             implode( ', ', $placeholders );
         $query = $wpdb->prepare( $query_string, $values );
 

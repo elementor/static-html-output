@@ -424,6 +424,10 @@ class CSSProcessor extends StaticHTMLOutput {
         array_filter( $unique_urls );
         sort( $unique_urls );
 
+        if ( ! $unique_urls ) {
+            return;
+        }
+
         // TODO: also add new URLs to CrawlLog
         CrawlQueue::addUrls( $unique_urls );
     }
