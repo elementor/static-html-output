@@ -248,6 +248,16 @@ class SiteCrawler extends StaticHTMLOutput {
                             ' because of rule ' . $exclusion
                         );
 
+                        $url_path = (string) parse_url( $this->url, PHP_URL_PATH );
+
+                        if ( ! $url_path ) {
+                            continue 2;
+                        }
+
+                        // TODO: dummy status to denote skipped due to exclusion rule
+                        CrawlLog::updateStatus( $url_path, 777 );
+                        CrawlQueue::removeURL( $url_path );
+
                         // TODO: reimplement progress bar
                         // if ( ! empty( $this->progress_bar ) ) {
                         //     $this->progress_bar->tick();
@@ -327,33 +337,22 @@ class SiteCrawler extends StaticHTMLOutput {
 
         $good_response_codes = [ 200, 201, 301, 302, 304 ];
 
+        $url_path = (string) parse_url( $this->url, PHP_URL_PATH );
+
+        if ( ! $url_path ) {
+            return false;
+        }
+
+        CrawlLog::updateStatus( $url_path, $status_code );
+        CrawlQueue::removeURL( $url_path );
+
+        error_log('Queue:' . PHP_EOL);
+        error_log( print_r( CrawlQueue::getCrawlablePaths(), true ) . PHP_EOL);
+
         if ( ! in_array( $status_code, $good_response_codes ) ) {
-            Logger::l(
-                'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
-            );
-
-            file_put_contents(
-                $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-404-LOG.txt',
-                $status_code . ':' . $this->url . PHP_EOL,
-                FILE_APPEND | LOCK_EX
-            );
-
-            chmod(
-                $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-404-LOG.txt',
-                0664
-            );
+            Logger::l( "BAD RESPONSE STATUS ($status_code): $this->url" );
 
             return false;
-        } else {
-            file_put_contents(
-                $this->crawled_links_file,
-                $this->url . PHP_EOL,
-                FILE_APPEND | LOCK_EX
-            );
-
-            chmod( $this->crawled_links_file, 0664 );
         }
 
         $base_url = $this->settings['baseUrl'];

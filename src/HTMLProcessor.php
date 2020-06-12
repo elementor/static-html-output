@@ -624,6 +624,12 @@ class HTMLProcessor extends StaticHTMLOutput {
                     return;
                 }
 
+                if ( trim( $path ) === '/' ) {
+                    return;
+                }
+
+                error_log('adding discovered via HTML ' . $path . PHP_EOL);
+
                 $this->discovered_urls[] = $path;
             }
         }
@@ -847,7 +853,6 @@ class HTMLProcessor extends StaticHTMLOutput {
     }
 
     public function writeDiscoveredURLs() : void {
-        // TODO: check for existing URLs in CrawlLog and only add non-processed to CrawlQueue
         $discovered_urls = array_unique( $this->discovered_urls );
         array_filter( $discovered_urls );
         sort( $discovered_urls );
@@ -867,6 +872,10 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         $page_url = (string) parse_url( $this->page_url, PHP_URL_PATH );
+
+        error_log( $page_url . PHP_EOL);
+        error_log( 'new urls from HTML' . PHP_EOL);
+        error_log( print_r( $new_urls, true ) . PHP_EOL);
 
         // TODO: also add new URLs to CrawlLog
         CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url , 0 );

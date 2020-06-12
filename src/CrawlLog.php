@@ -95,10 +95,10 @@ class CrawlLog {
     }
 
     /**
-     *  Clear CrawlQueue via truncate or deletion
+     *  Clear CrawlCrawl Log via truncate or deletion
      */
     public static function truncate() : void {
-        Logger::l( 'Deleting CrawlQueue (Detected URLs)' );
+        Logger::l( 'Deleting CrawlCrawl Log' );
 
         global $wpdb;
 
@@ -109,12 +109,12 @@ class CrawlLog {
         $total_crawl_log = self::getTotalCrawlableURLs();
 
         if ( $total_crawl_log > 0 ) {
-            Logger::l( 'failed to truncate CrawlQueue: try deleting instead' );
+            Logger::l( 'failed to truncate CrawlCrawl Log: try deleting instead' );
         }
     }
 
     /**
-     *  Count URLs in Crawl Queue
+     *  Count URLs in Crawl Log
      */
     public static function getTotal() : int {
         global $wpdb;
@@ -124,5 +124,22 @@ class CrawlLog {
         $total = $wpdb->get_var( "SELECT count(*) FROM $table_name" );
 
         return $total;
+    }
+
+    /**
+     *  Update URL status
+     */
+    public static function updateStatus( string $url, int $status) : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'statichtmloutput_crawl_log';
+
+        error_log("updating status $status $url" . PHP_EOL);
+
+        $wpdb->update(
+            $table_name,
+            [ 'status' => $status ],
+            [ 'url' => $url ]
+        );
     }
 }
