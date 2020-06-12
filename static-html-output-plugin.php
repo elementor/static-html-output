@@ -80,10 +80,6 @@ function static_html_output_ajax() {
         return null;
     } elseif ( strpos( $ajax_method, 'crawl' ) !== false ) {
         $class = new StaticHTMLOutput\SiteCrawler();
-        // crawl_again is used to detemine 2nd run of crawling
-        if ( $ajax_method === 'crawl_again' ) {
-            $ajax_method = 'crawl_discovered_links';
-        }
     } elseif ( strpos( $ajax_method, 'bitbucket' ) !== false ) {
         $class = new StaticHTMLOutput\BitBucket();
 

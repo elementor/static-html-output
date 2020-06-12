@@ -31,7 +31,6 @@ var nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/;
 var pollingIntervalID = '';
 var status_descriptions = {
     'crawl_site' : 'Crawling initial file list',
-    'crawl_again' : 'Crawling discovered URLs',
     'post_process_archive_dir' : 'Processing the crawled files',
     'post_export_teardown' : 'Cleaning up after processing',
     'netlify_do_export' : 'Deploying to Netlify',
@@ -278,7 +277,7 @@ jQuery(document).ready(function($){
         dataType: 'html',
         method: 'POST',
         success: function(serverResponse) {
-          doAJAXExport('crawl_site', 'crawl_again', 'post_process_archive_dir');
+          doAJAXExport('crawl_site', 'post_process_archive_dir');
         },
         error: ajaxErrorHandler
     });

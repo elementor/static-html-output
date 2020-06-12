@@ -419,18 +419,6 @@ class CSSProcessor extends StaticHTMLOutput {
     }
 
     public function writeDiscoveredURLs() : void {
-        $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
-
-        if ( $ajax_method === 'crawl_again' ) {
-            return;
-        }
-
-        if ( defined( 'WP_CLI' ) ) {
-            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                return;
-            }
-        }
-
         // TODO: check for existing URLs in CrawlLog and only add non-processed to CrawlQueue
         $unique_urls = array_unique( $this->discovered_urls );
         array_filter( $unique_urls );

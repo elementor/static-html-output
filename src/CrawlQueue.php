@@ -56,13 +56,13 @@ class CrawlQueue {
      *
      *  @return string[] All crawlable URLs
      */
-    public static function getCrawlablePaths() : array {
+    public static function getCrawlablePaths( int $limit = 500 ) : array {
         global $wpdb;
         $urls = [];
 
         $table_name = $wpdb->prefix . 'statichtmloutput_urls';
 
-        $rows = $wpdb->get_results( "SELECT url FROM $table_name ORDER by url ASC" );
+        $rows = $wpdb->get_results( "SELECT url FROM $table_name ORDER by url ASC LIMIT $limit" );
 
         foreach ( $rows as $row ) {
             $urls[] = $row->url;
