@@ -206,7 +206,7 @@ class GitLab extends SitePublisher {
         $good_response_codes = [ '200', '201', '301', '302', '304' ];
 
         if ( ! in_array( $client->status_code, $good_response_codes ) ) {
-            WsLog::l( 'BAD RESPONSE STATUS (' . $client->status_code . '): ' );
+            Logger::l( 'BAD RESPONSE STATUS (' . $client->status_code . '): ' );
 
             throw new StaticHTMLOutputException( 'GitLab API bad response status' );
         }

@@ -265,7 +265,7 @@ class Controller {
 
     public function reset_default_settings() : void {
         if ( ! delete_option( 'statichtmloutput-options' ) ) {
-            WsLog::l( 'Error resetting options to defaults' );
+            Logger::l( 'Error resetting options to defaults' );
             echo 'ERROR';
         }
 
@@ -346,30 +346,30 @@ class Controller {
             $info[] = 'SERVER SOFTWARE ' . $_SERVER['SERVER_SOFTWARE'];
         }
 
-        WsLog::l( implode( PHP_EOL, $info ) );
+        Logger::l( implode( PHP_EOL, $info ) );
 
-        WsLog::l( 'Active plugins:' );
+        Logger::l( 'Active plugins:' );
 
         $active_plugins = get_option( 'active_plugins' );
 
         foreach ( $active_plugins as $active_plugin ) {
-            WsLog::l( $active_plugin );
+            Logger::l( $active_plugin );
         }
 
-        WsLog::l( 'Plugin options:' );
+        Logger::l( 'Plugin options:' );
 
         $options = $this->options->getAllOptions( false );
 
         foreach ( $options as $key => $value ) {
-            WsLog::l( "{$value['Option name']}: {$value['Value']}" );
+            Logger::l( "{$value['Option name']}: {$value['Value']}" );
         }
 
-        WsLog::l( 'Installed extensions:' );
+        Logger::l( 'Installed extensions:' );
 
         $extensions = get_loaded_extensions();
 
         foreach ( $extensions as $extension ) {
-            WsLog::l( $extension );
+            Logger::l( $extension );
         }
     }
 }

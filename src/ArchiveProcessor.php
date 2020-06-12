@@ -35,7 +35,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
 
     public function renameWPDirectory( string $source, string $target ) : void {
         if ( empty( $source ) || empty( $target ) ) {
-            WsLog::l(
+            Logger::l(
                 'Failed trying to rename: ' .
                 'Source: ' . $source .
                 ' to: ' . $target
@@ -53,7 +53,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
                 $original_dir
             );
         } else {
-            WsLog::l(
+            Logger::l(
                 'Trying to rename non-existent directory: ' .
                 $original_dir
             );
@@ -167,7 +167,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
             } else {
                 if ( wp_mkdir_p( $target_folder ) ) {
                     if ( ! $this->put_safety_file( $target_folder ) ) {
-                        WsLog::l(
+                        Logger::l(
                             'Couldn\'t put safety file in ' .
                             'Target Directory' .
                             $target_folder
@@ -176,7 +176,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
                         die();
                     }
                 } else {
-                    WsLog::l(
+                    Logger::l(
                         'Couldn\'t create Target Directory: ' .
                         $target_folder
                     );
@@ -188,7 +188,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
             // CHECK #2: check directory empty and add safety file
             if ( $directory_empty ) {
                 if ( ! $this->put_safety_file( $target_folder ) ) {
-                    WsLog::l(
+                    Logger::l(
                         'Couldn\'t put safety file in ' .
                         'Target Directory' .
                         $target_folder
@@ -208,7 +208,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
                 );
 
                 if ( ! $this->put_safety_file( $target_folder ) ) {
-                    WsLog::l(
+                    Logger::l(
                         'Couldn\'t put safety file in ' .
                         'Target Directory' .
                         $target_folder
@@ -217,7 +217,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
                     die();
                 }
             } else {
-                WsLog::l(
+                Logger::l(
                     'Target Directory wasn\'t empty ' .
                     'or didn\'t contain safety file ' .
                     $target_folder
@@ -261,7 +261,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
         $zip_archive = new ZipArchive();
 
         if ( $zip_archive->open( $temp_zip, ZIPARCHIVE::CREATE ) !== true ) {
-            WsLog::l( 'Could not create archive' );
+            Logger::l( 'Could not create archive' );
             return;
         }
 
@@ -283,7 +283,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
                     str_replace( $this->archive->path, '', $filename )
                 )
                 ) {
-                    WsLog::l( 'Could not add file: ' . $filename );
+                    Logger::l( 'Could not add file: ' . $filename );
                     return;
                 }
             }

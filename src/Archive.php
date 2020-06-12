@@ -23,7 +23,7 @@ class Archive extends StaticHTMLOutput {
 
     public function create() : void {
         if ( ! wp_mkdir_p( $this->path ) ) {
-            WsLog::l( "Couldn't create archive directory at $this->path" );
+            Logger::l( "Couldn't create archive directory at $this->path" );
         }
     }
 }

@@ -112,17 +112,17 @@ class FileWriter extends StaticHTMLOutput {
             $write_result = file_put_contents( $filename, $file_contents );
 
             if ( ! $write_result ) {
-                WsLog::l( "Failed saving $this->url to $filename" );
+                Logger::l( "Failed saving $this->url to $filename" );
                 return;
             }
 
             $modified = chmod( $filename, 0664 );
 
             if ( ! $modified ) {
-                WsLog::l( "Failed chmod'ing $filename" );
+                Logger::l( "Failed chmod'ing $filename" );
             }
         } else {
-            WsLog::l( "Not saving empty file $this->url" );
+            Logger::l( "Not saving empty file $this->url" );
         }
     }
 }

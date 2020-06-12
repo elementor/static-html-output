@@ -373,8 +373,8 @@ abstract class SitePublisher {
      * @throws StaticHTMLOutputException
      */
     public function handleException( string $e ) : void {
-        WsLog::l( 'Deployment: error encountered' );
-        WsLog::l( $e );
+        Logger::l( 'Deployment: error encountered' );
+        Logger::l( $e );
         throw new StaticHTMLOutputException( $e );
     }
 
@@ -384,7 +384,7 @@ abstract class SitePublisher {
      */
     public function checkForValidResponses( int $code, array $good_codes ) : void {
         if ( ! in_array( $code, $good_codes ) ) {
-            WsLog::l(
+            Logger::l(
                 'BAD RESPONSE STATUS FROM API (' . $code . ')'
             );
 

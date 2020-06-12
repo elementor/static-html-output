@@ -130,7 +130,7 @@ class S3 extends SitePublisher {
                 echo 'SUCCESS';
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'S3 TEST ERROR RETURNED: ' . $e );
+            Logger::l( 'S3 TEST ERROR RETURNED: ' . $e );
             throw new StaticHTMLOutputException( $e );
         }
     }
@@ -260,10 +260,10 @@ class S3 extends SitePublisher {
     }
 
     public function cloudfront_invalidate_all_items() : void {
-        WsLog::l( 'Invalidating all CloudFront items' );
+        Logger::l( 'Invalidating all CloudFront items' );
 
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
-            WsLog::l( 'no Cloudfront ID found' );
+            Logger::l( 'no Cloudfront ID found' );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS'; }
@@ -306,7 +306,7 @@ EOD;
         );
 
         if ( ! $fp ) {
-            WsLog::l( "CLOUDFRONT CONNECTION ERROR: {$errno} {$errstr}" );
+            Logger::l( "CLOUDFRONT CONNECTION ERROR: {$errno} {$errstr}" );
             die( "Connection failed: {$errno} {$errstr}\n" );
         }
 
@@ -317,7 +317,7 @@ EOD;
             $resp .= fgets( $fp, 1024 );
         }
 
-        WsLog::l( "CloudFront response body: {$resp}" );
+        Logger::l( "CloudFront response body: {$resp}" );
 
         fclose( $fp );
 

@@ -100,7 +100,7 @@ class CrawlLog {
      *  Clear CrawlQueue via truncate or deletion
      */
     public static function truncate() : void {
-        WsLog::l( 'Deleting CrawlQueue (Detected URLs)' );
+        Logger::l( 'Deleting CrawlQueue (Detected URLs)' );
 
         global $wpdb;
 
@@ -111,7 +111,7 @@ class CrawlLog {
         $total_crawl_log = self::getTotalCrawlableURLs();
 
         if ( $total_crawl_log > 0 ) {
-            WsLog::l( 'failed to truncate CrawlQueue: try deleting instead' );
+            Logger::l( 'failed to truncate CrawlQueue: try deleting instead' );
         }
     }
 

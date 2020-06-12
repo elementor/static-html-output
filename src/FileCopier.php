@@ -44,7 +44,7 @@ class FileCopier {
         if ( is_file( $local_file ) ) {
             return $local_file;
         } else {
-            WsLog::l(
+            Logger::l(
                 'ERROR: trying to copy local file: ' . $local_file .
                 ' for URL: ' . $this->url .
                 ' (FILE NOT FOUND/UNREADABLE)'
@@ -98,7 +98,7 @@ class FileCopier {
         if ( is_file( $local_file ) ) {
             copy( $local_file, $filename );
         } else {
-            WsLog::l(
+            Logger::l(
                 'ERROR: trying to copy local file: ' . $local_file .
                 ' to: ' . $filename .
                 ' in archive dir: ' . $archive_dir .

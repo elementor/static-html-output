@@ -147,8 +147,8 @@ class BunnyCDN extends SitePublisher {
                 echo 'SUCCESS';
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'BUNNYCDN PURGE CACHE: error encountered' );
-            WsLog::l( $e );
+            Logger::l( 'BUNNYCDN PURGE CACHE: error encountered' );
+            Logger::l( $e );
             throw new StaticHTMLOutputException( $e );
         }
     }
@@ -178,8 +178,8 @@ class BunnyCDN extends SitePublisher {
 
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'BUNNYCDN TEST EXPORT: error encountered' );
-            WsLog::l( $e );
+            Logger::l( 'BUNNYCDN TEST EXPORT: error encountered' );
+            Logger::l( $e );
             throw new StaticHTMLOutputException( $e );
         }
 
@@ -213,8 +213,8 @@ class BunnyCDN extends SitePublisher {
 
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
-            WsLog::l( $e );
+            Logger::l( 'BUNNYCDN EXPORT: error encountered' );
+            Logger::l( $e );
             $this->handleException( $e );
         }
     }

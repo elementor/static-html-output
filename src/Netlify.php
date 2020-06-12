@@ -106,7 +106,7 @@ class Netlify extends SitePublisher {
                 }
             } else {
                 $err = 'BAD RESPONSE STATUS FROM NETLIFY API';
-                WsLog::l( $err );
+                Logger::l( $err );
                 throw new StaticHTMLOutputException( $err );
             }
         } catch ( StaticHTMLOutputException $e ) {

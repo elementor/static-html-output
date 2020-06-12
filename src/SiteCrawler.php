@@ -211,7 +211,7 @@ class SiteCrawler extends StaticHTMLOutput {
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            WsLog::l(
+            Logger::l(
                 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                     $this->list_of_urls_to_crawl_path
             );
@@ -244,7 +244,7 @@ class SiteCrawler extends StaticHTMLOutput {
             '/WP-STATIC-FINAL-CRAWL-LIST.txt';
 
         if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            WsLog::l(
+            Logger::l(
                 'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                     $this->list_of_urls_to_crawl_path
             );
@@ -278,7 +278,7 @@ class SiteCrawler extends StaticHTMLOutput {
             $total_links = count( $this->urls_to_crawl );
 
             if ( $total_links < 1 ) {
-                WsLog::l(
+                Logger::l(
                     'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
                     $this->list_of_urls_to_crawl_path
                 );
@@ -348,7 +348,7 @@ class SiteCrawler extends StaticHTMLOutput {
                 );
             }
 
-            WsLog::l(
+            Logger::l(
                 'Exclusion rules ' . implode( PHP_EOL, $exclusions )
             );
 
@@ -362,7 +362,7 @@ class SiteCrawler extends StaticHTMLOutput {
                     $exclusion = trim( $exclusion );
                     if ( $exclusion != '' ) {
                         if ( false !== strpos( $this->url, $exclusion ) ) {
-                            WsLog::l(
+                            Logger::l(
                                 'Excluding ' . $this->url .
                                 ' because of rule ' . $exclusion
                             );
@@ -452,7 +452,7 @@ class SiteCrawler extends StaticHTMLOutput {
         $good_response_codes = [ 200, 201, 301, 302, 304 ];
 
         if ( ! in_array( $status_code, $good_response_codes ) ) {
-            WsLog::l(
+            Logger::l(
                 'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
             );
 
@@ -677,7 +677,7 @@ class SiteCrawler extends StaticHTMLOutput {
             } elseif ( stripos( $type, 'application/json' ) !== false ) {
                 $this->file_type = 'json';
             } else {
-                WsLog::l(
+                Logger::l(
                     'no filetype inferred from content-type: ' .
                     $this->curl_content_type .
                     ' url: ' . $this->url
@@ -692,7 +692,7 @@ class SiteCrawler extends StaticHTMLOutput {
     public function checkForCurlErrors( string $response, $curl_handle ) : void {
         if ( ! $response ) {
             $response = curl_error( $curl_handle );
-            WsLog::l(
+            Logger::l(
                 'cURL error:' .
                 stripslashes( $response )
             );

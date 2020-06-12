@@ -178,13 +178,13 @@ class GitHub extends SitePublisher {
             $good_response_codes = [ 200, 201, 301, 302, 304 ];
 
             if ( ! in_array( $status_code, $good_response_codes ) ) {
-                WsLog::l( "BAD RESPONSE STATUS ($status_code)" );
+                Logger::l( "BAD RESPONSE STATUS ($status_code)" );
 
                 throw new StaticHTMLOutputException( 'GitHub API bad response status' );
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'GITHUB EXPORT: error encountered' );
-            WsLog::l( $e );
+            Logger::l( 'GITHUB EXPORT: error encountered' );
+            Logger::l( $e );
             throw new StaticHTMLOutputException( $e );
         }
 
@@ -244,7 +244,7 @@ JSON;
         $commit_message = '';
 
         if ( ! empty( $this->existing_file_object ) ) {
-            WsLog::l( "{$this->target_path} path exists in GitHub" );
+            Logger::l( "{$this->target_path} path exists in GitHub" );
 
             return true;
         }
