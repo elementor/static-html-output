@@ -26,7 +26,22 @@ if ( file_exists( STATICHTMLOUTPUT_PATH . 'vendor/autoload.php' ) ) {
 StaticHTMLOutput\Controller::init( __FILE__ );
 
 $crawl_progress = filter_input( INPUT_GET, 'statichtmloutput-crawl-progress' );
+$crawl_queue = filter_input( INPUT_GET, 'statichtmloutput-crawl-queue' );
 $deploy_progress = filter_input( INPUT_GET, 'statichtmloutput-deploy-progress' );
+
+if ( $crawl_queue ) {
+    if ( ! is_admin() ) {
+        wp_send_json( [ 'message' => 'Not permitted' ], 403 );
+    }
+
+    $detected_urls = StaticHTMLOutput\CrawlQueue::getCrawlablePaths();
+
+    $json_response = [
+        'detected' => $detected_urls,
+    ];
+
+    wp_send_json( $json_response, 200 );
+}
 
 if ( $crawl_progress ) {
     if ( ! is_admin() ) {
