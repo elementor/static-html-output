@@ -80,6 +80,22 @@ class CrawlLog {
     }
 
     /**
+     *  Get whole CrawlLog
+     *
+     *  @return mixed[] Whole crawl log
+     */
+    public static function getAll() : array {
+        global $wpdb;
+        $urls = [];
+
+        $table_name = $wpdb->prefix . 'statichtmloutput_crawl_log';
+
+        $rows = $wpdb->get_results( "SELECT * FROM $table_name ORDER by url ASC" );
+
+        return $rows;
+    }
+
+    /**
      *  Get total crawlable URLs
      *
      *  @return int Total crawlable URLs
@@ -116,8 +132,6 @@ class CrawlLog {
      *  Clear CrawlCrawl Log via truncate or deletion
      */
     public static function truncate() : void {
-        Logger::l( 'Deleting CrawlCrawl Log' );
-
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'statichtmloutput_crawl_log';

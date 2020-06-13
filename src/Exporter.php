@@ -14,52 +14,6 @@ class Exporter extends StaticHTMLOutput {
         );
     }
 
-    public function pre_export_cleanup() : void {
-        $files_to_clean = [
-            'WP-STATIC-2ND-CRAWL-LIST.txt',
-            'WP-STATIC-404-LOG.txt',
-            'WP-STATIC-DISCOVERED-URLS-LOG.txt',
-            'WP-STATIC-DISCOVERED-URLS.txt',
-            'WP2STATIC-FILES-TO-DEPLOY.txt',
-            'WP-STATIC-EXPORT-LOG.txt',
-            'WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
-            'WP-STATIC-FINAL-CRAWL-LIST.txt',
-            'WP2STATIC-GITLAB-FILES-IN-REPO.txt',
-        ];
-
-        foreach ( $files_to_clean as $file_to_clean ) {
-            if ( file_exists(
-                $this->settings['wp_uploads_path'] . '/' . $file_to_clean
-            ) ) {
-                unlink(
-                    $this->settings['wp_uploads_path'] . '/' .
-                        $file_to_clean
-                );
-            }
-        }
-    }
-
-    public function cleanup_working_files() : void {
-        $files_to_clean = [
-            '/WP-STATIC-2ND-CRAWL-LIST.txt',
-            '/WP-STATIC-DISCOVERED-URLS.txt',
-            '/WP2STATIC-FILES-TO-DEPLOY.txt',
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
-            '/WP-STATIC-FINAL-CRAWL-LIST.txt',
-            '/WP2STATIC-GITLAB-FILES-IN-REPO.txt',
-        ];
-
-        foreach ( $files_to_clean as $file_to_clean ) {
-            if ( file_exists(
-                $this->settings['wp_uploads_path'] . '/' . $file_to_clean
-            ) ) {
-                unlink(
-                    $this->settings['wp_uploads_path'] . '/' . $file_to_clean
-                );
-            }
-        }
-    }
-
     public function cleanup_leftover_archives() : void {
         $archive_path = $this->settings['wp_uploads_path'] . '/static-html-output/';
         $zip_path = rtrim( $archive_path, '/' ) . '.zip';

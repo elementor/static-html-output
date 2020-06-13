@@ -90,8 +90,6 @@ class CrawlQueue {
      *  Clear CrawlQueue via truncate or deletion
      */
     public static function truncate() : void {
-        Logger::l( 'Deleting CrawlQueue (Detected URLs)' );
-
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'statichtmloutput_urls';

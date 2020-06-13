@@ -205,10 +205,6 @@ class Controller {
                 $this->wp_site->uploads_url,
                 $this->settings
             );
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            echo 'SUCCESS';
-        }
     }
 
     public static function renderOptionsPage() : void {
@@ -255,14 +251,19 @@ class Controller {
     public function prepare_for_export() : void {
         $this->exporter = new Exporter();
 
-        $this->exporter->pre_export_cleanup();
-        $this->exporter->cleanup_leftover_archives();
+        // $this->exporter->cleanup_leftover_archives();
+
+        CrawlLog::truncate();
+        Logger::truncate();
+
+        $this->detect_urls();
+
+        $this->logEnvironmentalInfo();
 
         $archive = new Archive();
         $archive->create();
 
-        $this->logEnvironmentalInfo();
-
+        // TODO: this is now just Inclusions/Exclusions task:
         $this->exporter->generateModifiedFileList();
 
         if ( ! defined( 'WP_CLI' ) ) {
@@ -374,8 +375,6 @@ class Controller {
 
         $extensions = get_loaded_extensions();
 
-        foreach ( $extensions as $extension ) {
-            Logger::l( $extension );
-        }
+        Logger::l( implode( $extensions, ',' ) );
     }
 }

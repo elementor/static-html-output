@@ -299,8 +299,6 @@ class FilesHelper {
         ) : int {
         // clear CrawlQueue before rebuilding list
         CrawlQueue::truncate();
-        CrawlLog::truncate();
-
         $wp_site = new WPSite();
 
         $base_url = untrailingslashit( home_url() );

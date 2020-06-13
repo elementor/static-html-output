@@ -139,10 +139,6 @@ class SiteCrawler extends StaticHTMLOutput {
             );
         }
 
-        Logger::l(
-            'Exclusion rules ' . implode( PHP_EOL, $exclusions )
-        );
-
         foreach ( $this->urls_to_crawl as $link_to_crawl ) {
             $this->url = $link_to_crawl;
 

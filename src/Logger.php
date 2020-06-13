@@ -69,7 +69,7 @@ class Logger {
 
         $table_name = $wpdb->prefix . 'statichtmloutput_log';
 
-        $rows = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id DESC" );
+        $rows = $wpdb->get_results( "SELECT time, log FROM $table_name ORDER BY id ASC" );
 
         foreach ( $rows as $row ) {
             $logs[] = $row;
@@ -105,8 +105,6 @@ class Logger {
         $table_name = $wpdb->prefix . 'statichtmloutput_log';
 
         $wpdb->query( "TRUNCATE TABLE $table_name" );
-
-        self::l( 'Deleted all Logs' );
     }
 }
 
