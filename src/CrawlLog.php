@@ -95,6 +95,24 @@ class CrawlLog {
     }
 
     /**
+     *  Get crawled URLs
+     *
+     *  @return int Total crawled URLs
+     */
+    public static function getTotalCrawledURLs() : int {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'statichtmloutput_crawl_log';
+
+        $total_crawl_log =
+            $wpdb->get_var(
+                "SELECT COUNT(*) FROM $table_name WHERE status > 0"
+            );
+
+        return $total_crawl_log;
+    }
+
+    /**
      *  Clear CrawlCrawl Log via truncate or deletion
      */
     public static function truncate() : void {

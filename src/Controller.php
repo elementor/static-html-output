@@ -68,7 +68,6 @@ class Controller {
         return $instance;
     }
 
-
     /**
      * Adjusts position of dashboard menu icons
      *
@@ -110,6 +109,8 @@ class Controller {
     }
 
     public function activate_for_single_site() : void {
+        // add_action( 'init', [ 'StaticHTMLOutput\Controller', 'add_custom_routes' ], 0 );
+
         Logger::createTable();
         $this->setDefaultOptions();
         CrawlQueue::createTable();
@@ -148,15 +149,6 @@ class Controller {
     }
 
     public static function registerOptionsPage() : void {
-        add_submenu_page(
-            '',
-            'Static HTML Output Crawl Queue',
-            'Crawl Queue',
-            'manage_options',
-            'statichtmloutput-crawl-queue',
-            [ 'StaticHTMLOutput\ViewRenderer', 'renderCrawlQueue' ]
-        );
-
         $page = add_menu_page(
             'Static HTML',
             'Static HTML',
@@ -227,6 +219,10 @@ class Controller {
 
         $instance->view
             ->setTemplate( 'options-page-js' )
+            ->assign(
+                'crawl_progress_url',
+                admin_url('admin.php?page=statichtmloutput&statichtmloutput-crawl-progress=1')
+            )
             ->assign( 'options', $instance->options )
             ->assign( 'wp_site', $instance->wp_site )
             ->assign( 'onceAction', self::HOOK . '-options' )

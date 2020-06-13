@@ -25,6 +25,24 @@ if ( file_exists( STATICHTMLOUTPUT_PATH . 'vendor/autoload.php' ) ) {
 
 StaticHTMLOutput\Controller::init( __FILE__ );
 
+$crawl_progress = filter_input( INPUT_GET, 'statichtmloutput-crawl-progress' );
+
+if ( $crawl_progress ) {
+    if ( ! is_admin() ) {
+        wp_send_json( [ 'message' => 'Not permitted' ], 403 );
+    }
+
+    $detected_urls = StaticHTMLOutput\CrawlLog::getTotalCrawlableURLs();
+    $crawled_urls = StaticHTMLOutput\CrawlLog::getTotalCrawledURLs();
+
+    $json_response = [
+        'detected' => $detected_urls,
+        'crawled' => $crawled_urls
+    ];
+
+    wp_send_json( $json_response, 200 );
+}
+
 function static_html_output_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=statichtmloutput">Settings</a>';
     array_unshift( $links, $settings_link );
@@ -45,6 +63,8 @@ add_action(
     10,
     0
 );
+
+
 
 add_filter(
     'plugin_action_links_' . plugin_basename( __FILE__ ),
