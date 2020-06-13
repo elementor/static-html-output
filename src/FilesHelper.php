@@ -297,8 +297,6 @@ class FilesHelper {
         string $uploads_url,
         array $settings
         ) : int {
-        // clear CrawlQueue before rebuilding list
-        CrawlQueue::truncate();
         $wp_site = new WPSite();
 
         $base_url = untrailingslashit( home_url() );

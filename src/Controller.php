@@ -183,6 +183,10 @@ class Controller {
     }
 
     public function detect_urls() : void {
+        // clear CrawlQueue before rebuilding list
+        CrawlQueue::truncate();
+        CrawlLog::truncate();
+
         $this->wp_site = new WPSite();
 
         $target_settings = [
@@ -219,6 +223,14 @@ class Controller {
                 'crawl_progress_url',
                 admin_url('admin.php?page=statichtmloutput&statichtmloutput-crawl-progress=1')
             )
+            ->assign(
+                'crawl_log_url',
+                admin_url('admin.php?page=statichtmloutput&statichtmloutput-crawl-log=1')
+            )
+            ->assign(
+                'export_log_url',
+                admin_url('admin.php?page=statichtmloutput&statichtmloutput-export-log=1')
+            )
             ->assign( 'options', $instance->options )
             ->assign( 'wp_site', $instance->wp_site )
             ->assign( 'onceAction', self::HOOK . '-options' )
@@ -252,8 +264,6 @@ class Controller {
         $this->exporter = new Exporter();
 
         // $this->exporter->cleanup_leftover_archives();
-
-        CrawlLog::truncate();
         Logger::truncate();
 
         $this->detect_urls();

@@ -3,6 +3,8 @@
 var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>;
 
 var crawl_progress_url = '<?php echo $this->crawl_progress_url; ?>';
+var crawl_log_url = '<?php echo $this->crawl_log_url; ?>';
+var export_log_url = '<?php echo $this->export_log_url; ?>';
 
 var current_archive = {};
 
@@ -624,32 +626,16 @@ jQuery(document).ready(function($){
     switch ( log_name ) {
         case 'export_log':
             // TODO: rename ambiguous export log name
-            log_url = log_file_url;
+            log_url = export_log_url;
         break;
-
-        case 'discovered_urls':
-            log_url = discovered_urls_file_url;
-        break;
-
-        case 'detected_wordpress_urls':
-            log_url = detected_wordpress_urls_file_url;
-        break;
-
-        case 'modified_crawl_list':
-            log_url = modified_crawl_list_file_url;
-        break;
-
-        case 'crawled_links':
-            log_url = crawled_links_list_file_url;
-        break;
-
-        case 'encountered_404s':
-            log_url = encountered_404s_list_file_url;
+        case 'crawl_log':
+            // TODO: rename ambiguous export log name
+            log_url = crawl_log_url;
         break;
     }
 
     // load the log file
-    $.get( log_url, function( data ) {
+    $.get( log_url + '&cb=' + Date.now(), function( data ) {
       // hide loading icon
       $('#log_load_progress').hide();
 

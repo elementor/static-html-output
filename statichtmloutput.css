@@ -47,6 +47,10 @@ div.postbox div.inside {
     width: 95%;
 }
 
+#export_log_textarea {
+  font-family: monospace;
+}
+
 #exportStatus {
     width: 100%;
 }
