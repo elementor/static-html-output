@@ -42,7 +42,7 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
             '', // $base_url
-            '', // $selected_deployment_option = 'folder'
+            '', // $selected_deployment_option = 'zip'
             '', // $wp_site_url
             '' // $wp_uploads_path
         );
@@ -140,7 +140,7 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
             'https://mynewdomain.com', // $base_url
-            '', // $selected_deployment_option = 'folder'
+            '', // $selected_deployment_option = 'zip'
             'http://mywpsite.com', // $wp_site_url
             '' // $wp_uploads_path
         );
@@ -213,7 +213,7 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
             '', // $base_url
-            '', // $selected_deployment_option = 'folder'
+            '', // $selected_deployment_option = 'zip'
             $site_url, // $wp_site_url
             '' // $wp_uploads_path
         );
@@ -370,7 +370,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4040', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mywpsite.com/a-page/',
@@ -384,7 +384,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4040', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mywpsite.com/a-page/',
@@ -398,7 +398,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4040', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mywpsite.com/a-page/',
@@ -412,7 +412,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://mydomain.com', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mydomain.com/',
@@ -426,7 +426,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://mydomain.com', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mydomain.com/',
@@ -440,7 +440,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost/',
@@ -454,7 +454,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'http://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost/',
@@ -468,7 +468,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4444', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost:4444/',
@@ -482,7 +482,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4444', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost:4444/',
@@ -496,7 +496,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4444', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost:4444/',

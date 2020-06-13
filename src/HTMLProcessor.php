@@ -94,7 +94,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         bool $remove_wp_meta = false,
         string $rewrite_rules = '',
         string $base_url,
-        string $selected_deployment_option = 'folder',
+        string $selected_deployment_option = 'zip',
         string $wp_site_url,
         string $wp_uploads_path
     ) {

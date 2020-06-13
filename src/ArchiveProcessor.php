@@ -12,10 +12,6 @@ class ArchiveProcessor extends StaticHTMLOutput {
      * @var Archive
      */
     public $archive;
-    /**
-     * @var string
-     */
-    public $target_folder;
 
     public function __construct() {
         $this->archive = new Archive();
@@ -28,7 +24,6 @@ class ArchiveProcessor extends StaticHTMLOutput {
                 'processing',
                 'netlify',
                 'zip',
-                'folder',
             ]
         );
     }
@@ -143,89 +138,6 @@ class ArchiveProcessor extends StaticHTMLOutput {
         chmod( $safety_file, 0664 );
 
         return true;
-    }
-
-    public function copyStaticSiteToPublicFolder() : void {
-        if ( $this->settings['selected_deployment_option'] === 'folder' ) {
-            $target_folder = trim( $this->settings['targetFolder'] );
-            $this->target_folder = $target_folder;
-
-            if ( ! $target_folder ) {
-                return;
-            }
-
-            // instantiate with safe defaults
-            $directory_exists = true;
-            $directory_empty = false;
-            $dir_has_safety_file = false;
-
-            // CHECK #1: directory exists or can be created
-            $directory_exists = is_dir( $target_folder );
-
-            if ( $directory_exists ) {
-                $directory_empty = $this->dir_is_empty( $target_folder );
-            } else {
-                if ( wp_mkdir_p( $target_folder ) ) {
-                    if ( ! $this->put_safety_file( $target_folder ) ) {
-                        Logger::l(
-                            'Couldn\'t put safety file in ' .
-                            'Target Directory' .
-                            $target_folder
-                        );
-
-                        die();
-                    }
-                } else {
-                    Logger::l(
-                        'Couldn\'t create Target Directory: ' .
-                        $target_folder
-                    );
-
-                    die();
-                }
-            }
-
-            // CHECK #2: check directory empty and add safety file
-            if ( $directory_empty ) {
-                if ( ! $this->put_safety_file( $target_folder ) ) {
-                    Logger::l(
-                        'Couldn\'t put safety file in ' .
-                        'Target Directory' .
-                        $target_folder
-                    );
-
-                    die();
-                }
-            }
-
-            $dir_has_safety_file =
-                $this->dir_has_safety_file( $target_folder );
-
-            if ( $directory_empty || $dir_has_safety_file ) {
-                $this->recursive_copy(
-                    $this->archive->path,
-                    $this->target_folder
-                );
-
-                if ( ! $this->put_safety_file( $target_folder ) ) {
-                    Logger::l(
-                        'Couldn\'t put safety file in ' .
-                        'Target Directory' .
-                        $target_folder
-                    );
-
-                    die();
-                }
-            } else {
-                Logger::l(
-                    'Target Directory wasn\'t empty ' .
-                    'or didn\'t contain safety file ' .
-                    $target_folder
-                );
-
-                die();
-            }
-        }
     }
 
     public function createNetlifySpecialFiles() : void {

@@ -257,7 +257,6 @@ class Controller {
 
         $this->exporter->pre_export_cleanup();
         $this->exporter->cleanup_leftover_archives();
-        $this->exporter->initialize_cache_files();
 
         $archive = new Archive();
         $archive->create();
@@ -290,7 +289,6 @@ class Controller {
         // NOTE: renameWP Directories also doing same server publish
         $processor->renameArchiveDirectories();
         $processor->removeWPCruft();
-        $processor->copyStaticSiteToPublicFolder();
         $processor->create_zip();
 
         if ( ! defined( 'WP_CLI' ) ) {

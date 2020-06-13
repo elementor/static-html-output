@@ -23,8 +23,6 @@ class Deployer extends StaticHTMLOutput {
         $start_time = microtime( true );
 
         switch ( $this->settings['selected_deployment_option'] ) {
-            case 'folder':
-                break;
             case 'zip':
                 break;
             case 's3':

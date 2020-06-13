@@ -337,11 +337,6 @@ class FilesHelper {
         CrawlQueue::addUrls( $unique_urls );
         CrawlLog::addUrls( $unique_urls, 'initial_crawl_list', 0 );
 
-        file_put_contents(
-            $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt',
-            $initial_crawl_list_total
-        );
-
         return count( $url_queue );
     }
 

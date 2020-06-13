@@ -18,7 +18,6 @@ class Exporter extends StaticHTMLOutput {
         $files_to_clean = [
             'WP-STATIC-2ND-CRAWL-LIST.txt',
             'WP-STATIC-404-LOG.txt',
-            'WP-STATIC-CRAWLED-LINKS.txt',
             'WP-STATIC-DISCOVERED-URLS-LOG.txt',
             'WP-STATIC-DISCOVERED-URLS.txt',
             'WP2STATIC-FILES-TO-DEPLOY.txt',
@@ -43,7 +42,6 @@ class Exporter extends StaticHTMLOutput {
     public function cleanup_working_files() : void {
         $files_to_clean = [
             '/WP-STATIC-2ND-CRAWL-LIST.txt',
-            '/WP-STATIC-CRAWLED-LINKS.txt',
             '/WP-STATIC-DISCOVERED-URLS.txt',
             '/WP2STATIC-FILES-TO-DEPLOY.txt',
             '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
@@ -62,47 +60,18 @@ class Exporter extends StaticHTMLOutput {
         }
     }
 
-    public function initialize_cache_files() : void {
-        // TODO: is this still necessary?
-        $crawled_links_file =
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-CRAWLED-LINKS.txt';
-
-        $resource = fopen( $crawled_links_file, 'w' );
-
-        if ( ! is_resource( $resource ) ) {
-            return;
-        }
-
-        fwrite( $resource, '' );
-        fclose( $resource );
-    }
-
     public function cleanup_leftover_archives() : void {
-        $upload_dir_paths = scandir( $this->settings['wp_uploads_path'] );
+        $archive_path = $this->settings['wp_uploads_path'] . '/static-html-output/';
+        $zip_path = rtrim( $archive_path, '/' ) . '.zip';
 
-        if ( ! $upload_dir_paths ) {
-            return;
+        if ( is_dir( $archive_path ) ) {
+            FilesHelper::delete_dir_with_files(
+                $archive_path
+            );
         }
 
-        $leftover_files =
-            preg_grep(
-                '/^([^.])/',
-                $upload_dir_paths
-            );
-
-        foreach ( $leftover_files as $filename ) {
-            if ( strpos( $filename, 'static-html-output' ) !== false ) {
-                $deletion_target = $this->settings['wp_uploads_path'] .
-                    '/' . $filename;
-                if ( is_dir( $deletion_target ) ) {
-                    FilesHelper::delete_dir_with_files(
-                        $deletion_target
-                    );
-                } else {
-                    unlink( $deletion_target );
-                }
-            }
+        if ( is_file( $zip_path ) ) {
+            unlink( $zip_path);
         }
 
         if ( ! defined( 'WP_CLI' ) ) {

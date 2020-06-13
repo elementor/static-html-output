@@ -26,6 +26,7 @@ if ( file_exists( STATICHTMLOUTPUT_PATH . 'vendor/autoload.php' ) ) {
 StaticHTMLOutput\Controller::init( __FILE__ );
 
 $crawl_progress = filter_input( INPUT_GET, 'statichtmloutput-crawl-progress' );
+$deploy_progress = filter_input( INPUT_GET, 'statichtmloutput-deploy-progress' );
 
 if ( $crawl_progress ) {
     if ( ! is_admin() ) {
