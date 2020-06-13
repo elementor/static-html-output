@@ -124,16 +124,11 @@ class CrawlQueue {
     public static function removeURL( string $url) : void {
         global $wpdb;
 
-        error_log('Deleting ' . $url . PHP_EOL);
-
         $table_name = $wpdb->prefix . 'statichtmloutput_urls';
 
         $result = $wpdb->delete(
             $table_name,
             [ 'url' => $url ]
         );
-
-        error_log( $result ? 'deleted ' . $result . ' rows' : 'failed to delete' );
-        error_log( PHP_EOL );
     }
 }

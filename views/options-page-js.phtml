@@ -30,6 +30,7 @@ var localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/
 var nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/;
 var pollingIntervalID = '';
 var status_descriptions = {
+    'detect_urls' : 'Redetecting initial crawl URLs',
     'crawl_site' : 'Crawling initial file list',
     'post_process_archive_dir' : 'Processing the crawled files',
     'post_export_teardown' : 'Cleaning up after processing',
@@ -277,7 +278,7 @@ jQuery(document).ready(function($){
         dataType: 'html',
         method: 'POST',
         success: function(serverResponse) {
-          doAJAXExport('crawl_site', 'post_process_archive_dir');
+          doAJAXExport('detect_urls', 'crawl_site', 'post_process_archive_dir');
         },
         error: ajaxErrorHandler
     });

@@ -628,8 +628,6 @@ class HTMLProcessor extends StaticHTMLOutput {
                     return;
                 }
 
-                error_log('adding discovered via HTML ' . $path . PHP_EOL);
-
                 $this->discovered_urls[] = $path;
             }
         }
@@ -872,10 +870,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         $page_url = (string) parse_url( $this->page_url, PHP_URL_PATH );
-
-        error_log( $page_url . PHP_EOL);
-        error_log( 'new urls from HTML' . PHP_EOL);
-        error_log( print_r( $new_urls, true ) . PHP_EOL);
 
         // TODO: also add new URLs to CrawlLog
         CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url , 0 );

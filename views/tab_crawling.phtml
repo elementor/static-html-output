@@ -51,7 +51,12 @@
                 URLs were detected on your site that will be used to initiate the crawl. Other URLs will be discovered while crawling.</p>
         </i>
         <br>
-        <a id="preview_initial_crawl_list_button" href="<?php echo $this->wp_site->uploads_url; ?>/WP-STATIC-INITIAL-CRAWL-LIST.txt" class="button button-secondary" target="_blank">Preview initial crawl list</a>
+
+        <a
+            href="<?php echo admin_url('admin.php?page=statichtmloutput-crawl-queue'); ?>"
+            class="button button-secondary"
+            target="_blank">Show Detected URLs
+        </a>
 
 
 

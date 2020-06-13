@@ -64,6 +64,7 @@ class Controller {
             add_filter( 'custom_menu_order', '__return_true' );
             add_filter( 'menu_order', [ 'StaticHTMLOutput\Controller', 'set_menu_order' ] );
         }
+
         return $instance;
     }
 
@@ -147,7 +148,14 @@ class Controller {
     }
 
     public static function registerOptionsPage() : void {
-        $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
+        add_submenu_page(
+            '',
+            'Static HTML Output Crawl Queue',
+            'Crawl Queue',
+            'manage_options',
+            'statichtmloutput-crawl-queue',
+            [ 'StaticHTMLOutput\ViewRenderer', 'renderCrawlQueue' ]
+        );
 
         $page = add_menu_page(
             'Static HTML',
@@ -182,7 +190,7 @@ class Controller {
         echo 'SUCCESS';
     }
 
-    public function generate_filelist_preview() : void {
+    public function detect_urls() : void {
         $this->wp_site = new WPSite();
 
         $target_settings = [
@@ -205,11 +213,15 @@ class Controller {
                 $this->wp_site->uploads_url,
                 $this->settings
             );
+
+        if ( ! defined( 'WP_CLI' ) ) {
+            echo 'SUCCESS';
+        }
     }
 
     public static function renderOptionsPage() : void {
         $instance = self::getInstance();
-        $instance->generate_filelist_preview();
+        $instance->detect_urls();
         $instance->wp_site = new WPSite();
         $instance->current_archive = '';
 

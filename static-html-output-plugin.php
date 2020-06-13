@@ -63,7 +63,7 @@ function static_html_output_ajax() {
     $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
 
     $controller_methods = [
-        'generate_filelist_preview',
+        'detect_urls',
         'prepare_for_export',
         'post_process_archive_dir',
         'finalize_deployment',

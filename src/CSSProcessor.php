@@ -401,8 +401,6 @@ class CSSProcessor extends StaticHTMLOutput {
                     return;
                 }
 
-                error_log('adding discovered via CSS ' . $discovered_url_without_site_url . PHP_EOL);
-
                 $this->discovered_urls[] = $discovered_url_without_site_url;
             }
         }
@@ -418,9 +416,9 @@ class CSSProcessor extends StaticHTMLOutput {
         }
 
         // get all from CrawlLog
-        $known_urls = CrawlLog::getCrawlablePaths();  
+        $known_urls = CrawlLog::getCrawlablePaths();
 
-        // filter only new URLs 
+        // filter only new URLs
         $new_urls = array_diff( $discovered_urls, $known_urls );
 
         if ( ! $new_urls ) {
@@ -429,11 +427,6 @@ class CSSProcessor extends StaticHTMLOutput {
 
         $page_url = (string) parse_url( $this->page_url, PHP_URL_PATH );
 
-        error_log( $page_url . PHP_EOL);
-        error_log( 'new urls from CSS' . PHP_EOL);
-        error_log( print_r( $new_urls, true ) . PHP_EOL);
-
-        // TODO: also add new URLs to CrawlLog
         CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url , 0 );
         CrawlQueue::addUrls( $new_urls );
     }

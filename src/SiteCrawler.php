@@ -346,9 +346,6 @@ class SiteCrawler extends StaticHTMLOutput {
         CrawlLog::updateStatus( $url_path, $status_code );
         CrawlQueue::removeURL( $url_path );
 
-        error_log('Queue:' . PHP_EOL);
-        error_log( print_r( CrawlQueue::getCrawlablePaths(), true ) . PHP_EOL);
-
         if ( ! in_array( $status_code, $good_response_codes ) ) {
             Logger::l( "BAD RESPONSE STATUS ($status_code): $this->url" );
 

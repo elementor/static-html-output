@@ -134,8 +134,6 @@ class CrawlLog {
 
         $table_name = $wpdb->prefix . 'statichtmloutput_crawl_log';
 
-        error_log("updating status $status $url" . PHP_EOL);
-
         $wpdb->update(
             $table_name,
             [ 'status' => $status ],
