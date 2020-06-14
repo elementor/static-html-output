@@ -290,7 +290,6 @@ final class HTMLProcessorTest extends TestCase {
     /**
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
      * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
-     * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
      * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
      * @covers StaticHTMLOutput\HTMLProcessor::getHTML
      * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
@@ -319,7 +318,6 @@ final class HTMLProcessorTest extends TestCase {
      * @covers StaticHTMLOutput\HTMLProcessor::processStyleAttribute
      * @covers StaticHTMLOutput\CSSProcessor::__construct
      * @covers StaticHTMLOutput\CSSProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\CSSProcessor::detectIfURLsShouldBeHarvested
      * @covers StaticHTMLOutput\CSSProcessor::getCSS
      * @covers StaticHTMLOutput\CSSProcessor::getProtocolRelativeURL
      * @covers StaticHTMLOutput\CSSProcessor::getTargetSiteProtocol

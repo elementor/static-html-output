@@ -425,8 +425,6 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $this->page_url = new Net_URL2( $page_url );
 
-        $this->detectIfURLsShouldBeHarvested();
-
         $this->discovered_urls = [];
 
         // PERF: 70% of function time
@@ -516,21 +514,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->writeDiscoveredURLs();
 
         return true;
-    }
-
-    public function detectIfURLsShouldBeHarvested() : void {
-        if ( ! defined( 'WP_CLI' ) ) {
-            $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
-
-            $this->harvest_new_urls = $ajax_method === 'crawl_site';
-        } else {
-            // we shouldn't harvest any while we're in the second crawl
-            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                return;
-            } else {
-                $this->harvest_new_urls = true;
-            }
-        }
     }
 
     public function processLink( DOMElement $element ) : void {
