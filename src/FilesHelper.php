@@ -389,14 +389,11 @@ class FilesHelper {
                     case 'page':
                         $permalink = get_page_link( $post->ID );
                         break;
-                    case 'post':
-                        $permalink = get_permalink( $post->ID );
-                        break;
                     case 'attachment':
                         $permalink = get_attachment_link( $post->ID );
                         break;
                     default:
-                        $permalink = get_post_permalink( $post->ID );
+                        $permalink = get_permalink( $post->ID );
                         break;
                 }
             }

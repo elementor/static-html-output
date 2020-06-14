@@ -620,7 +620,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             if ( $this->isInternalLink( (string) $url ) ) {
                 $path = (string) parse_url( (string) $url, PHP_URL_PATH );
 
-                if ( $path[0] !== '/' ) {
+                if ( empty( $path ) || $path[0] !== '/' ) {
                     return;
                 }
 
