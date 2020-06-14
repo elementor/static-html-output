@@ -172,4 +172,19 @@ class CrawlLog {
             [ 'url' => $url ]
         );
     }
+
+    /**
+     *  Check if URL is in CrawlLog
+     *
+     *  @return bool If URL exists
+     */
+    public static function hasUrl( string $url ) : bool {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'statichtmloutput_crawl_log';
+
+        $has_url = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name where url = '$url'" );
+
+        return (bool) $has_url;
+    }
 }

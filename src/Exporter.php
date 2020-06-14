@@ -59,7 +59,7 @@ class Exporter extends StaticHTMLOutput {
             );
 
             // check inclusion isn't already in CrawlLog, else inesert unique into CrawlQueue
-            $inclusions = [];
+            $inclusions = Exclusions::getAll();
 
             foreach ( $inclusions as $inclusion ) {
                 $inclusion = trim( $inclusion );

@@ -51,4 +51,23 @@ class Exclusions {
         $wpdb->query( $query );
     }
 
+    /**
+     *  Get all Exclusions patterns
+     *
+     *  @return string[] All Exclusions patterns
+     */
+    public static function getAll() : array {
+        global $wpdb;
+        $patterns = [];
+
+        $table_name = $wpdb->prefix . 'statichtmloutput_exclusions';
+
+        $rows = $wpdb->get_results( "SELECT pattern FROM $table_name" );
+
+        foreach ( $rows as $row ) {
+            $patterns[] = $row->url;
+        }
+
+        return $patterns;
+    }
 }
