@@ -94,8 +94,18 @@ class SiteCrawler extends StaticHTMLOutput {
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
+            } else if ( !empty( $this->progress_bar ) ) {
+                $this->progress_bar->finish();
             }
         }
+    }
+    
+    public function progressBarTick() : void {
+        if ( empty( $this->progress_bar ) ) {
+            return;
+        }
+        
+        $this->progress_bar->tick( 1, sprintf( 'Processing URLs  %d / %d', filter_var( $this->progress_bar->current(), FILTER_SANITIZE_NUMBER_INT ) + 1, CrawlLog::getTotalCrawlableURLs() ) );
     }
 
     public function crawlABitMore() : void {
@@ -118,11 +128,14 @@ class SiteCrawler extends StaticHTMLOutput {
 
         $this->archive_dir = $this->settings['wp_uploads_path'] . '/static-html-output/';
 
-        // TODO: modify this to show Detected / Crawled URL progress
-        // if ( defined( 'WP_CLI' ) && empty( $this->progress_bar ) ) {
-        //     $this->progress_bar =
-        //         \WP_CLI\Utils\make_progress_bar( 'Crawling site', $total_urls_to_crawl );
-        // }
+        if ( defined( 'WP_CLI' ) && empty( $this->progress_bar ) ) {
+            $this->progress_bar =
+                \WP_CLI\Utils\make_progress_bar( sprintf( 'Processing URLs  %d / %d', 0, CrawlLog::getTotalCrawlableURLs() ), CrawlLog::getTotalCrawlableURLs() );
+        }
+
+        if ( ! empty( $this->progress_bar ) ) {
+            $this->progress_bar->setTotal( CrawlLog::getTotalCrawlableURLs() );
+        }
 
         // TODO: add these to Exclusions table
         $exclusions = [ 'wp-json' ];
@@ -157,6 +170,7 @@ class SiteCrawler extends StaticHTMLOutput {
                         $url_path = (string) parse_url( $this->url, PHP_URL_PATH );
 
                         if ( ! $url_path ) {
+                            $this->progressBarTick();
                             continue 2;
                         }
 
@@ -164,12 +178,7 @@ class SiteCrawler extends StaticHTMLOutput {
                         CrawlLog::updateStatus( $url_path, 777 );
                         CrawlQueue::removeURL( $url_path );
 
-                        // TODO: reimplement progress bar
-                        // if ( ! empty( $this->progress_bar ) ) {
-                        //     $this->progress_bar->tick();
-                        // }
-
-                        // skip the outer foreach loop
+                        $this->progressBarTick();
                         continue 2;
                     }
                 }
@@ -185,10 +194,7 @@ class SiteCrawler extends StaticHTMLOutput {
 
             // ProgressLog::l( $completed_urls, $total_urls_to_crawl );
 
-            // TODO: reimplement progress bar
-            // if ( ! empty( $this->progress_bar ) ) {
-            //     $this->progress_bar->tick();
-            // }
+            $this->progressBarTick();
         }
 
         $this->checkIfMoreCrawlingNeeded();
@@ -408,6 +414,8 @@ class SiteCrawler extends StaticHTMLOutput {
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
+            } else if ( !empty( $this->progress_bar ) ) {
+                $this->progress_bar->finish();
             }
         }
     }
