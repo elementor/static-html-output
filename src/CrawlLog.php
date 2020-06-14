@@ -161,7 +161,7 @@ class CrawlLog {
     /**
      *  Update URL status
      */
-    public static function updateStatus( string $url, int $status) : void {
+    public static function updateStatus( string $url, int $status ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'statichtmloutput_crawl_log';

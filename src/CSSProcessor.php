@@ -365,7 +365,7 @@ class CSSProcessor extends StaticHTMLOutput {
         $url = strtok( $url, '#' );
         $url = trim( (string) strtok( (string) $url, '?' ) );
 
-        if ( trim( (string) $url ) === '') {
+        if ( trim( (string) $url ) === '' ) {
             return;
         }
 
@@ -397,7 +397,7 @@ class CSSProcessor extends StaticHTMLOutput {
 
             if ( is_string( $discovered_url_without_site_url ) ) {
                 // ignore empty or root / (duct tapes issue with / being repeatedly added)
-                if ( trim( $discovered_url_without_site_url ) === '/') {
+                if ( trim( $discovered_url_without_site_url ) === '/' ) {
                     return;
                 }
 
@@ -427,7 +427,7 @@ class CSSProcessor extends StaticHTMLOutput {
 
         $page_url = (string) parse_url( $this->page_url, PHP_URL_PATH );
 
-        CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url , 0 );
+        CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url, 0 );
         CrawlQueue::addUrls( $new_urls );
     }
 

@@ -25,7 +25,7 @@ class Exporter extends StaticHTMLOutput {
         }
 
         if ( is_file( $zip_path ) ) {
-            unlink( $zip_path);
+            unlink( $zip_path );
         }
 
         if ( ! defined( 'WP_CLI' ) ) {

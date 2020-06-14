@@ -94,18 +94,25 @@ class SiteCrawler extends StaticHTMLOutput {
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } else if ( !empty( $this->progress_bar ) ) {
+            } elseif ( ! empty( $this->progress_bar ) ) {
                 $this->progress_bar->finish();
             }
         }
     }
-    
+
     public function progressBarTick() : void {
         if ( empty( $this->progress_bar ) ) {
             return;
         }
-        
-        $this->progress_bar->tick( 1, sprintf( 'Processing URLs  %d / %d', filter_var( $this->progress_bar->current(), FILTER_SANITIZE_NUMBER_INT ) + 1, CrawlLog::getTotalCrawlableURLs() ) );
+
+        $this->progress_bar->tick(
+            1,
+            sprintf(
+                'Processing URLs  %d / %d',
+                (int) filter_var( $this->progress_bar->current(), FILTER_SANITIZE_NUMBER_INT ) + 1,
+                CrawlLog::getTotalCrawlableURLs()
+            )
+        );
     }
 
     public function crawlABitMore() : void {
@@ -130,7 +137,14 @@ class SiteCrawler extends StaticHTMLOutput {
 
         if ( defined( 'WP_CLI' ) && empty( $this->progress_bar ) ) {
             $this->progress_bar =
-                \WP_CLI\Utils\make_progress_bar( sprintf( 'Processing URLs  %d / %d', 0, CrawlLog::getTotalCrawlableURLs() ), CrawlLog::getTotalCrawlableURLs() );
+                \WP_CLI\Utils\make_progress_bar(
+                    sprintf(
+                        'Processing URLs  %d / %d',
+                        0,
+                        CrawlLog::getTotalCrawlableURLs()
+                    ),
+                    CrawlLog::getTotalCrawlableURLs()
+                );
         }
 
         if ( ! empty( $this->progress_bar ) ) {
@@ -402,7 +416,7 @@ class SiteCrawler extends StaticHTMLOutput {
         if ( defined( 'WP_CLI' ) ) {
             \WP_CLI::debug( sprintf( 'Processing %s', $this->url ) );
         }
-        
+
         return true;
     }
 
@@ -418,7 +432,7 @@ class SiteCrawler extends StaticHTMLOutput {
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
-            } else if ( !empty( $this->progress_bar ) ) {
+            } elseif ( ! empty( $this->progress_bar ) ) {
                 $this->progress_bar->finish();
             }
         }
@@ -433,7 +447,7 @@ class SiteCrawler extends StaticHTMLOutput {
         );
 
         $file_writer->saveFile( $this->archive_dir );
-        
+
         if ( defined( 'WP_CLI' ) ) {
             \WP_CLI::debug( sprintf( 'Saved %s', $this->url ) );
         }

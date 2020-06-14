@@ -860,9 +860,9 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         // get all from CrawlLog
-        $known_urls = CrawlLog::getCrawlablePaths();  
+        $known_urls = CrawlLog::getCrawlablePaths();
 
-        // filter only new URLs 
+        // filter only new URLs
         $new_urls = array_diff( $discovered_urls, $known_urls );
 
         if ( ! $new_urls ) {
@@ -872,7 +872,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         $page_url = (string) parse_url( $this->page_url, PHP_URL_PATH );
 
         // TODO: also add new URLs to CrawlLog
-        CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url , 0 );
+        CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url, 0 );
         CrawlQueue::addUrls( $new_urls );
     }
 

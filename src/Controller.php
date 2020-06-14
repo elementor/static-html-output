@@ -221,15 +221,15 @@ class Controller {
             ->setTemplate( 'options-page-js' )
             ->assign(
                 'crawl_progress_url',
-                admin_url('admin.php?page=statichtmloutput&statichtmloutput-crawl-progress=1')
+                admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-crawl-progress=1' )
             )
             ->assign(
                 'crawl_log_url',
-                admin_url('admin.php?page=statichtmloutput&statichtmloutput-crawl-log=1')
+                admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-crawl-log=1' )
             )
             ->assign(
                 'export_log_url',
-                admin_url('admin.php?page=statichtmloutput&statichtmloutput-export-log=1')
+                admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-export-log=1' )
             )
             ->assign( 'options', $instance->options )
             ->assign( 'wp_site', $instance->wp_site )
@@ -385,6 +385,6 @@ class Controller {
 
         $extensions = get_loaded_extensions();
 
-        Logger::l( implode( $extensions, ',' ) );
+        Logger::l( implode( ',', $extensions ) );
     }
 }

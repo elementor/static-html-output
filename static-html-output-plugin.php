@@ -36,7 +36,7 @@ if ( $export_log ) {
         wp_send_json( [ 'message' => 'Not permitted' ], 403 );
     }
 
-    header('Content-Type: text/plain');
+    header( 'Content-Type: text/plain' );
     status_header( 200 );
 
     $log_rows = StaticHTMLOutput\Logger::getAll();
@@ -54,23 +54,23 @@ if ( $crawl_log ) {
         wp_send_json( [ 'message' => 'Not permitted' ], 403 );
     }
 
-    header('Content-Type: text/plain');
+    header( 'Content-Type: text/plain' );
     status_header( 200 );
 
     $log_rows = StaticHTMLOutput\CrawlLog::getAll();
 
     foreach ( $log_rows as $log_row ) {
-        $status = '';
+        $crawl_status = '';
 
         if ( ! $log_row->status ) {
-            $status = 'Pending';
+            $crawl_status = 'Pending';
         } elseif ( $log_row->status === '777' ) {
-            $status = 'Skipped';
+            $crawl_status = 'Skipped';
         } else {
-            $status = $log_row->status;
+            $crawl_status = $log_row->status;
         }
 
-        echo str_pad($status, 9) . " $log_row->url " .
+        echo str_pad( $status, 9 ) . " $log_row->url " .
         "  Note: $log_row->note \t" . PHP_EOL;
     }
 
@@ -83,7 +83,7 @@ if ( $crawl_queue ) {
         wp_send_json( [ 'message' => 'Not permitted' ], 403 );
     }
 
-    header('Content-Type: text/plain');
+    header( 'Content-Type: text/plain' );
     status_header( 200 );
 
     $detected_urls = StaticHTMLOutput\CrawlQueue::getCrawlablePaths();
@@ -104,7 +104,7 @@ if ( $crawl_progress ) {
 
     $json_response = [
         'detected' => $detected_urls,
-        'crawled' => $crawled_urls
+        'crawled' => $crawled_urls,
     ];
 
     wp_send_json( $json_response, 200 );

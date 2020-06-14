@@ -119,7 +119,7 @@ class CrawlQueue {
     /**
      *  Remove single URL from CrawlQueue
      */
-    public static function removeURL( string $url) : void {
+    public static function removeURL( string $url ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'statichtmloutput_urls';

@@ -24,7 +24,7 @@ class Exclusions {
     /**
      * Add all Urls to queue
      *
-     * @param string[] $urls List of URLs to crawl
+     * @param string[] $patterns List of URLs to crawl
      */
     public static function addPatterns( array $patterns ) : void {
         global $wpdb;
