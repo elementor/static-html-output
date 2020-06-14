@@ -399,6 +399,10 @@ class SiteCrawler extends StaticHTMLOutput {
                 break;
         }
 
+        if ( defined( 'WP_CLI' ) ) {
+            \WP_CLI::debug( sprintf( 'Processing %s', $this->url ) );
+        }
+        
         return true;
     }
 
@@ -429,6 +433,10 @@ class SiteCrawler extends StaticHTMLOutput {
         );
 
         $file_writer->saveFile( $this->archive_dir );
+        
+        if ( defined( 'WP_CLI' ) ) {
+            \WP_CLI::debug( sprintf( 'Saved %s', $this->url ) );
+        }
     }
 
     public function getExtensionFromURL() : string {
