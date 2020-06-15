@@ -226,6 +226,10 @@ class Controller {
                 admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-crawl-progress=1' )
             )
             ->assign(
+                'deploy_progress_url',
+                admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-deploy-progress=1' )
+            )
+            ->assign(
                 'crawl_log_url',
                 admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-crawl-log=1' )
             )

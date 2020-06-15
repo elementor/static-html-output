@@ -3,6 +3,7 @@
 var wp_site = <?php echo json_encode($this->wp_site, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES); ?>;
 
 var crawl_progress_url = '<?php echo $this->crawl_progress_url; ?>';
+var deploy_progress_url = '<?php echo $this->deploy_progress_url; ?>';
 var crawl_log_url = '<?php echo $this->crawl_log_url; ?>';
 var export_log_url = '<?php echo $this->export_log_url; ?>';
 
@@ -522,6 +523,17 @@ jQuery(document).ready(function($){
             $.get( crawl_progress_url + '?cacheBuster=' + Date.now(), function( data ) {
               $('#current_action').html(
                 `Crawled ${data.crawled} of ${data.detected} detected URLs`);
+            });
+        break;
+        
+        case 's3_transfer_files':
+        case 'bunnycdn_transfer_files':
+        case 'github_upload_files':
+        case 'bitbucket_upload_files':
+        case 'gitlab_upload_files':
+            $.get( deploy_progress_url + '?cacheBuster=' + Date.now(), function( data ) {
+              $('#current_action').html(
+                `${data.remaining} files remaining to be deployed`);
             });
         break;
     }

@@ -110,6 +110,20 @@ if ( $crawl_progress ) {
     wp_send_json( $json_response, 200 );
 }
 
+if ( $deploy_progress ) {
+    if ( ! is_admin() ) {
+        wp_send_json( [ 'message' => 'Not permitted' ], 403 );
+    }
+
+    $remaining_urls = StaticHTMLOutput\DeployQueue::getTotal();
+
+    $json_response = [
+        'remaining' => $remaining_urls,
+    ];
+
+    wp_send_json( $json_response, 200 );
+}
+
 function static_html_output_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=statichtmloutput">Settings</a>';
     array_unshift( $links, $settings_link );
