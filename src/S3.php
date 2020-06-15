@@ -20,13 +20,13 @@ class S3 extends SitePublisher {
      * @var string
      */
     public $hash_key;
+    /**
+     * @var string
+     */
+    public $local_file;
 
     public function __construct() {
         $this->loadSettings( 's3' );
-
-        $this->previous_hashes_path =
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-S3-PREVIOUS-HASHES.txt';
 
         if ( defined( 'WP_CLI' ) ) {
             return; }
@@ -102,7 +102,7 @@ class S3 extends SitePublisher {
 
                 } catch ( StaticHTMLOutputException $e ) {
                     $mime_type = MimeTypes::guess_type( $this->local_file );
-                    $error = $local_file . PHP_EOL . $e;
+                    $error = $this->local_file . PHP_EOL . $e;
 
                     $this->handleException( $error );
                 }

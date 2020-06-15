@@ -30,6 +30,10 @@ class BitBucket extends SitePublisher {
      * @var string
      */
     public $local_file_contents;
+    /**
+     * @var string
+     */
+    public $local_file;
 
     public function __construct() {
         $this->loadSettings( 'bitbucket' );
@@ -40,10 +44,6 @@ class BitBucket extends SitePublisher {
         );
 
         $this->api_base = 'https://api.bitbucket.org/2.0/repositories/';
-
-        $this->previous_hashes_path =
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-BITBUCKET-PREVIOUS-HASHES.txt';
 
         if ( defined( 'WP_CLI' ) ) {
             return; }
@@ -150,7 +150,7 @@ class BitBucket extends SitePublisher {
 
 
     /**
-     * @param mixed[] local file and remote path to deploy
+     * @param mixed $line local file and remote path to deploy
      */
     public function addFileToBatchForCommitting( $line ) : void {
         $this->files_data['message'] = 'StaticHTMLOutput deployment';

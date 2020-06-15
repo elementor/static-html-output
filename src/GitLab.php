@@ -8,6 +8,18 @@ class GitLab extends SitePublisher {
      * @var string
      */
     public $files_in_repo_list_path;
+    /**
+     * @var string
+     */
+    public $local_file;
+    /**
+     * @var string
+     */
+    public $local_file_contents;
+    /**
+     * @var string
+     */
+    public $target_path;
 
     public function __construct() {
         $this->loadSettings( 'gitlab' );
@@ -87,7 +99,7 @@ class GitLab extends SitePublisher {
                             'encoding' => 'base64',
                         ];
                     }
-                // plugin has no cache for file that exists in GitLab
+                    // plugin has no cache for file that exists in GitLab
                 } else {
                     $files_data[] = [
                         'action' => 'update',
@@ -96,7 +108,7 @@ class GitLab extends SitePublisher {
                         'encoding' => 'base64',
                     ];
                 }
-            // file doesn't exist in GitLab
+                // file doesn't exist in GitLab
             } else {
                 $files_data[] = [
                     'action' => 'create',

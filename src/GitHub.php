@@ -22,6 +22,10 @@ class GitHub extends SitePublisher {
     /**
      * @var string
      */
+    public $local_file;
+    /**
+     * @var string
+     */
     public $remote_path;
     /**
      * @var string
