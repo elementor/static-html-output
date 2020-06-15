@@ -71,11 +71,11 @@ abstract class SitePublisher {
     }
 
     public function updateProgress() : void {
-        error_log('updating progress' . PHP_EOL);
+
     }
 
     public function initiateProgressIndicator() : void {
-        error_log('initiating progress indicator' . PHP_EOL);
+
     }
 
 
@@ -332,20 +332,6 @@ abstract class SitePublisher {
         ) : void {
         $this->file_paths_and_hashes[ $target_path ] =
             crc32( $local_file_contents );
-    }
-
-    public function writeFilePathAndHashesToFile() : void {
-        $fp = fopen( $this->previous_hashes_path, 'w' );
-
-        if ( ! is_resource( $fp ) ) {
-            return;
-        }
-
-        foreach ( $this->file_paths_and_hashes as $key => $value ) {
-            fwrite( $fp, $key . ',' . $value . PHP_EOL );
-        }
-
-        fclose( $fp );
     }
 }
 

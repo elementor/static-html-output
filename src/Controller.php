@@ -116,6 +116,7 @@ class Controller {
         CrawlQueue::createTable();
         CrawlLog::createTable();
         DeployQueue::createTable();
+        DeployCache::createTable();
         Exclusions::createTable();
     }
 

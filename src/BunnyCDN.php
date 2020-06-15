@@ -79,40 +79,40 @@ class BunnyCDN extends SitePublisher {
 
             $this->local_file = $this->archive->path . $this->local_file;
 
+            $deploy_queue_path = str_replace( $this->archive->path, '', $this->local_file );
+
             if ( ! is_file( $this->local_file ) ) {
-                continue; }
+                DeployQueue::removeURL( $deploy_queue_path );
+                continue;
+            }
 
             $this->local_file_contents = (string) file_get_contents( $this->local_file );
 
             if ( ! $this->local_file_contents ) {
+                DeployQueue::removeURL( $deploy_queue_path );
                 continue;
             }
 
-            if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
-                $prev = $this->file_paths_and_hashes[ $this->target_path ];
-                $current = crc32( $this->local_file_contents );
+            $cached_hash = DeployCache::fileIsCached( $deploy_queue_path );
 
-                if ( $prev != $current ) {
+            if ( $cached_hash ) {
+                error_log('file is cached' . PHP_EOL);
+                $current_hash = md5( $this->local_file_contents );
+
+                if ( $current_hash != $cached_hash ) {
                     $this->createFileInBunnyCDN();
-
-                    $this->recordFilePathAndHashInMemory(
-                        $this->target_path,
-                        $this->local_file_contents
-                    );
+                    DeployCache::addFile( $deploy_queue_path );
                 }
             } else {
                 $this->createFileInBunnyCDN();
 
-                $this->recordFilePathAndHashInMemory(
-                    $this->target_path,
-                    $this->local_file_contents
-                );
+                DeployCache::addFile( $deploy_queue_path );
             }
+
+            DeployQueue::removeURL( $deploy_queue_path );
 
             $this->updateProgress();
         }
-
-        $this->writeFilePathAndHashesToFile();
 
         $this->pauseBetweenAPICalls();
 
@@ -211,7 +211,6 @@ class BunnyCDN extends SitePublisher {
                     $result->HttpCode,
                     [ 200, 201, 301, 302, 304 ]
                 );
-
             }
         } catch ( StaticHTMLOutputException $e ) {
             Logger::l( 'BUNNYCDN EXPORT: error encountered' );
