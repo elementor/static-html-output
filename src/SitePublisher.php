@@ -21,17 +21,9 @@ abstract class SitePublisher {
      */
     public $files_remaining;
     /**
-     * @var string
-     */
-    public $deploy_count_path;
-    /**
      * @var mixed[]
      */
     public $file_paths_and_hashes;
-    /**
-     * @var string
-     */
-    public $previous_hashes_path;
     /**
      * @var Archive
      */
@@ -70,10 +62,12 @@ abstract class SitePublisher {
         }
     }
 
+    // TODO: remove?
     public function updateProgress() : void {
 
     }
 
+    // TODO: remove?
     public function initiateProgressIndicator() : void {
 
     }
@@ -82,6 +76,7 @@ abstract class SitePublisher {
     public function clearFileList() : void {
         DeployQueue::truncate();
 
+        // TODO: add case for GitLab
         if ( isset( $this->glob_hash_path_list ) ) {
             if ( is_file( $this->glob_hash_path_list ) ) {
                 $f = fopen( $this->glob_hash_path_list, 'r+' );
@@ -303,34 +298,6 @@ abstract class SitePublisher {
                 'BAD RESPONSE STATUS FROM API (' . $code . ')'
             );
         }
-    }
-
-    public function openPreviousHashesFile() : void {
-        $this->file_paths_and_hashes = [];
-
-        if ( is_file( $this->previous_hashes_path ) ) {
-            $file = fopen( $this->previous_hashes_path, 'r' );
-
-            if ( ! is_resource( $file ) ) {
-                return;
-            }
-
-            while ( ( $line = fgetcsv( $file ) ) !== false ) {
-                if ( isset( $line[0] ) && isset( $line[1] ) ) {
-                    $this->file_paths_and_hashes[ $line[0] ] = $line[1];
-                }
-            }
-
-            fclose( $file );
-        }
-    }
-
-    public function recordFilePathAndHashInMemory(
-        string $target_path,
-        string $local_file_contents
-        ) : void {
-        $this->file_paths_and_hashes[ $target_path ] =
-            crc32( $local_file_contents );
     }
 }
 

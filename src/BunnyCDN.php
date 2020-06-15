@@ -40,10 +40,6 @@ class BunnyCDN extends SitePublisher {
             $this->api_base = 'https://storage.bunnycdn.com';
         }
 
-        $this->previous_hashes_path =
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-BUNNYCDN-PREVIOUS-HASHES.txt';
-
         if ( defined( 'WP_CLI' ) ) {
             return;
         }
@@ -70,8 +66,6 @@ class BunnyCDN extends SitePublisher {
         }
 
         $lines = $this->getItemsToDeploy( $batch_size );
-
-        $this->openPreviousHashesFile();
 
         foreach ( $lines as $line ) {
             $this->local_file = $line->url;
