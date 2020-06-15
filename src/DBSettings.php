@@ -49,11 +49,6 @@ class DBSettings {
             'deployBatchSize',
         ];
 
-        $key_sets['folder'] = [
-            'baseUrl-folder',
-            'targetFolder',
-        ];
-
         $key_sets['zip'] = [
             'baseUrl-zip',
         ];

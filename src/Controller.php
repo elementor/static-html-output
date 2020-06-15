@@ -28,7 +28,7 @@ class Controller {
      */
     public $wp_site;
 
-    const VERSION = '6.6.18';
+    const VERSION = '6.6.19';
     const OPTIONS_KEY = 'statichtmloutput-options';
     const HOOK = 'statichtmloutput';
 
@@ -64,9 +64,9 @@ class Controller {
             add_filter( 'custom_menu_order', '__return_true' );
             add_filter( 'menu_order', [ 'StaticHTMLOutput\Controller', 'set_menu_order' ] );
         }
+
         return $instance;
     }
-
 
     /**
      * Adjusts position of dashboard menu icons
@@ -109,7 +109,15 @@ class Controller {
     }
 
     public function activate_for_single_site() : void {
+        // add_action( 'init', [ 'StaticHTMLOutput\Controller', 'add_custom_routes' ], 0 );
+
+        Logger::createTable();
         $this->setDefaultOptions();
+        CrawlQueue::createTable();
+        CrawlLog::createTable();
+        DeployQueue::createTable();
+        DeployCache::createTable();
+        Exclusions::createTable();
     }
 
     /**
@@ -143,8 +151,6 @@ class Controller {
     }
 
     public static function registerOptionsPage() : void {
-        $plugins_url = plugin_dir_url( dirname( __FILE__ ) );
-
         $page = add_menu_page(
             'Static HTML',
             'Static HTML',
@@ -178,7 +184,11 @@ class Controller {
         echo 'SUCCESS';
     }
 
-    public function generate_filelist_preview() : void {
+    public function detect_urls() : void {
+        // clear CrawlQueue before rebuilding list
+        CrawlQueue::truncate();
+        CrawlLog::truncate();
+
         $this->wp_site = new WPSite();
 
         $target_settings = [
@@ -194,8 +204,6 @@ class Controller {
                 PostSettings::get( $target_settings );
         }
 
-        $plugin_hook = 'statichtmloutput';
-
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
                 true,
@@ -203,19 +211,32 @@ class Controller {
                 $this->wp_site->uploads_url,
                 $this->settings
             );
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            echo $initial_file_list_count;
-        }
     }
 
     public static function renderOptionsPage() : void {
         $instance = self::getInstance();
+        $instance->detect_urls();
         $instance->wp_site = new WPSite();
         $instance->current_archive = '';
 
         $instance->view
             ->setTemplate( 'options-page-js' )
+            ->assign(
+                'crawl_progress_url',
+                admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-crawl-progress=1' )
+            )
+            ->assign(
+                'deploy_progress_url',
+                admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-deploy-progress=1' )
+            )
+            ->assign(
+                'crawl_log_url',
+                admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-crawl-log=1' )
+            )
+            ->assign(
+                'export_log_url',
+                admin_url( 'admin.php?page=statichtmloutput&statichtmloutput-export-log=1' )
+            )
             ->assign( 'options', $instance->options )
             ->assign( 'wp_site', $instance->wp_site )
             ->assign( 'onceAction', self::HOOK . '-options' )
@@ -225,6 +246,7 @@ class Controller {
             ->setTemplate( 'options-page' )
             ->assign( 'wp_site', $instance->wp_site )
             ->assign( 'options', $instance->options )
+            ->assign( 'total_detected_urls', CrawlQueue::getTotal() )
             ->assign( 'onceAction', self::HOOK . '-options' )
             ->render();
     }
@@ -247,15 +269,17 @@ class Controller {
     public function prepare_for_export() : void {
         $this->exporter = new Exporter();
 
-        $this->exporter->pre_export_cleanup();
-        $this->exporter->cleanup_leftover_archives();
-        $this->exporter->initialize_cache_files();
+        // $this->exporter->cleanup_leftover_archives();
+        Logger::truncate();
+
+        $this->detect_urls();
+
+        $this->logEnvironmentalInfo();
 
         $archive = new Archive();
         $archive->create();
 
-        $this->logEnvironmentalInfo();
-
+        // TODO: this is now just Inclusions/Exclusions task:
         $this->exporter->generateModifiedFileList();
 
         if ( ! defined( 'WP_CLI' ) ) {
@@ -265,7 +289,7 @@ class Controller {
 
     public function reset_default_settings() : void {
         if ( ! delete_option( 'statichtmloutput-options' ) ) {
-            WsLog::l( 'Error resetting options to defaults' );
+            Logger::l( 'Error resetting options to defaults' );
             echo 'ERROR';
         }
 
@@ -282,7 +306,6 @@ class Controller {
         // NOTE: renameWP Directories also doing same server publish
         $processor->renameArchiveDirectories();
         $processor->removeWPCruft();
-        $processor->copyStaticSiteToPublicFolder();
         $processor->create_zip();
 
         if ( ! defined( 'WP_CLI' ) ) {
@@ -291,35 +314,7 @@ class Controller {
     }
 
     public function delete_deploy_cache() : void {
-        $target_settings = [
-            'wpenv',
-        ];
-
-        if ( defined( 'WP_CLI' ) ) {
-            $this->settings =
-                DBSettings::get( $target_settings );
-        } else {
-            $this->settings =
-                PostSettings::get( $target_settings );
-        }
-
-        $uploads_dir = $this->settings['wp_uploads_path'];
-
-        $cache_files = [
-            '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-GITHUB-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-S3-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-BUNNYCDN-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-BITBUCKET-PREVIOUS-HASHES.txt',
-            // Add to cleanup script when upgrading > 6.6.8
-            // '/WP2STATIC-FTP-PREVIOUS-HASHES.txt',
-        ];
-
-        foreach ( $cache_files as $cache_file ) {
-            if ( is_file( $uploads_dir . $cache_file ) ) {
-                unlink( $uploads_dir . $cache_file );
-            }
-        }
+        DeployCache::truncate();
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
@@ -346,30 +341,28 @@ class Controller {
             $info[] = 'SERVER SOFTWARE ' . $_SERVER['SERVER_SOFTWARE'];
         }
 
-        WsLog::l( implode( PHP_EOL, $info ) );
+        Logger::l( implode( PHP_EOL, $info ) );
 
-        WsLog::l( 'Active plugins:' );
+        Logger::l( 'Active plugins:' );
 
         $active_plugins = get_option( 'active_plugins' );
 
         foreach ( $active_plugins as $active_plugin ) {
-            WsLog::l( $active_plugin );
+            Logger::l( $active_plugin );
         }
 
-        WsLog::l( 'Plugin options:' );
+        Logger::l( 'Plugin options:' );
 
         $options = $this->options->getAllOptions( false );
 
         foreach ( $options as $key => $value ) {
-            WsLog::l( "{$value['Option name']}: {$value['Value']}" );
+            Logger::l( "{$value['Option name']}: {$value['Value']}" );
         }
 
-        WsLog::l( 'Installed extensions:' );
+        Logger::l( 'Installed extensions:' );
 
         $extensions = get_loaded_extensions();
 
-        foreach ( $extensions as $extension ) {
-            WsLog::l( $extension );
-        }
+        Logger::l( implode( ',', $extensions ) );
     }
 }

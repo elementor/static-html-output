@@ -40,10 +40,6 @@ class BunnyCDN extends SitePublisher {
             $this->api_base = 'https://storage.bunnycdn.com';
         }
 
-        $this->previous_hashes_path =
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-BUNNYCDN-PREVIOUS-HASHES.txt';
-
         if ( defined( 'WP_CLI' ) ) {
             return;
         }
@@ -71,47 +67,45 @@ class BunnyCDN extends SitePublisher {
 
         $lines = $this->getItemsToDeploy( $batch_size );
 
-        $this->openPreviousHashesFile();
-
         foreach ( $lines as $line ) {
-            list($this->local_file, $this->target_path) = explode( ',', $line );
+            $this->local_file = $line->url;
+            $this->target_path = $line->remote_path;
 
             $this->local_file = $this->archive->path . $this->local_file;
 
+            $deploy_queue_path = str_replace( $this->archive->path, '', $this->local_file );
+
             if ( ! is_file( $this->local_file ) ) {
-                continue; }
+                DeployQueue::removeURL( $deploy_queue_path );
+                continue;
+            }
 
             $this->local_file_contents = (string) file_get_contents( $this->local_file );
 
             if ( ! $this->local_file_contents ) {
+                DeployQueue::removeURL( $deploy_queue_path );
                 continue;
             }
 
-            if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
-                $prev = $this->file_paths_and_hashes[ $this->target_path ];
-                $current = crc32( $this->local_file_contents );
+            $cached_hash = DeployCache::fileIsCached( $deploy_queue_path );
 
-                if ( $prev != $current ) {
+            if ( $cached_hash ) {
+                $current_hash = md5( $this->local_file_contents );
+
+                if ( $current_hash != $cached_hash ) {
                     $this->createFileInBunnyCDN();
-
-                    $this->recordFilePathAndHashInMemory(
-                        $this->target_path,
-                        $this->local_file_contents
-                    );
+                    DeployCache::addFile( $deploy_queue_path );
                 }
             } else {
                 $this->createFileInBunnyCDN();
 
-                $this->recordFilePathAndHashInMemory(
-                    $this->target_path,
-                    $this->local_file_contents
-                );
+                DeployCache::addFile( $deploy_queue_path );
             }
+
+            DeployQueue::removeURL( $deploy_queue_path );
 
             $this->updateProgress();
         }
-
-        $this->writeFilePathAndHashesToFile();
 
         $this->pauseBetweenAPICalls();
 
@@ -147,8 +141,8 @@ class BunnyCDN extends SitePublisher {
                 echo 'SUCCESS';
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'BUNNYCDN PURGE CACHE: error encountered' );
-            WsLog::l( $e );
+            Logger::l( 'BUNNYCDN PURGE CACHE: error encountered' );
+            Logger::l( $e );
             throw new StaticHTMLOutputException( $e );
         }
     }
@@ -178,8 +172,8 @@ class BunnyCDN extends SitePublisher {
 
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'BUNNYCDN TEST EXPORT: error encountered' );
-            WsLog::l( $e );
+            Logger::l( 'BUNNYCDN TEST EXPORT: error encountered' );
+            Logger::l( $e );
             throw new StaticHTMLOutputException( $e );
         }
 
@@ -210,11 +204,10 @@ class BunnyCDN extends SitePublisher {
                     $result->HttpCode,
                     [ 200, 201, 301, 302, 304 ]
                 );
-
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'BUNNYCDN EXPORT: error encountered' );
-            WsLog::l( $e );
+            Logger::l( 'BUNNYCDN EXPORT: error encountered' );
+            Logger::l( $e );
             $this->handleException( $e );
         }
     }

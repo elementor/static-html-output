@@ -23,8 +23,6 @@ class Deployer extends StaticHTMLOutput {
         $start_time = microtime( true );
 
         switch ( $this->settings['selected_deployment_option'] ) {
-            case 'folder':
-                break;
             case 'zip':
                 break;
             case 's3':
@@ -125,7 +123,6 @@ class Deployer extends StaticHTMLOutput {
 
     public function triggerPostDeployHooks() : void {
         $this->archive = new Archive();
-        $this->archive->setToCurrentArchive();
 
         do_action( 'statichtmloutput_post_deploy_trigger', $this->archive );
     }

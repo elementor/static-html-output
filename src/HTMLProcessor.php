@@ -51,10 +51,6 @@ class HTMLProcessor extends StaticHTMLOutput {
      */
     public $raw_html;
     /**
-     * @var bool
-     */
-    public $harvest_new_urls;
-    /**
      * @var string
      */
     public $destination_protocol;
@@ -94,7 +90,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         bool $remove_wp_meta = false,
         string $rewrite_rules = '',
         string $base_url,
-        string $selected_deployment_option = 'folder',
+        string $selected_deployment_option = 'zip',
         string $wp_site_url,
         string $wp_uploads_path
     ) {
@@ -425,8 +421,6 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $this->page_url = new Net_URL2( $page_url );
 
-        $this->detectIfURLsShouldBeHarvested();
-
         $this->discovered_urls = [];
 
         // PERF: 70% of function time
@@ -513,24 +507,8 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         $this->stripHTMLComments();
-        $this->writeDiscoveredURLs();
 
         return true;
-    }
-
-    public function detectIfURLsShouldBeHarvested() : void {
-        if ( ! defined( 'WP_CLI' ) ) {
-            $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
-
-            $this->harvest_new_urls = $ajax_method === 'crawl_site';
-        } else {
-            // we shouldn't harvest any while we're in the second crawl
-            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                return;
-            } else {
-                $this->harvest_new_urls = true;
-            }
-        }
     }
 
     public function processLink( DOMElement $element ) : void {
@@ -612,20 +590,22 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $this->processed_urls[] = (string) $url;
 
-        if ( $this->harvest_new_urls ) {
-            if ( ! $this->isValidURL( (string) $url ) ) {
+        if ( ! $this->isValidURL( (string) $url ) ) {
+            return;
+        }
+
+        if ( $this->isInternalLink( (string) $url ) ) {
+            $path = (string) parse_url( (string) $url, PHP_URL_PATH );
+
+            if ( empty( $path ) || $path[0] !== '/' ) {
                 return;
             }
 
-            if ( $this->isInternalLink( (string) $url ) ) {
-                $path = (string) parse_url( (string) $url, PHP_URL_PATH );
-
-                if ( $path[0] !== '/' ) {
-                    return;
-                }
-
-                $this->discovered_urls[] = $path;
+            if ( trim( $path ) === '/' ) {
+                return;
             }
+
+            $this->discovered_urls[] = $path;
         }
     }
 
@@ -846,33 +826,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->rewriteBaseURL( $element );
     }
 
-    public function writeDiscoveredURLs() : void {
-        $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
-
-        if ( $ajax_method === 'crawl_again' ) {
-            return;
-        }
-
-        if ( defined( 'WP_CLI' ) ) {
-            if ( defined( 'CRAWLING_DISCOVERED' ) ) {
-                return;
-            }
-        }
-
-        file_put_contents(
-            $this->wp_uploads_path .
-                '/WP-STATIC-DISCOVERED-URLS.txt',
-            PHP_EOL .
-                implode( PHP_EOL, array_unique( $this->discovered_urls ) ),
-            FILE_APPEND | LOCK_EX
-        );
-
-        chmod(
-            $this->wp_uploads_path .
-                '/WP-STATIC-DISCOVERED-URLS.txt',
-            0664
-        );
-    }
 
     // make link absolute, using current page to determine full path
     public function normalizeURL( DOMElement $element, string $attribute ) : void {
@@ -1161,6 +1114,21 @@ class HTMLProcessor extends StaticHTMLOutput {
 
             $element->setAttribute( $attribute_to_change, $rewritten_url );
         }
+    }
+
+    /**
+     * @return string[] Discovered URLs
+     */
+    public function getDiscoveredURLs() : array {
+        $discovered_urls = array_unique( $this->discovered_urls );
+        array_filter( $discovered_urls );
+        sort( $discovered_urls );
+
+        if ( ! $discovered_urls ) {
+            return [];
+        }
+
+        return $discovered_urls;
     }
 
     public function getHTML() : string {

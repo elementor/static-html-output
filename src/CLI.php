@@ -100,14 +100,13 @@ class CLI {
 
         $plugin = Controller::getInstance();
         WP_CLI::log( 'Generating file list' );
-        $plugin->generate_filelist_preview();
+        $plugin->detect_urls();
         WP_CLI::log( 'Preparing for export' );
         $plugin->prepare_for_export();
 
         $site_crawler = new SiteCrawler();
 
         $site_crawler->crawl_site();
-        $site_crawler->crawl_discovered_links();
         WP_CLI::log( 'Performing post process actions' );
         $plugin->post_process_archive_dir();
 

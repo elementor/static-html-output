@@ -20,13 +20,13 @@ class S3 extends SitePublisher {
      * @var string
      */
     public $hash_key;
+    /**
+     * @var string
+     */
+    public $local_file;
 
     public function __construct() {
         $this->loadSettings( 's3' );
-
-        $this->previous_hashes_path =
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-S3-PREVIOUS-HASHES.txt';
 
         if ( defined( 'WP_CLI' ) ) {
             return; }
@@ -49,36 +49,41 @@ class S3 extends SitePublisher {
 
         $lines = $this->getItemsToDeploy( $batch_size );
 
-        $this->openPreviousHashesFile();
-
         foreach ( $lines as $line ) {
-            list($local_file, $this->target_path) = explode( ',', $line );
+            $this->local_file = $line->url;
+            $this->target_path = $line->remote_path;
 
-            $local_file = $this->archive->path . $local_file;
+            $this->local_file = $this->archive->path . $this->local_file;
 
-            if ( ! is_file( $local_file ) ) {
-                continue; }
+            $deploy_queue_path = str_replace( $this->archive->path, '', $this->local_file );
 
-            $this->local_file_contents = (string) file_get_contents( $local_file );
-
-            if ( ! $this->local_file_contents ) {
+            if ( ! is_file( $this->local_file ) ) {
+                DeployQueue::removeURL( $deploy_queue_path );
                 continue;
             }
 
-            $this->hash_key = $this->target_path . basename( $local_file );
+            $this->local_file_contents = (string) file_get_contents( $this->local_file );
 
-            if ( isset( $this->file_paths_and_hashes[ $this->hash_key ] ) ) {
-                $prev = $this->file_paths_and_hashes[ $this->hash_key ];
-                $current = crc32( $this->local_file_contents );
+            if ( ! $this->local_file_contents ) {
+                DeployQueue::removeURL( $deploy_queue_path );
+                continue;
+            }
 
-                if ( $prev != $current ) {
+            $cached_hash = DeployCache::fileIsCached( $deploy_queue_path );
+
+            if ( $cached_hash ) {
+                $current_hash = md5( $this->local_file_contents );
+
+                if ( $current_hash != $cached_hash ) {
                     try {
                         $this->put_s3_object(
                             $this->target_path .
-                                    basename( $local_file ),
+                                    basename( $this->local_file ),
                             $this->local_file_contents,
-                            MimeTypes::guess_type( $local_file )
+                            MimeTypes::guess_type( $this->local_file )
                         );
+
+                        DeployCache::addFile( $deploy_queue_path );
 
                     } catch ( StaticHTMLOutputException $e ) {
                         $this->handleException( $e );
@@ -88,28 +93,25 @@ class S3 extends SitePublisher {
                 try {
                     $this->put_s3_object(
                         $this->target_path .
-                                basename( $local_file ),
+                                basename( $this->local_file ),
                         $this->local_file_contents,
-                        MimeTypes::guess_type( $local_file )
+                        MimeTypes::guess_type( $this->local_file )
                     );
 
+                    DeployCache::addFile( $deploy_queue_path );
+
                 } catch ( StaticHTMLOutputException $e ) {
-                    $mime_type = MimeTypes::guess_type( $local_file );
-                    $error = $local_file . PHP_EOL . $e;
+                    $mime_type = MimeTypes::guess_type( $this->local_file );
+                    $error = $this->local_file . PHP_EOL . $e;
 
                     $this->handleException( $error );
                 }
             }
 
-            $this->recordFilePathAndHashInMemory(
-                $this->hash_key,
-                $this->local_file_contents
-            );
+            DeployQueue::removeURL( $deploy_queue_path );
 
             $this->updateProgress();
         }
-
-        $this->writeFilePathAndHashesToFile();
 
         $this->pauseBetweenAPICalls();
 
@@ -130,7 +132,7 @@ class S3 extends SitePublisher {
                 echo 'SUCCESS';
             }
         } catch ( StaticHTMLOutputException $e ) {
-            WsLog::l( 'S3 TEST ERROR RETURNED: ' . $e );
+            Logger::l( 'S3 TEST ERROR RETURNED: ' . $e );
             throw new StaticHTMLOutputException( $e );
         }
     }
@@ -260,10 +262,10 @@ class S3 extends SitePublisher {
     }
 
     public function cloudfront_invalidate_all_items() : void {
-        WsLog::l( 'Invalidating all CloudFront items' );
+        Logger::l( 'Invalidating all CloudFront items' );
 
         if ( ! isset( $this->settings['cfDistributionId'] ) ) {
-            WsLog::l( 'no Cloudfront ID found' );
+            Logger::l( 'no Cloudfront ID found' );
 
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS'; }
@@ -306,7 +308,7 @@ EOD;
         );
 
         if ( ! $fp ) {
-            WsLog::l( "CLOUDFRONT CONNECTION ERROR: {$errno} {$errstr}" );
+            Logger::l( "CLOUDFRONT CONNECTION ERROR: {$errno} {$errstr}" );
             die( "Connection failed: {$errno} {$errstr}\n" );
         }
 
@@ -317,7 +319,7 @@ EOD;
             $resp .= fgets( $fp, 1024 );
         }
 
-        WsLog::l( "CloudFront response body: {$resp}" );
+        Logger::l( "CloudFront response body: {$resp}" );
 
         fclose( $fp );
 

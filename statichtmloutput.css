@@ -47,12 +47,12 @@ div.postbox div.inside {
     width: 95%;
 }
 
-#exportStatus {
-    width: 100%;
+#export_log_textarea {
+  font-family: monospace;
 }
 
-#progress {
-    display: none;
+#exportStatus {
+    width: 100%;
 }
 
 #progress-container {
@@ -90,7 +90,7 @@ div.postbox div.inside {
     height: 18px;
     width: 18px;
     position: relative;
-    display: inline-block;
+    display: none;
     margin-top: 0px;
     margin-right: 10px;
     text-align: center;

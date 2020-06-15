@@ -35,178 +35,12 @@ class FilesHelper {
     }
 
     /**
-     * Detect Active Plugin CSS URLs
-     *
-     * @return string[] list of URLs
-     */
-    public static function getPluginCSSURLs() : array {
-        $files = [];
-
-        $plugins_path = trailingslashit( WP_PLUGIN_DIR );
-        $plugins_url = trailingslashit( plugins_url() );
-        $active_plugins = get_option( 'active_plugins' );
-
-        $active_plugin_dirs = array_map(
-            function ( $active_plugin ) use ( $plugins_path ) {
-                $plugin_base = dirname( $active_plugin );
-
-                // exclude SSG plugin dirs and known uploads dir excludables
-                $exclude_plugins = [
-                    'simplerstatic',
-                    'static-html-output-plugin',
-                    'wp2static',
-                ];
-
-                foreach ( $exclude_plugins as $exclude_plugin ) {
-                    if ( strpos( $plugin_base, $exclude_plugin ) !== false ) {
-                        return;
-                    }
-                }
-
-                return $plugins_path . $plugin_base;
-            },
-            $active_plugins
-        );
-
-        foreach ( $active_plugin_dirs as $active_plugin_dir ) {
-
-            if ( is_dir( $active_plugin_dir ) ) {
-                $iterator = new RecursiveIteratorIterator(
-                    new RecursiveDirectoryIterator(
-                        $active_plugin_dir,
-                        RecursiveDirectoryIterator::SKIP_DOTS
-                    )
-                );
-
-                foreach ( $iterator as $filename => $file_object ) {
-                    // exclude vendor dirs
-                    if ( strpos( strtolower( $filename ), 'vendor' ) !== false ) {
-                        continue;
-                    }
-
-                    // exclude likely admin area assets
-                    if ( strpos( strtolower( $filename ), 'admin' ) !== false ) {
-                        continue;
-                    }
-
-                    $extension = pathinfo( $filename, PATHINFO_EXTENSION );
-
-                    if ( $extension !== 'css' ) {
-                        continue;
-                    }
-
-                    // Standardise all paths to use / (Windows support)
-                    // TODO: should come earlier in chain
-                    $filename = wp_normalize_path( $filename );
-
-                    $detected_filename =
-                        str_replace(
-                            $plugins_path,
-                            $plugins_url,
-                            $filename
-                        );
-
-                    $detected_filename =
-                        str_replace(
-                            get_home_url(),
-                            '',
-                            $detected_filename
-                        );
-
-                    if ( is_string( $detected_filename ) ) {
-                        array_push(
-                            $files,
-                            $detected_filename
-                        );
-                    }
-                }
-            }
-        }
-
-        return $files;
-    }
-
-    /**
-     * @return string[] list of URLs
-     */
-    public static function getThemeFiles( string $theme_type ) : array {
-        $wp_site = new WPSite();
-
-        $files = [];
-        $template_path = '';
-        $template_url = '';
-
-        if ( $theme_type === 'parent' ) {
-            $template_path = $wp_site->parent_theme_path;
-            $template_url = get_template_directory_uri();
-        } else {
-            $template_path = $wp_site->child_theme_path;
-            $template_url = get_stylesheet_directory_uri();
-        }
-
-        $directory = $template_path;
-
-        if ( is_dir( $directory ) ) {
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator(
-                    $directory,
-                    RecursiveDirectoryIterator::SKIP_DOTS
-                )
-            );
-
-            foreach ( $iterator as $filename => $file_object ) {
-                // $path_crawlable = self::filePathLooksCrawlable( $filename );
-                // for theme files, let's just grab CSS files, as these will yield other link
-                $extension = pathinfo( $filename, PATHINFO_EXTENSION );
-
-                if ( $extension !== 'css' ) {
-                    continue;
-                }
-
-                $detected_filename =
-                    str_replace(
-                        $template_path,
-                        $template_url,
-                        $filename
-                    );
-
-                $detected_filename =
-                    str_replace(
-                        get_home_url(),
-                        '',
-                        $detected_filename
-                    );
-
-                if ( is_string( $detected_filename ) ) {
-                    array_push(
-                        $files,
-                        $detected_filename
-                    );
-                }
-            }
-        }
-
-        return $files;
-    }
-
-    /**
      * @return string[] list of URLs
      */
     public static function detectVendorFiles( string $wp_site_url ) : array {
         $wp_site = new WPSite();
 
         $vendor_files = [];
-
-        if ( class_exists( '\\Elementor\Api' ) ) {
-            $elementor_font_dir = WP_PLUGIN_DIR .
-                '/elementor/assets/lib/font-awesome';
-
-            $elementor_urls = self::getListOfLocalFilesByUrl(
-                $elementor_font_dir
-            );
-
-            $vendor_files = array_merge( $vendor_files, $elementor_urls );
-        }
 
         if ( defined( 'WPSEO_VERSION' ) ) {
             $yoast_sitemaps = [
@@ -218,26 +52,6 @@ class FilesHelper {
             ];
 
             $vendor_files = array_merge( $vendor_files, $yoast_sitemaps );
-        }
-
-        if ( class_exists( 'autoptimizeMain' ) ) {
-            $autoptimize_cache_dir =
-                $wp_site->wp_content_path . '/cache/autoptimize';
-
-            // get difference between home and wp-contents URL
-            $prefix = str_replace(
-                $wp_site->site_url,
-                '/',
-                $wp_site->wp_content_url
-            );
-
-            $autoptimize_urls = self::getAutoptimizeCacheFiles(
-                $autoptimize_cache_dir,
-                $wp_site->wp_content_path,
-                $prefix
-            );
-
-            $vendor_files = array_merge( $vendor_files, $autoptimize_urls );
         }
 
         if ( class_exists( 'Custom_Permalinks' ) ) {
@@ -269,16 +83,6 @@ class FilesHelper {
                     $custom_permalinks
                 );
             }
-        }
-
-        if ( class_exists( 'molongui_authorship' ) ) {
-            $molongui_path = WP_PLUGIN_DIR . '/molongui-authorship';
-
-            $molongui_urls = self::getListOfLocalFilesByUrl(
-                $molongui_path
-            );
-
-            $vendor_files = array_merge( $vendor_files, $molongui_urls );
         }
 
         return $vendor_files;
@@ -439,7 +243,8 @@ class FilesHelper {
             'wp2static-crawled-site',
             'thumbs.db',
             'vendor',
-            'wp-static-html-output', // exclude earlier version exports
+            'wp-static-html-output',
+            'static-html-output',
         ];
 
         foreach ( $filenames_to_ignore as $ignorable ) {
@@ -506,9 +311,6 @@ class FilesHelper {
 
         $url_queue = array_merge(
             $url_queue,
-            self::getThemeFiles( 'parent' ),
-            self::getThemeFiles( 'child' ),
-            self::getPluginCSSURLs(),
             self::detectVendorFiles( $wp_site->site_url ),
             self::getAllWPPostURLs( $base_url ),
             self::getDateArchiveURLs()
@@ -522,21 +324,14 @@ class FilesHelper {
         );
 
         $unique_urls = array_unique( $url_queue );
+        array_filter( $unique_urls );
         sort( $unique_urls );
 
         $initial_crawl_list_total = count( $unique_urls );
 
-        $str = implode( "\n", $unique_urls );
-
-        file_put_contents(
-            $uploads_path . '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
-            $str
-        );
-
-        file_put_contents(
-            $uploads_path . '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt',
-            $initial_crawl_list_total
-        );
+        // TODO: also add to CrawlLog
+        CrawlQueue::addUrls( $unique_urls );
+        CrawlLog::addUrls( $unique_urls, 'initial_crawl_list', 0 );
 
         return count( $url_queue );
     }
@@ -594,14 +389,11 @@ class FilesHelper {
                     case 'page':
                         $permalink = get_page_link( $post->ID );
                         break;
-                    case 'post':
-                        $permalink = get_permalink( $post->ID );
-                        break;
                     case 'attachment':
                         $permalink = get_attachment_link( $post->ID );
                         break;
                     default:
-                        $permalink = get_post_permalink( $post->ID );
+                        $permalink = get_permalink( $post->ID );
                         break;
                 }
             }
@@ -705,27 +497,6 @@ class FilesHelper {
             }
         }
 
-        // get all pagination links for each category
-        $category_pagination_urls =
-            self::getPaginationURLsForCategories( $category_links );
-
-        // get all pagination links for each post_type
-        $post_pagination_urls =
-            self::getPaginationURLsForPosts(
-                array_unique( $unique_post_types )
-            );
-
-        // get all comment links
-        $comment_pagination_urls =
-            self::getPaginationURLsForComments( $wp_site_url );
-
-        $post_urls = array_merge(
-            $post_urls,
-            $post_pagination_urls,
-            $category_pagination_urls,
-            $comment_pagination_urls
-        );
-
         return $post_urls;
     }
 
@@ -761,128 +532,6 @@ class FilesHelper {
         );
 
         return $cleaned_urls;
-    }
-
-    /**
-     * @param string[] $post_types to get pagination URLs from
-     * @return string[] list of URLs
-     */
-    public static function getPaginationURLsForPosts( array $post_types ) : array {
-        global $wpdb, $wp_rewrite;
-        $wp_site = new WPSite();
-        $pagination_base = $wp_rewrite->pagination_base;
-        $default_posts_per_page = get_option( 'posts_per_page' );
-        $urls_to_include = [];
-
-        foreach ( $post_types as $post_type ) {
-            $query = "
-                SELECT ID,post_type
-                FROM %s
-                WHERE post_status = '%s'
-                AND post_type = '%s'";
-
-            $count = $wpdb->get_results(
-                sprintf(
-                    $query,
-                    $wpdb->posts,
-                    'publish',
-                    $post_type
-                )
-            );
-
-            $post_type_obj = get_post_type_object( $post_type );
-
-            if ( ! $post_type_obj || ! isset( $post_type_obj->labels->name ) ) {
-                continue;
-            }
-
-            $plural_form = strtolower( $post_type_obj->labels->name );
-            $count = $wpdb->num_rows;
-            $total_pages = ceil( $count / $default_posts_per_page );
-            $archive_link = get_post_type_archive_link( $post_type );
-
-            // only use pagination base when post type is page
-            for ( $page = 2; $page <= $total_pages; $page++ ) {
-                if ( $post_type === 'page' ) {
-                    $pagination_url =
-                        // TODO: check this against custom post types
-                        // "/{$plural_form}/{$pagination_base}/{$page}";
-                        "/{$pagination_base}/{$page}";
-                } else {
-                    $pagination_url =
-                        "/{$archive_link}/{$pagination_base}/{$page}";
-                }
-
-                $urls_to_include[] = str_replace(
-                    $wp_site->site_url,
-                    '/',
-                    $pagination_url
-                );
-            }
-        }
-
-        return $urls_to_include;
-    }
-
-    /**
-     * @param mixed[] $categories with total counts
-     * @return string[] list of URLs
-     */
-    public static function getPaginationURLsForCategories( array $categories ) : array {
-        if ( ! $categories ) {
-            return [];
-        }
-
-        global $wp_rewrite;
-
-        $urls_to_include = [];
-        $pagination_base = $wp_rewrite->pagination_base;
-        $default_posts_per_page = get_option( 'posts_per_page' );
-
-        foreach ( $categories as $term => $total_posts ) {
-            $total_pages = ceil( $total_posts / $default_posts_per_page );
-
-            for ( $page = 2; $page <= $total_pages; $page++ ) {
-                $urls_to_include[] =
-                    "{$term}/{$pagination_base}/{$page}";
-            }
-        }
-
-        return $urls_to_include;
-    }
-
-    /**
-     * @return string[] list of URLs
-     */
-    public static function getPaginationURLsForComments( string $wp_site_url ) : array {
-        global $wp_rewrite;
-
-        $comments_pagination_base = $wp_rewrite->comments_pagination_base;
-
-        $comments = get_comments();
-
-        if ( ! is_array( $comments ) ) {
-            return [];
-        }
-
-        $urls_to_include = [];
-
-        foreach ( $comments as $comment ) {
-            $comment_url = get_comment_link( $comment->comment_ID );
-            $comment_url = strtok( $comment_url, '#' );
-
-            if ( ! is_string( $comment_url ) ) {
-                continue;
-            }
-
-            $urls_to_include[] = str_replace(
-                $wp_site_url,
-                '',
-                $comment_url
-            );
-        }
-
-        return array_unique( $urls_to_include );
     }
 }
 

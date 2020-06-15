@@ -12,14 +12,9 @@ class ArchiveProcessor extends StaticHTMLOutput {
      * @var Archive
      */
     public $archive;
-    /**
-     * @var string
-     */
-    public $target_folder;
 
     public function __construct() {
         $this->archive = new Archive();
-        $this->archive->setToCurrentArchive();
 
         $this->loadSettings(
             [
@@ -29,14 +24,13 @@ class ArchiveProcessor extends StaticHTMLOutput {
                 'processing',
                 'netlify',
                 'zip',
-                'folder',
             ]
         );
     }
 
     public function renameWPDirectory( string $source, string $target ) : void {
         if ( empty( $source ) || empty( $target ) ) {
-            WsLog::l(
+            Logger::l(
                 'Failed trying to rename: ' .
                 'Source: ' . $source .
                 ' to: ' . $target
@@ -54,7 +48,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
                 $original_dir
             );
         } else {
-            WsLog::l(
+            Logger::l(
                 'Trying to rename non-existent directory: ' .
                 $original_dir
             );
@@ -146,89 +140,6 @@ class ArchiveProcessor extends StaticHTMLOutput {
         return true;
     }
 
-    public function copyStaticSiteToPublicFolder() : void {
-        if ( $this->settings['selected_deployment_option'] === 'folder' ) {
-            $target_folder = trim( $this->settings['targetFolder'] );
-            $this->target_folder = $target_folder;
-
-            if ( ! $target_folder ) {
-                return;
-            }
-
-            // instantiate with safe defaults
-            $directory_exists = true;
-            $directory_empty = false;
-            $dir_has_safety_file = false;
-
-            // CHECK #1: directory exists or can be created
-            $directory_exists = is_dir( $target_folder );
-
-            if ( $directory_exists ) {
-                $directory_empty = $this->dir_is_empty( $target_folder );
-            } else {
-                if ( wp_mkdir_p( $target_folder ) ) {
-                    if ( ! $this->put_safety_file( $target_folder ) ) {
-                        WsLog::l(
-                            'Couldn\'t put safety file in ' .
-                            'Target Directory' .
-                            $target_folder
-                        );
-
-                        die();
-                    }
-                } else {
-                    WsLog::l(
-                        'Couldn\'t create Target Directory: ' .
-                        $target_folder
-                    );
-
-                    die();
-                }
-            }
-
-            // CHECK #2: check directory empty and add safety file
-            if ( $directory_empty ) {
-                if ( ! $this->put_safety_file( $target_folder ) ) {
-                    WsLog::l(
-                        'Couldn\'t put safety file in ' .
-                        'Target Directory' .
-                        $target_folder
-                    );
-
-                    die();
-                }
-            }
-
-            $dir_has_safety_file =
-                $this->dir_has_safety_file( $target_folder );
-
-            if ( $directory_empty || $dir_has_safety_file ) {
-                $this->recursive_copy(
-                    $this->archive->path,
-                    $this->target_folder
-                );
-
-                if ( ! $this->put_safety_file( $target_folder ) ) {
-                    WsLog::l(
-                        'Couldn\'t put safety file in ' .
-                        'Target Directory' .
-                        $target_folder
-                    );
-
-                    die();
-                }
-            } else {
-                WsLog::l(
-                    'Target Directory wasn\'t empty ' .
-                    'or didn\'t contain safety file ' .
-                    $target_folder
-                );
-
-                die();
-            }
-        }
-    }
-
     public function createNetlifySpecialFiles() : void {
         if ( $this->settings['selected_deployment_option'] !== 'netlify' ) {
             return;
@@ -262,7 +173,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
         $zip_archive = new ZipArchive();
 
         if ( $zip_archive->open( $temp_zip, ZIPARCHIVE::CREATE ) !== true ) {
-            WsLog::l( 'Could not create archive' );
+            Logger::l( 'Could not create archive' );
             return;
         }
 
@@ -284,7 +195,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
                     str_replace( $this->archive->path, '', $filename )
                 )
                 ) {
-                    WsLog::l( 'Could not add file: ' . $filename );
+                    Logger::l( 'Could not add file: ' . $filename );
                     return;
                 }
             }

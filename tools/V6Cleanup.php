@@ -9,7 +9,7 @@ class V6Cleanup {
         $deleted_v6_options = delete_option( 'wp2static-options' );
 
         if ( $deleted_v6_options ) {
-            WsLog::l( 'Deleted Version 6 options from DB' );
+            Logger::l( 'Deleted Version 6 options from DB' );
         }
 
         $v6_txt_files = [
@@ -32,7 +32,7 @@ class V6Cleanup {
                 $deleted_file = unlink( SiteInfo::getPath( 'uploads' ) . $txt_file );
 
                 if ( $deleted_file ) {
-                    WsLog::l( 'Deleted Version 6 text file: ' . $txt_file );
+                    Logger::l( 'Deleted Version 6 text file: ' . $txt_file );
                 }
             }
         }
@@ -44,7 +44,7 @@ class V6Cleanup {
                 $deleted_zip = unlink( $v6_zip_file );
 
                 if ( $deleted_zip ) {
-                    WsLog::l( 'Deleted Version 6 zip file: ' . $v6_zip_file );
+                    Logger::l( 'Deleted Version 6 zip file: ' . $v6_zip_file );
                 }
             }
         }
@@ -54,7 +54,7 @@ class V6Cleanup {
         if ( is_array( $v6_archives ) ) {
             foreach ( $v6_archives as $v6_archive ) {
                 if ( is_dir( $v6_archive ) ) {
-                    WsLog::l( 'Deleting Version 6 archive: ' . $v6_archive );
+                    Logger::l( 'Deleting Version 6 archive: ' . $v6_archive );
                     FilesHelper::delete_dir_with_files( $v6_archive );
                 }
             }

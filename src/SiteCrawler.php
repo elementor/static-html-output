@@ -62,10 +62,6 @@ class SiteCrawler extends StaticHTMLOutput {
      * @var string
      */
     public $crawled_links_file;
-    /**
-     * @var int
-     */
-    public $remaining_urls_to_crawl;
 
     public function __construct() {
         $this->loadSettings(
@@ -90,330 +86,129 @@ class SiteCrawler extends StaticHTMLOutput {
         $this->archive_dir = '';
         $this->list_of_urls_to_crawl_path = '';
         $this->urls_to_crawl = [];
-
-        if ( ! defined( 'WP_CLI' ) ) {
-            // @codingStandardsIgnoreStart
-            if ( $_POST['ajax_action'] === 'crawl_again' ) {
-                $this->crawl_discovered_links();
-            } elseif ( $_POST['ajax_action'] === 'crawl_site' ) {
-                $this->crawl_site();
-            }
-            // @codingStandardsIgnoreEnd
-        }
-    }
-
-    public function generate_discovered_links_list() : void {
-        $second_crawl_file_path = $this->settings['wp_uploads_path'] .
-        '/WP-STATIC-2ND-CRAWL-LIST.txt';
-
-        $already_crawled = file(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-INITIAL-CRAWL-LIST.txt',
-            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-        );
-
-        if ( ! $already_crawled ) {
-            $already_crawled = [];
-        }
-
-        $unique_discovered_links = [];
-
-        $discovered_links_file = $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-DISCOVERED-URLS.txt';
-
-        if ( is_file( $discovered_links_file ) ) {
-            $discovered_links = file(
-                $discovered_links_file,
-                FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-            );
-
-            if ( ! $discovered_links ) {
-                $discovered_links = [];
-            }
-
-            $unique_discovered_links = array_unique( $discovered_links );
-            sort( $unique_discovered_links );
-        }
-
-        file_put_contents(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
-            implode( PHP_EOL, $unique_discovered_links )
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS-LOG.txt',
-            0664
-        );
-
-        file_put_contents(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt',
-            count( $unique_discovered_links )
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt',
-            0664
-        );
-
-        $discovered_links = array_diff(
-            $unique_discovered_links,
-            $already_crawled
-        );
-
-        if ( ! empty( $this->progress_bar ) ) {
-            $this->progress_bar->finish();
-            $this->progress_bar = \WP_ClI\Utils\make_progress_bar(
-                'Crawling discovered links',
-                count( $discovered_links )
-            );
-        }
-
-        file_put_contents(
-            $second_crawl_file_path,
-            implode( PHP_EOL, $discovered_links )
-        );
-
-        chmod( $second_crawl_file_path, 0664 );
-
-        copy(
-            $second_crawl_file_path,
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt'
-        );
-
-        chmod(
-            $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt',
-            0664
-        );
-    }
-
-    public function crawl_discovered_links() : void {
-        if ( defined( 'WP_CLI' ) && ! defined( 'CRAWLING_DISCOVERED' ) ) {
-            define( 'CRAWLING_DISCOVERED', true );
-        }
-
-        $second_crawl_file_path = $this->settings['wp_uploads_path'] .
-        '/WP-STATIC-2ND-CRAWL-LIST.txt';
-
-        // NOTE: the first iteration of the 2nd crawl phase,
-        // the list of URLs for 2nd crawl is prepared
-        if ( ! is_file( $second_crawl_file_path ) ) {
-            $this->generate_discovered_links_list();
-        }
-
-        $this->list_of_urls_to_crawl_path =
-            $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
-
-        if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            WsLog::l(
-                'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
-                    $this->list_of_urls_to_crawl_path
-            );
-            die();
-        } else {
-            if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
-                $this->crawlABitMore();
-            } else {
-                if ( ! defined( 'WP_CLI' ) ) {
-                    echo 'SUCCESS';
-                }
-            }
-        }
     }
 
     public function crawl_site() : void {
-        // crude detection for CLI export to use 2nd crawl phase
-        $this->list_of_urls_to_crawl_path =
-            $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-FINAL-2ND-CRAWL-LIST.txt';
+        if ( CrawlQueue::getTotal() > 0 ) {
+            $this->crawlABitMore();
+        } else {
+            if ( ! defined( 'WP_CLI' ) ) {
+                echo 'SUCCESS';
+            } elseif ( ! empty( $this->progress_bar ) ) {
+                $this->progress_bar->finish();
+            }
+        }
+    }
 
-        if ( is_file( $this->list_of_urls_to_crawl_path ) ) {
-            $this->crawl_discovered_links();
-
+    public function progressBarTick() : void {
+        if ( empty( $this->progress_bar ) ) {
             return;
         }
 
-        $this->list_of_urls_to_crawl_path =
-            $this->settings['wp_uploads_path'] .
-            '/WP-STATIC-FINAL-CRAWL-LIST.txt';
-
-        if ( ! is_file( $this->list_of_urls_to_crawl_path ) ) {
-            WsLog::l(
-                'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
-                    $this->list_of_urls_to_crawl_path
-            );
-            die();
-        } else {
-            if ( filesize( $this->list_of_urls_to_crawl_path ) ) {
-                $this->crawlABitMore();
-            } else {
-                if ( ! defined( 'WP_CLI' ) ) {
-                    echo 'SUCCESS';
-                }
-            }
-        }
+        $this->progress_bar->tick(
+            1,
+            sprintf(
+                'Processing URLs  %d / %d',
+                (int) filter_var( $this->progress_bar->current(), FILTER_SANITIZE_NUMBER_INT ) + 1,
+                CrawlLog::getTotalCrawlableURLs()
+            )
+        );
     }
 
     public function crawlABitMore() : void {
         $batch_of_links_to_crawl = [];
 
-        $crawl_list = file(
-            $this->list_of_urls_to_crawl_path,
-            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-        );
+        $crawlable_urls = CrawlQueue::getTotalCrawlableURLs();
 
-        if ( ! $crawl_list ) {
+        if ( ! $crawlable_urls ) {
             return;
         }
 
-        $this->urls_to_crawl = $crawl_list;
+        // get total CrawlQueue
+        $total_urls = CrawlQueue::getTotal();
 
-        if ( is_array( $this->urls_to_crawl ) ) {
-            $total_links = count( $this->urls_to_crawl );
+        // get batch size (smaller of total urls or crawl_increment)
+        $batch_size = min( $total_urls, $this->settings['crawl_increment'] );
 
-            if ( $total_links < 1 ) {
-                WsLog::l(
-                    'ERROR: LIST OF URLS TO CRAWL NOT FOUND AT: ' .
-                    $this->list_of_urls_to_crawl_path
+        // fetch just amount of URLs needed (limit to crawl_increment)
+        $this->urls_to_crawl = CrawlQueue::getCrawlablePaths( $batch_size );
+
+        $this->archive_dir = $this->settings['wp_uploads_path'] . '/static-html-output/';
+
+        if ( defined( 'WP_CLI' ) && empty( $this->progress_bar ) ) {
+            $this->progress_bar =
+                \WP_CLI\Utils\make_progress_bar(
+                    sprintf(
+                        'Processing URLs  %d / %d',
+                        0,
+                        CrawlLog::getTotalCrawlableURLs()
+                    ),
+                    CrawlLog::getTotalCrawlableURLs()
                 );
-                die();
-            }
+        }
 
-            if ( $this->settings['crawl_increment'] > $total_links ) {
-                $this->settings['crawl_increment'] = $total_links;
-            }
+        if ( ! empty( $this->progress_bar ) ) {
+            $this->progress_bar->setTotal( CrawlLog::getTotalCrawlableURLs() );
+        }
 
-            for ( $i = 0; $i < $this->settings['crawl_increment']; $i++ ) {
-                $link_from_crawl_list = array_shift( $this->urls_to_crawl );
+        // TODO: add these to Exclusions table
+        $exclusions = [ 'wp-json' ];
 
-                if ( $link_from_crawl_list ) {
-                    $batch_of_links_to_crawl[] = $link_from_crawl_list;
-                }
-            }
-
-            $this->remaining_urls_to_crawl = count( $this->urls_to_crawl );
-
-            // resave crawl list file, minus those from this batch
-            file_put_contents(
-                $this->list_of_urls_to_crawl_path,
-                implode( "\r\n", $this->urls_to_crawl )
+        if ( isset( $this->settings['excludeURLs'] ) ) {
+            $user_exclusions = explode(
+                "\n",
+                str_replace( "\r", '', $this->settings['excludeURLs'] )
             );
 
-            chmod( $this->list_of_urls_to_crawl_path, 0664 );
-
-            // TODO: required in saving/copying, but not here? optimize...
-            $handle = fopen(
-                $this->settings['wp_uploads_path'] .
-                    '/WP2STATIC-CURRENT-ARCHIVE.txt',
-                'r'
+            $exclusions = array_merge(
+                $exclusions,
+                $user_exclusions
             );
+        }
 
-            if ( ! is_resource( $handle ) ) {
-                return;
-            }
+        foreach ( $this->urls_to_crawl as $link_to_crawl ) {
+            $this->url = $link_to_crawl;
 
-            $line = stream_get_line( $handle, 0 );
+            $this->full_url = $this->settings['wp_site_url'] .
+                ltrim( $this->url, '/' );
 
-            if ( ! is_string( $line ) ) {
-                return;
-            }
+            foreach ( $exclusions as $exclusion ) {
+                $exclusion = trim( $exclusion );
+                if ( $exclusion != '' ) {
+                    if ( false !== strpos( $this->url, $exclusion ) ) {
+                        Logger::l(
+                            'Excluding ' . $this->url .
+                            ' because of rule ' . $exclusion
+                        );
 
-            $this->archive_dir = $line;
+                        $url_path = (string) parse_url( $this->url, PHP_URL_PATH );
 
-            $total_urls_path = $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-INITIAL-CRAWL-TOTAL.txt';
-
-            // TODO: avoid mutation
-            // @codingStandardsIgnoreStart
-            if (
-                defined( 'CRAWLING_DISCOVERED' ) ||
-                ( isset( $_POST['ajax_action'] ) &&
-                    $_POST['ajax_action'] == 'crawl_again'
-                )
-            ) {
-                $total_urls_path = $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-DISCOVERED-URLS-TOTAL.txt';
-            }
-            // @codingStandardsIgnoreEnd
-
-            $total_urls_to_crawl = (int) file_get_contents( $total_urls_path );
-
-            if ( defined( 'WP_CLI' ) && empty( $this->progress_bar ) ) {
-                $this->progress_bar =
-                    \WP_CLI\Utils\make_progress_bar( 'Crawling site', $total_urls_to_crawl );
-            }
-
-            $batch_index = 0;
-
-            $exclusions = [ 'wp-json' ];
-
-            if ( isset( $this->settings['excludeURLs'] ) ) {
-                $user_exclusions = explode(
-                    "\n",
-                    str_replace( "\r", '', $this->settings['excludeURLs'] )
-                );
-
-                $exclusions = array_merge(
-                    $exclusions,
-                    $user_exclusions
-                );
-            }
-
-            WsLog::l(
-                'Exclusion rules ' . implode( PHP_EOL, $exclusions )
-            );
-
-            foreach ( $batch_of_links_to_crawl as $link_to_crawl ) {
-                $this->url = $link_to_crawl;
-
-                $this->full_url = $this->settings['wp_site_url'] .
-                    ltrim( $this->url, '/' );
-
-                foreach ( $exclusions as $exclusion ) {
-                    $exclusion = trim( $exclusion );
-                    if ( $exclusion != '' ) {
-                        if ( false !== strpos( $this->url, $exclusion ) ) {
-                            WsLog::l(
-                                'Excluding ' . $this->url .
-                                ' because of rule ' . $exclusion
-                            );
-
-                            if ( ! empty( $this->progress_bar ) ) {
-                                $this->progress_bar->tick();
-                            }
-
-                            // skip the outer foreach loop
+                        if ( ! $url_path ) {
+                            $this->progressBarTick();
                             continue 2;
                         }
+
+                        // TODO: dummy status to denote skipped due to exclusion rule
+                        CrawlLog::updateStatus( $url_path, 777 );
+                        CrawlQueue::removeURL( $url_path );
+
+                        $this->progressBarTick();
+                        continue 2;
                     }
                 }
-
-                $this->file_extension = $this->getExtensionFromURL();
-
-                if ( $this->loadFileForProcessing() ) {
-                    $this->saveFile();
-                }
-
-                $batch_index++;
-
-                $completed_urls =
-                    $total_urls_to_crawl -
-                    $this->remaining_urls_to_crawl -
-                    count( $batch_of_links_to_crawl ) +
-                    $batch_index;
-
-                ProgressLog::l( $completed_urls, $total_urls_to_crawl );
-
-                if ( ! empty( $this->progress_bar ) ) {
-                    $this->progress_bar->tick();
-                }
             }
+
+            $this->file_extension = $this->getExtensionFromURL();
+
+            if ( $this->loadFileForProcessing() ) {
+                $this->saveFile();
+            }
+
+            // TODO: get crawl status and remove URL from CrawlQueue
+
+            // ProgressLog::l( $completed_urls, $total_urls_to_crawl );
+
+            $this->progressBarTick();
         }
 
         $this->checkIfMoreCrawlingNeeded();
@@ -468,33 +263,19 @@ class SiteCrawler extends StaticHTMLOutput {
 
         $good_response_codes = [ 200, 201, 301, 302, 304 ];
 
+        $url_path = (string) parse_url( $this->url, PHP_URL_PATH );
+
+        if ( ! $url_path ) {
+            return false;
+        }
+
+        CrawlLog::updateStatus( $url_path, $status_code );
+        CrawlQueue::removeURL( $url_path );
+
         if ( ! in_array( $status_code, $good_response_codes ) ) {
-            WsLog::l(
-                'BAD RESPONSE STATUS (' . $status_code . '): ' . $this->url
-            );
-
-            file_put_contents(
-                $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-404-LOG.txt',
-                $status_code . ':' . $this->url . PHP_EOL,
-                FILE_APPEND | LOCK_EX
-            );
-
-            chmod(
-                $this->settings['wp_uploads_path'] .
-                    '/WP-STATIC-404-LOG.txt',
-                0664
-            );
+            Logger::l( "BAD RESPONSE STATUS ($status_code): $this->url" );
 
             return false;
-        } else {
-            file_put_contents(
-                $this->crawled_links_file,
-                $this->url . PHP_EOL,
-                FILE_APPEND | LOCK_EX
-            );
-
-            chmod( $this->crawled_links_file, 0664 );
         }
 
         $base_url = $this->settings['baseUrl'];
@@ -552,6 +333,7 @@ class SiteCrawler extends StaticHTMLOutput {
 
                 if ( $processed ) {
                     $this->processed_file = $processor->getHTML();
+                    $this->saveDiscoveredURLs( $processor->getDiscoveredURLs(), $this->full_url );
                 }
 
                 break;
@@ -605,6 +387,7 @@ class SiteCrawler extends StaticHTMLOutput {
 
                 if ( $processed ) {
                     $this->processed_file = $processor->getCSS();
+                    $this->saveDiscoveredURLs( $processor->getDiscoveredURLs(), $this->full_url );
                 }
 
                 break;
@@ -632,19 +415,27 @@ class SiteCrawler extends StaticHTMLOutput {
                 break;
         }
 
+        if ( defined( 'WP_CLI' ) ) {
+            \WP_CLI::debug( sprintf( 'Processing %s', $this->url ) );
+        }
+
         return true;
     }
 
     public function checkIfMoreCrawlingNeeded() : void {
-        if ( $this->remaining_urls_to_crawl > 0 ) {
+        $remaining_urls_to_crawl = CrawlQueue::getTotal();
+
+        if ( $remaining_urls_to_crawl > 0 ) {
             if ( ! defined( 'WP_CLI' ) ) {
-                echo $this->remaining_urls_to_crawl;
+                echo $remaining_urls_to_crawl;
             } else {
                 $this->crawl_site();
             }
         } else {
             if ( ! defined( 'WP_CLI' ) ) {
                 echo 'SUCCESS';
+            } elseif ( ! empty( $this->progress_bar ) ) {
+                $this->progress_bar->finish();
             }
         }
     }
@@ -658,6 +449,10 @@ class SiteCrawler extends StaticHTMLOutput {
         );
 
         $file_writer->saveFile( $this->archive_dir );
+
+        if ( defined( 'WP_CLI' ) ) {
+            \WP_CLI::debug( sprintf( 'Saved %s', $this->url ) );
+        }
     }
 
     public function getExtensionFromURL() : string {
@@ -694,7 +489,7 @@ class SiteCrawler extends StaticHTMLOutput {
             } elseif ( stripos( $type, 'application/json' ) !== false ) {
                 $this->file_type = 'json';
             } else {
-                WsLog::l(
+                Logger::l(
                     'no filetype inferred from content-type: ' .
                     $this->curl_content_type .
                     ' url: ' . $this->url
@@ -709,10 +504,35 @@ class SiteCrawler extends StaticHTMLOutput {
     public function checkForCurlErrors( string $response, $curl_handle ) : void {
         if ( ! $response ) {
             $response = curl_error( $curl_handle );
-            WsLog::l(
+            Logger::l(
                 'cURL error:' .
                 stripslashes( $response )
             );
         }
+    }
+
+    /**
+     * @param string[] $discovered_urls from a processed page
+     */
+    public function saveDiscoveredURLs( array $discovered_urls, string $parent_page ) : void {
+        if ( ! $discovered_urls ) {
+            return;
+        }
+
+        // get all from CrawlLog
+        $known_urls = CrawlLog::getCrawlablePaths();
+
+        // filter only new URLs
+        $new_urls = array_diff( $discovered_urls, $known_urls );
+
+        if ( ! $new_urls ) {
+            return;
+        }
+
+        $page_path = (string) parse_url( $parent_page, PHP_URL_PATH );
+
+        // TODO: also add new URLs to CrawlLog
+        CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_path, 0 );
+        CrawlQueue::addUrls( $new_urls );
     }
 }

@@ -88,7 +88,6 @@ $tpl = new StaticHTMLOutput\TemplateHelper();
     function generateDeploymentMethodOptions() {
       $options = [
         'zip' => 'ZIP archive (.zip)',
-        'folder' => 'Subdirectory on current server',
         's3' => 'Amazon S3',
         'bitbucket' => 'Bitbucket',
         'bunnycdn' => 'BunnyCDN',
@@ -139,7 +138,7 @@ $tpl = new StaticHTMLOutput\TemplateHelper();
 
             <div class="submit">
               <?php wp_nonce_field($this->onceAction) ?>
-              <button id="startExportButton" class="button-primary button-hero" disabled>Start static site export</button>
+              <button id="startExportButton" class="button-primary button-hero">Start static site export</button>
               <button class="saveSettingsButton button-secondary" disabled>Save current options</button>
               <button class="button resetDefaultSettingsButton" disabled>Reset to default settings</button>
               <button style="display:none;" class="button cancelExportButton">Cancel export</button>
@@ -160,7 +159,14 @@ $tpl = new StaticHTMLOutput\TemplateHelper();
                 <div id="progress-container">
                   <div id="progress">
                     <div class="pulsate-css"></div>
-                    <div id="current_action">Starting export</div>
+                    <div id="current_action">
+
+                    <a
+                        href="<?php echo admin_url('admin.php?page=statichtmloutput&statichtmloutput-crawl-queue=1'); ?>"
+                        target="_blank"><?php echo $this->total_detected_urls; ?> URLs</a>
+
+                     were detected. The rest of your site's URLs will be discovered during crawling.
+                    </div>
                   </div>
 
                   <p id="exportDuration" style="display:block;"></p>

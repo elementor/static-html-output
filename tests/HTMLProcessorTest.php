@@ -42,7 +42,7 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
             '', // $base_url
-            '', // $selected_deployment_option = 'folder'
+            '', // $selected_deployment_option = 'zip'
             '', // $wp_site_url
             '' // $wp_uploads_path
         );
@@ -140,7 +140,7 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
             'https://mynewdomain.com', // $base_url
-            '', // $selected_deployment_option = 'folder'
+            '', // $selected_deployment_option = 'zip'
             'http://mywpsite.com', // $wp_site_url
             '' // $wp_uploads_path
         );
@@ -213,7 +213,7 @@ final class HTMLProcessorTest extends TestCase {
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
             '', // $base_url
-            '', // $selected_deployment_option = 'folder'
+            '', // $selected_deployment_option = 'zip'
             $site_url, // $wp_site_url
             '' // $wp_uploads_path
         );
@@ -289,45 +289,43 @@ final class HTMLProcessorTest extends TestCase {
 
     /**
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
-     * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
-     * @covers StaticHTMLOutput\HTMLProcessor::detectIfURLsShouldBeHarvested
-     * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
-     * @covers StaticHTMLOutput\HTMLProcessor::getHTML
-     * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
-     * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
-     * @covers StaticHTMLOutput\HTMLProcessor::processHTML
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
-     * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
-     * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
-     * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\HTMLProcessor::getBaseURLRewritePatterns
-     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
-     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
-     * @covers StaticHTMLOutput\HTMLProcessor::processHead
-     * @covers StaticHTMLOutput\HTMLProcessor::processLink
-     * @covers StaticHTMLOutput\HTMLProcessor::processMeta
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
-     * @covers StaticHTMLOutput\HTMLProcessor::forceHTTPS
-     * @covers StaticHTMLOutput\HTMLProcessor::processImage
-     * @covers StaticHTMLOutput\HTMLProcessor::processImageSrcSet
-     * @covers StaticHTMLOutput\HTMLProcessor::processAnchor
-     * @covers StaticHTMLOutput\HTMLProcessor::processGenericHref
-     * @covers StaticHTMLOutput\HTMLProcessor::processGenericSrc
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteEncodedSiteURLAndHostName
-     * @covers StaticHTMLOutput\HTMLProcessor::processStyle
-     * @covers StaticHTMLOutput\HTMLProcessor::processStyleAttribute
      * @covers StaticHTMLOutput\CSSProcessor::__construct
      * @covers StaticHTMLOutput\CSSProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\CSSProcessor::detectIfURLsShouldBeHarvested
      * @covers StaticHTMLOutput\CSSProcessor::getCSS
      * @covers StaticHTMLOutput\CSSProcessor::getProtocolRelativeURL
      * @covers StaticHTMLOutput\CSSProcessor::getTargetSiteProtocol
      * @covers StaticHTMLOutput\CSSProcessor::isInternalLink
+     * @covers StaticHTMLOutput\CSSProcessor::isValidURL
      * @covers StaticHTMLOutput\CSSProcessor::processCSS
      * @covers StaticHTMLOutput\CSSProcessor::rewritePlaceholderURLsToDestination
      * @covers StaticHTMLOutput\CSSProcessor::rewriteSiteURLsToPlaceholder
-     * @covers StaticHTMLOutput\CSSProcessor::writeDiscoveredURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
+     * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::forceHTTPS
+     * @covers StaticHTMLOutput\HTMLProcessor::getBaseURLRewritePatterns
+     * @covers StaticHTMLOutput\HTMLProcessor::getHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
+     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::isValidURL
+     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::processAnchor
+     * @covers StaticHTMLOutput\HTMLProcessor::processGenericHref
+     * @covers StaticHTMLOutput\HTMLProcessor::processGenericSrc
+     * @covers StaticHTMLOutput\HTMLProcessor::processHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::processHead
+     * @covers StaticHTMLOutput\HTMLProcessor::processImage
+     * @covers StaticHTMLOutput\HTMLProcessor::processImageSrcSet
+     * @covers StaticHTMLOutput\HTMLProcessor::processLink
+     * @covers StaticHTMLOutput\HTMLProcessor::processMeta
+     * @covers StaticHTMLOutput\HTMLProcessor::processStyle
+     * @covers StaticHTMLOutput\HTMLProcessor::processStyleAttribute
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteEncodedSiteURLAndHostName
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
+     * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
      * @dataProvider processHTMLProvider
      */
     public function testProcessHTML(
@@ -370,7 +368,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4040', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mywpsite.com/a-page/',
@@ -384,7 +382,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4040', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mywpsite.com/a-page/',
@@ -398,7 +396,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4040', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mywpsite.com/a-page/',
@@ -412,7 +410,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://mydomain.com', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mydomain.com/',
@@ -426,7 +424,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://mydomain.com', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mydomain.com/',
@@ -440,7 +438,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost/',
@@ -454,7 +452,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'http://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost/',
@@ -468,7 +466,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4444', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost:4444/',
@@ -482,7 +480,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4444', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost:4444/',
@@ -496,7 +494,7 @@ final class HTMLProcessorTest extends TestCase {
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
                 'https://mynewdomain.com', // $base_url
-                '', // $selected_deployment_option = 'folder'
+                '', // $selected_deployment_option = 'zip'
                 'http://localhost:4444', // $wp_site_url
                 '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost:4444/',
