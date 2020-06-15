@@ -5,9 +5,9 @@ namespace StaticHTMLOutput;
 class GitLab extends SitePublisher {
 
     /**
-     * @var string
+     * @var string[]
      */
-    public $files_in_repo_list_path;
+    public $files_in_repo;
     /**
      * @var string
      */
@@ -23,10 +23,6 @@ class GitLab extends SitePublisher {
 
     public function __construct() {
         $this->loadSettings( 'gitlab' );
-
-        $this->files_in_repo_list_path =
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-GITLAB-FILES-IN-REPO.txt';
 
         if ( defined( 'WP_CLI' ) ) {
             return; }
@@ -49,17 +45,11 @@ class GitLab extends SitePublisher {
 
         $lines = $this->getItemsToDeploy( $batch_size );
 
-        $files_in_tree = file(
-            $this->files_in_repo_list_path,
-            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-        );
+        $this->getListOfFilesInRepo();
 
-        if ( is_array( $files_in_tree ) ) {
-            $files_in_tree = array_filter( $files_in_tree );
-            $files_in_tree = array_unique( $files_in_tree );
-        } else {
-            $files_in_tree = [];
-        }
+        $files_in_tree = $this->files_in_repo;
+        $files_in_tree = array_filter( $files_in_tree );
+        $files_in_tree = array_unique( $files_in_tree );
 
         $files_data = [];
 
@@ -177,11 +167,9 @@ class GitLab extends SitePublisher {
      * @param mixed[] $items file objects
      */
     public function addToListOfFilesInRepos( array $items ) : void {
-        file_put_contents(
-            $this->files_in_repo_list_path,
-            implode( PHP_EOL, $items ) . PHP_EOL,
-            FILE_APPEND | LOCK_EX
-        );
+        $this->files_in_repo = $this->files_in_repo ? $this->files_in_repo : [];
+
+        $this->files_in_repo = array_merge( $this->files_in_repo, $items );
     }
 
     /**

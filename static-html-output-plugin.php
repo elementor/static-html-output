@@ -209,7 +209,6 @@ function static_html_output_ajax() {
             case 'gitlab_prepare_export':
                 $class->bootstrap();
                 $class->loadArchive();
-                $class->getListOfFilesInRepo();
                 $class->prepareDeploy( true );
                 $class->createGitLabPagesConfig();
                 break;
