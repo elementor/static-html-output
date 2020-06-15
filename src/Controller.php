@@ -314,35 +314,7 @@ class Controller {
     }
 
     public function delete_deploy_cache() : void {
-        $target_settings = [
-            'wpenv',
-        ];
-
-        if ( defined( 'WP_CLI' ) ) {
-            $this->settings =
-                DBSettings::get( $target_settings );
-        } else {
-            $this->settings =
-                PostSettings::get( $target_settings );
-        }
-
-        $uploads_dir = $this->settings['wp_uploads_path'];
-
-        $cache_files = [
-            '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-GITHUB-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-S3-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-BUNNYCDN-PREVIOUS-HASHES.txt',
-            '/WP2STATIC-BITBUCKET-PREVIOUS-HASHES.txt',
-            // Add to cleanup script when upgrading > 6.6.8
-            // '/WP2STATIC-FTP-PREVIOUS-HASHES.txt',
-        ];
-
-        foreach ( $cache_files as $cache_file ) {
-            if ( is_file( $uploads_dir . $cache_file ) ) {
-                unlink( $uploads_dir . $cache_file );
-            }
-        }
+        DeployCache::truncate();
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
