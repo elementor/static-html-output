@@ -115,6 +115,7 @@ class Controller {
         $this->setDefaultOptions();
         CrawlQueue::createTable();
         CrawlLog::createTable();
+        DeployQueue::createTable();
         Exclusions::createTable();
     }
 

@@ -74,7 +74,8 @@ class BunnyCDN extends SitePublisher {
         $this->openPreviousHashesFile();
 
         foreach ( $lines as $line ) {
-            list($this->local_file, $this->target_path) = explode( ',', $line );
+            $this->local_file = $line->url;
+            $this->target_path = $line->remote_path;
 
             $this->local_file = $this->archive->path . $this->local_file;
 

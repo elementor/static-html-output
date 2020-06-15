@@ -11,15 +11,7 @@ abstract class SitePublisher {
     /**
      * @var string
      */
-    public $export_file_list;
-    /**
-     * @var string
-     */
     public $archive_dir;
-    /**
-     * @var int
-     */
-    public $batch_index;
     /**
      * @var int
      */
@@ -68,10 +60,6 @@ abstract class SitePublisher {
     }
 
     public function bootstrap() : void {
-        $this->export_file_list =
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-FILES-TO-DEPLOY.txt';
-
         $this->archive_dir = $this->settings['wp_uploads_path'] . '/static-html-output/';
     }
 
@@ -83,39 +71,16 @@ abstract class SitePublisher {
     }
 
     public function updateProgress() : void {
-        $this->batch_index++;
-
-        $completed_urls =
-            $this->total_urls_to_crawl -
-            $this->files_remaining +
-            $this->batch_index;
-
-        ProgressLog::l( $completed_urls, $this->total_urls_to_crawl );
+        error_log('updating progress' . PHP_EOL);
     }
 
     public function initiateProgressIndicator() : void {
-        $this->deploy_count_path = $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
-        $this->total_urls_to_crawl =
-            (int) file_get_contents( $this->deploy_count_path );
-
-        $this->batch_index = 0;
+        error_log('initiating progress indicator' . PHP_EOL);
     }
 
 
     public function clearFileList() : void {
-        if ( is_file( $this->export_file_list ) ) {
-            $f = fopen( $this->export_file_list, 'r+' );
-
-            if ( ! is_resource( $f ) ) {
-                return;
-            }
-
-            if ( $f !== false ) {
-                ftruncate( $f, 0 );
-                fclose( $f );
-            }
-        }
+        DeployQueue::truncate();
 
         if ( isset( $this->glob_hash_path_list ) ) {
             if ( is_file( $this->glob_hash_path_list ) ) {
@@ -240,13 +205,8 @@ abstract class SitePublisher {
                         $basename_in_target
                     );
 
-                file_put_contents(
-                    $this->export_file_list,
-                    $local_file_path . ',' . $remote_deployment_path . PHP_EOL,
-                    FILE_APPEND | LOCK_EX
-                );
 
-                chmod( $this->export_file_list, 0664 );
+                DeployQueue::addUrl( $local_file_path, $remote_deployment_path );
             }
         }
     }
@@ -259,32 +219,6 @@ abstract class SitePublisher {
             $basename_in_target
         );
 
-        // TODO: detect and use `cat | wc -l` if available
-        $linecount = 0;
-        $handle = fopen( $this->export_file_list, 'r' );
-
-        if ( ! is_resource( $handle ) ) {
-            return;
-        }
-
-        while ( ! feof( $handle ) ) {
-            $line = fgets( $handle );
-            $linecount++;
-        }
-
-        fclose( $handle );
-
-        $deploy_count_path = $this->settings['wp_uploads_path'] .
-                '/WP-STATIC-TOTAL-FILES-TO-DEPLOY.txt';
-
-        file_put_contents(
-            $deploy_count_path,
-            $linecount,
-            LOCK_EX
-        );
-
-        chmod( $deploy_count_path, 0664 );
-
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
         }
@@ -294,56 +228,32 @@ abstract class SitePublisher {
      * @return string[] list of files to deploy
      */
     public function getItemsToDeploy( int $batch_size = 1 ) : array {
-        $lines = [];
+        // $lines = [];
+        $batch_of_links_to_deploy = [];
 
-        $f = fopen( $this->export_file_list, 'r' );
+        $deployable_urls = DeployQueue::getTotalDeployableURLs();
 
-        if ( ! is_resource( $f ) ) {
+        if ( ! $deployable_urls ) {
             return [];
         }
 
-        for ( $i = 0; $i < $batch_size; $i++ ) {
-            $file_list = fgets( $f );
+        // get total DeployQueue
+        // TODO: have duplicate total fetching fns in Crawl, Deploy queues
+        $total_urls = DeployQueue::getTotal();
 
-            if ( ! $file_list ) {
-                return [];
-            }
+        // get batch size (smaller of total urls or crawl_increment)
+        $batch_size = min( $total_urls, $this->settings['deployBatchSize'] );
 
-            $lines[] = rtrim( $file_list );
-        }
+        // fetch just amount of URLs needed (limit to crawl_increment)
+        $this->urls_to_deploy = DeployQueue::getDeployablePaths( $batch_size );
 
-        fclose( $f );
-
-        // TODO: optimize this for just one read, one write within func
-        $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
-
-        if ( ! $contents ) {
-            return [];
-        }
-
-        for ( $i = 0; $i < $batch_size; $i++ ) {
-            // rewrite file minus the lines we took
-            array_shift( $contents );
-        }
-
-        file_put_contents(
-            $this->export_file_list,
-            implode( PHP_EOL, $contents )
-        );
-
-        chmod( $this->export_file_list, 0664 );
-
-        return $lines;
+        return $this->urls_to_deploy;
     }
 
     public function getRemainingItemsCount() : int {
-        $contents = file( $this->export_file_list, FILE_IGNORE_NEW_LINES );
+        $deployable_urls = DeployQueue::getTotalDeployableURLs();
 
-        if ( ! is_array( $contents ) ) {
-            return 0;
-        }
-
-        return count( $contents );
+        return $deployable_urls;
     }
 
     // TODO: rename to signalSuccessfulAction or such

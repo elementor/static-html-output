@@ -118,9 +118,9 @@ class SiteCrawler extends StaticHTMLOutput {
     public function crawlABitMore() : void {
         $batch_of_links_to_crawl = [];
 
-        $crawl_list = CrawlQueue::getCrawlablePaths();
+        $crawlable_urls = CrawlQueue::getTotalCrawlableURLs();
 
-        if ( ! $crawl_list ) {
+        if ( ! $crawlable_urls ) {
             return;
         }
 
