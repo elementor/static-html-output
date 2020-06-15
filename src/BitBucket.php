@@ -66,20 +66,47 @@ class BitBucket extends SitePublisher {
 
         $lines = $this->getItemsToDeploy( $batch_size );
 
-        $this->openPreviousHashesFile();
-
         $this->files_data = [];
 
         foreach ( $lines as $line ) {
-            $this->addFileToBatchForCommitting( $line );
+            $this->local_file = $line->url;
+            $this->target_path = $line->remote_path;
+
+            $this->local_file = $this->archive->path . $this->local_file;
+
+            $deploy_queue_path = str_replace( $this->archive->path, '', $this->local_file );
+
+            if ( ! is_file( $this->local_file ) ) {
+                DeployQueue::removeURL( $deploy_queue_path );
+                return;
+            }
+
+            $this->local_file_contents = (string) file_get_contents( $this->local_file );
+
+            if ( ! $this->local_file_contents ) {
+                DeployQueue::removeURL( $deploy_queue_path );
+                return;
+            }
+
+            $cached_hash = DeployCache::fileIsCached( $deploy_queue_path );
+
+            if ( $cached_hash ) {
+                $current_hash = md5( $this->local_file_contents );
+
+                if ( $current_hash != $cached_hash ) {
+                    $this->addFileToBatchForCommitting( $line );
+                }
+            } else {
+                $this->addFileToBatchForCommitting( $line );
+            }
+
+            DeployQueue::removeURL( $deploy_queue_path );
 
             // NOTE: progress will indicate file preparation, not the transfer
             $this->updateProgress();
         }
 
         $this->sendBatchToBitbucket();
-
-        $this->writeFilePathAndHashesToFile();
 
         $this->pauseBetweenAPICalls();
 
@@ -121,48 +148,26 @@ class BitBucket extends SitePublisher {
         $this->finalizeDeployment();
     }
 
-    public function addFileToBatchForCommitting( string $line ) : void {
-        list($local_file, $this->target_path) = explode( ',', $line );
 
-        $local_file = $this->archive->path . $local_file;
-
+    /**
+     * @param mixed[] local file and remote path to deploy
+     */
+    public function addFileToBatchForCommitting( $line ) : void {
         $this->files_data['message'] = 'StaticHTMLOutput deployment';
+        $this->local_file = $line->url;
+        $this->target_path = $line->remote_path;
+        $this->local_file = $this->archive->path . $this->local_file;
 
-        if ( ! is_file( $local_file ) ) {
-            return; }
-
-        $this->local_file_contents = (string) file_get_contents( $local_file );
-
-        if ( ! $this->local_file_contents ) {
-            return;
-        }
-
-        if ( isset( $this->file_paths_and_hashes[ $this->target_path ] ) ) {
-            $prev = $this->file_paths_and_hashes[ $this->target_path ];
-            $current = crc32( $this->local_file_contents );
-
-            if ( $prev != $current ) {
-                $this->files_data[ '/' . rtrim( $this->target_path ) ] =
-                    new CURLFile( $local_file );
-
-                $this->recordFilePathAndHashInMemory(
-                    $this->target_path,
-                    $this->local_file_contents
-                );
-            }
-        } else {
-            $this->files_data[ '/' . rtrim( $this->target_path ) ] =
-                new CURLFile( $local_file );
-
-            $this->recordFilePathAndHashInMemory(
-                $this->target_path,
-                $this->local_file_contents
-            );
-        }
-
+        $this->files_data[ '/' . rtrim( $this->target_path ) ] =
+            new CURLFile( $this->local_file );
     }
 
     public function sendBatchToBitbucket() : void {
+        if ( ! $this->files_data ) {
+            error_log('no files for batch');
+            return;
+        }
+
         $this->client = new Request();
 
         $remote_path = $this->api_base . $this->settings['bbRepo'] . '/src';
@@ -184,6 +189,13 @@ class BitBucket extends SitePublisher {
                 $this->client->status_code,
                 [ 200, 201, 301, 302, 304 ]
             );
+
+            foreach ( $this->files_data as $curl_file ) {
+                $deploy_queue_path =
+                    str_replace( $this->archive->path, '', $curl_file->name );
+
+                DeployCache::addFile( $deploy_queue_path );
+            }
         } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }
