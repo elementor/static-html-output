@@ -96,7 +96,6 @@ class BunnyCDN extends SitePublisher {
             $cached_hash = DeployCache::fileIsCached( $deploy_queue_path );
 
             if ( $cached_hash ) {
-                error_log('file is cached' . PHP_EOL);
                 $current_hash = md5( $this->local_file_contents );
 
                 if ( $current_hash != $cached_hash ) {

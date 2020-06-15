@@ -205,7 +205,6 @@ abstract class SitePublisher {
                         $basename_in_target
                     );
 
-
                 DeployQueue::addUrl( $local_file_path, $remote_deployment_path );
             }
         }
@@ -225,7 +224,7 @@ abstract class SitePublisher {
     }
 
     /**
-     * @return string[] list of files to deploy
+     * @return mixed[] pairs of local files and remote deploy paths
      */
     public function getItemsToDeploy( int $batch_size = 1 ) : array {
         // $lines = [];
@@ -245,9 +244,9 @@ abstract class SitePublisher {
         $batch_size = min( $total_urls, $this->settings['deployBatchSize'] );
 
         // fetch just amount of URLs needed (limit to crawl_increment)
-        $this->urls_to_deploy = DeployQueue::getDeployablePaths( $batch_size );
+        $urls_to_deploy = DeployQueue::getDeployablePaths( $batch_size );
 
-        return $this->urls_to_deploy;
+        return $urls_to_deploy;
     }
 
     public function getRemainingItemsCount() : int {

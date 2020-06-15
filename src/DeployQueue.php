@@ -60,7 +60,9 @@ class DeployQueue {
 
         $table_name = $wpdb->prefix . 'statichtmloutput_deploy_queue';
 
-        $rows = $wpdb->get_results( "SELECT url, remote_path FROM $table_name ORDER by url ASC LIMIT $limit" );
+        $rows = $wpdb->get_results(
+            "SELECT url, remote_path FROM $table_name ORDER by url ASC LIMIT $limit"
+        );
 
         return $rows;
     }

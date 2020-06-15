@@ -34,7 +34,6 @@ class DeployCache {
 
         $deploy_cache_table = $wpdb->prefix . 'statichtmloutput_deploy_cache';
 
-
         $settings = null;
 
         $target_settings = [
@@ -86,6 +85,7 @@ class DeployCache {
     /**
      * Checks if file can skip deployment
      *  - uses hash of file and path's hash
+     *
      *  @return null|string hash of file if cached
      */
     public static function fileIsCached(
@@ -119,7 +119,7 @@ class DeployCache {
             $file_contents = file_get_contents( $deployed_file );
 
             if ( ! $file_contents ) {
-                return false;
+                return null;
             }
 
             $file_hash = md5( $file_contents );
@@ -143,7 +143,7 @@ class DeployCache {
     public static function truncate(
         string $namespace = self::DEFAULT_NAMESPACE
     ) : void {
-        WsLog::l( 'Deleting DeployCache' );
+        Logger::l( 'Deleting DeployCache' );
 
         global $wpdb;
 
