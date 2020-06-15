@@ -164,7 +164,6 @@ class BitBucket extends SitePublisher {
 
     public function sendBatchToBitbucket() : void {
         if ( ! $this->files_data ) {
-            error_log('no files for batch');
             return;
         }
 

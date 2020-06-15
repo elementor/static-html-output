@@ -16,10 +16,6 @@ class GitLab extends SitePublisher {
             $this->settings['wp_uploads_path'] .
                 '/WP2STATIC-GITLAB-FILES-IN-REPO.txt';
 
-        $this->previous_hashes_path =
-            $this->settings['wp_uploads_path'] .
-                '/WP2STATIC-GITLAB-PREVIOUS-HASHES.txt';
-
         if ( defined( 'WP_CLI' ) ) {
             return; }
     }
@@ -55,62 +51,62 @@ class GitLab extends SitePublisher {
 
         $files_data = [];
 
-        $this->openPreviousHashesFile();
-
         foreach ( $lines as $line ) {
-            list($local_file, $target_path) = explode( ',', $line );
+            $this->local_file = $line->url;
+            $this->target_path = $line->remote_path;
 
-            $local_file = $this->archive->path . $local_file;
+            $this->local_file = $this->archive->path . $this->local_file;
 
-            if ( ! is_file( $local_file ) ) {
-                continue; }
+            $deploy_queue_path = str_replace( $this->archive->path, '', $this->local_file );
 
-            $local_file_contents = file_get_contents( $local_file );
-
-            if ( ! $local_file_contents ) {
+            if ( ! is_file( $this->local_file ) ) {
+                DeployQueue::removeURL( $deploy_queue_path );
                 continue;
             }
 
-            if ( in_array( $target_path, $files_in_tree ) ) {
-                if ( isset( $this->file_paths_and_hashes[ $target_path ] ) ) {
-                    $prev = $this->file_paths_and_hashes[ $target_path ];
-                    $current = crc32( $local_file_contents );
+            $this->local_file_contents = (string) file_get_contents( $this->local_file );
 
-                    if ( $prev != $current ) {
+            if ( ! $this->local_file_contents ) {
+                DeployQueue::removeURL( $deploy_queue_path );
+                continue;
+            }
+
+            // does file exist in GitLab?
+            if ( in_array( $this->target_path, $files_in_tree ) ) {
+                $cached_hash = DeployCache::fileIsCached( $deploy_queue_path );
+
+                // does plugin have cache of file?
+                if ( $cached_hash ) {
+                    $current_hash = md5( $this->local_file_contents );
+                    // plugin cache doesn't match current file hash
+                    if ( $current_hash != $cached_hash ) {
                         $files_data[] = [
                             'action' => 'update',
-                            'file_path' => $target_path,
-                            'content' => base64_encode(
-                                $local_file_contents
-                            ),
+                            'file_path' => $this->target_path,
+                            'content' => base64_encode( $this->local_file_contents ),
                             'encoding' => 'base64',
                         ];
                     }
+                // plugin has no cache for file that exists in GitLab
                 } else {
                     $files_data[] = [
                         'action' => 'update',
-                        'file_path' => $target_path,
-                        'content' => base64_encode(
-                            $local_file_contents
-                        ),
+                        'file_path' => $this->target_path,
+                        'content' => base64_encode( $this->local_file_contents ),
                         'encoding' => 'base64',
                     ];
                 }
+            // file doesn't exist in GitLab
             } else {
                 $files_data[] = [
                     'action' => 'create',
-                    'file_path' => $target_path,
-                    'content' => base64_encode(
-                        $local_file_contents
-                    ),
+                    'file_path' => $this->target_path,
+                    'content' => base64_encode( $this->local_file_contents ),
                     'encoding' => 'base64',
                 ];
             }
 
-            $this->recordFilePathAndHashInMemory(
-                $target_path,
-                $local_file_contents
-            );
+            DeployQueue::removeURL( $deploy_queue_path );
 
             // NOTE: delay and progress askew in GitLab as we may
             // upload all in one  request. Progress indicates building
@@ -123,34 +119,41 @@ class GitLab extends SitePublisher {
         $commits_endpoint = 'https://gitlab.com/api/v4/projects/' .
             $this->settings['glProject'] . '/repository/commits';
 
-        try {
-            $client = new Request();
+        if ( $files_data ) {
+            try {
+                $client = new Request();
 
-            $post_options = [
-                'branch' => 'master',
-                'commit_message' => 'StaticHTMLOutput Deployment',
-                'actions' => $files_data,
-            ];
+                $post_options = [
+                    'branch' => 'master',
+                    'commit_message' => 'StaticHTMLOutput Deployment',
+                    'actions' => $files_data,
+                ];
 
-            $headers = [
-                'PRIVATE-TOKEN: ' . $this->settings['glToken'],
-                'Content-Type: application/json',
-            ];
+                $headers = [
+                    'PRIVATE-TOKEN: ' . $this->settings['glToken'],
+                    'Content-Type: application/json',
+                ];
 
-            $client->postWithJSONPayloadCustomHeaders(
-                $commits_endpoint,
-                $post_options,
-                $headers
-            );
+                $client->postWithJSONPayloadCustomHeaders(
+                    $commits_endpoint,
+                    $post_options,
+                    $headers
+                );
 
-            $this->checkForValidResponses(
-                $client->status_code,
-                [ 200, 201, 301, 302, 304 ]
-            );
+                $this->checkForValidResponses(
+                    $client->status_code,
+                    [ 200, 201, 301, 302, 304 ]
+                );
 
-            $this->writeFilePathAndHashesToFile();
-        } catch ( StaticHTMLOutputException $e ) {
-            $this->handleException( $e );
+                foreach ( $files_data as $file ) {
+                    $deploy_queue_path =
+                        str_replace( $this->archive->path, '', $file['file_path'] );
+
+                    DeployCache::addFile( $deploy_queue_path );
+                }
+            } catch ( StaticHTMLOutputException $e ) {
+                $this->handleException( $e );
+            }
         }
 
         if ( $this->uploadsCompleted() ) {
@@ -296,15 +299,8 @@ EOD;
         $target_path = $this->archive->path . '.gitlab-ci.yml';
         file_put_contents( $target_path, $config_file );
         chmod( $target_path, 0664 );
-        $export_line = '.gitlab-ci.yml,.gitlab-ci.yml';
 
-        file_put_contents(
-            $this->export_file_list,
-            $export_line . PHP_EOL,
-            FILE_APPEND | LOCK_EX
-        );
-
-        chmod( $this->export_file_list, 0664 );
+        DeployQueue::addUrl( '.gitlab-ci.yml', '.gitlab-ci.yml' );
     }
 }
 
