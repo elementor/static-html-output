@@ -70,7 +70,7 @@ if ( $crawl_log ) {
             $crawl_status = $log_row->status;
         }
 
-        echo str_pad( $status, 9 ) . " $log_row->url " .
+        echo str_pad( $crawl_status, 9 ) . " $log_row->url " .
         "  Note: $log_row->note \t" . PHP_EOL;
     }
 

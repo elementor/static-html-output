@@ -9,16 +9,15 @@ final class CSSProcessorTest extends TestCase {
 
     /**
      * @covers StaticHTMLOutput\CSSProcessor::__construct
-     * @covers StaticHTMLOutput\CSSProcessor::processCSS
      * @covers StaticHTMLOutput\CSSProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\CSSProcessor::detectIfURLsShouldBeHarvested
      * @covers StaticHTMLOutput\CSSProcessor::getCSS
      * @covers StaticHTMLOutput\CSSProcessor::getProtocolRelativeURL
      * @covers StaticHTMLOutput\CSSProcessor::getTargetSiteProtocol
      * @covers StaticHTMLOutput\CSSProcessor::isInternalLink
-     * @covers StaticHTMLOutput\CSSProcessor::rewriteSiteURLsToPlaceholder
-     * @covers StaticHTMLOutput\CSSProcessor::writeDiscoveredURLs
+     * @covers StaticHTMLOutput\CSSProcessor::isValidURL
+     * @covers StaticHTMLOutput\CSSProcessor::processCSS
      * @covers StaticHTMLOutput\CSSProcessor::rewritePlaceholderURLsToDestination
+     * @covers StaticHTMLOutput\CSSProcessor::rewriteSiteURLsToPlaceholder
 
      * @dataProvider cssSampleContents
      */

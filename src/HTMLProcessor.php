@@ -51,10 +51,6 @@ class HTMLProcessor extends StaticHTMLOutput {
      */
     public $raw_html;
     /**
-     * @var bool
-     */
-    public $harvest_new_urls;
-    /**
      * @var string
      */
     public $destination_protocol;
@@ -511,7 +507,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         $this->stripHTMLComments();
-        $this->writeDiscoveredURLs();
 
         return true;
     }
@@ -595,24 +590,22 @@ class HTMLProcessor extends StaticHTMLOutput {
 
         $this->processed_urls[] = (string) $url;
 
-        if ( $this->harvest_new_urls ) {
-            if ( ! $this->isValidURL( (string) $url ) ) {
+        if ( ! $this->isValidURL( (string) $url ) ) {
+            return;
+        }
+
+        if ( $this->isInternalLink( (string) $url ) ) {
+            $path = (string) parse_url( (string) $url, PHP_URL_PATH );
+
+            if ( empty( $path ) || $path[0] !== '/' ) {
                 return;
             }
 
-            if ( $this->isInternalLink( (string) $url ) ) {
-                $path = (string) parse_url( (string) $url, PHP_URL_PATH );
-
-                if ( empty( $path ) || $path[0] !== '/' ) {
-                    return;
-                }
-
-                if ( trim( $path ) === '/' ) {
-                    return;
-                }
-
-                $this->discovered_urls[] = $path;
+            if ( trim( $path ) === '/' ) {
+                return;
             }
+
+            $this->discovered_urls[] = $path;
         }
     }
 
@@ -833,31 +826,6 @@ class HTMLProcessor extends StaticHTMLOutput {
         $this->rewriteBaseURL( $element );
     }
 
-    public function writeDiscoveredURLs() : void {
-        $discovered_urls = array_unique( $this->discovered_urls );
-        array_filter( $discovered_urls );
-        sort( $discovered_urls );
-
-        if ( ! $discovered_urls ) {
-            return;
-        }
-
-        // get all from CrawlLog
-        $known_urls = CrawlLog::getCrawlablePaths();
-
-        // filter only new URLs
-        $new_urls = array_diff( $discovered_urls, $known_urls );
-
-        if ( ! $new_urls ) {
-            return;
-        }
-
-        $page_url = (string) parse_url( $this->page_url, PHP_URL_PATH );
-
-        // TODO: also add new URLs to CrawlLog
-        CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url, 0 );
-        CrawlQueue::addUrls( $new_urls );
-    }
 
     // make link absolute, using current page to determine full path
     public function normalizeURL( DOMElement $element, string $attribute ) : void {
@@ -1146,6 +1114,21 @@ class HTMLProcessor extends StaticHTMLOutput {
 
             $element->setAttribute( $attribute_to_change, $rewritten_url );
         }
+    }
+
+    /**
+     * @return string[] Discovered URLs
+     */
+    public function getDiscoveredURLs() : array {
+        $discovered_urls = array_unique( $this->discovered_urls );
+        array_filter( $discovered_urls );
+        sort( $discovered_urls );
+
+        if ( ! $discovered_urls ) {
+            return [];
+        }
+
+        return $discovered_urls;
     }
 
     public function getHTML() : string {

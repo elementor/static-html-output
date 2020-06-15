@@ -208,8 +208,6 @@ class CSSProcessor extends StaticHTMLOutput {
             }
         }
 
-        $this->writeDiscoveredURLs();
-
         return true;
     }
 
@@ -406,31 +404,6 @@ class CSSProcessor extends StaticHTMLOutput {
         }
     }
 
-    public function writeDiscoveredURLs() : void {
-        $discovered_urls = array_unique( $this->discovered_urls );
-        array_filter( $discovered_urls );
-        sort( $discovered_urls );
-
-        if ( ! $discovered_urls ) {
-            return;
-        }
-
-        // get all from CrawlLog
-        $known_urls = CrawlLog::getCrawlablePaths();
-
-        // filter only new URLs
-        $new_urls = array_diff( $discovered_urls, $known_urls );
-
-        if ( ! $new_urls ) {
-            return;
-        }
-
-        $page_url = (string) parse_url( $this->page_url, PHP_URL_PATH );
-
-        CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_url, 0 );
-        CrawlQueue::addUrls( $new_urls );
-    }
-
     public function isValidURL( string $url ) : bool {
         // NOTE: not using native URL filter as it won't accept
         // non-ASCII URLs, which we want to support
@@ -484,6 +457,21 @@ class CSSProcessor extends StaticHTMLOutput {
         );
 
         return $this->destination_protocol_relative_url;
+    }
+
+    /**
+     * @return string[] Discovered URLs
+     */
+    public function getDiscoveredURLs() : array {
+        $discovered_urls = array_unique( $this->discovered_urls );
+        array_filter( $discovered_urls );
+        sort( $discovered_urls );
+
+        if ( ! $discovered_urls ) {
+            return [];
+        }
+
+        return $discovered_urls;
     }
 }
 

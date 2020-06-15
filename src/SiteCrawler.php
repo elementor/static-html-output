@@ -333,6 +333,7 @@ class SiteCrawler extends StaticHTMLOutput {
 
                 if ( $processed ) {
                     $this->processed_file = $processor->getHTML();
+                    $this->saveDiscoveredURLs( $processor->getDiscoveredURLs(), $this->full_url );
                 }
 
                 break;
@@ -386,6 +387,7 @@ class SiteCrawler extends StaticHTMLOutput {
 
                 if ( $processed ) {
                     $this->processed_file = $processor->getCSS();
+                    $this->saveDiscoveredURLs( $processor->getDiscoveredURLs(), $this->full_url );
                 }
 
                 break;
@@ -507,5 +509,30 @@ class SiteCrawler extends StaticHTMLOutput {
                 stripslashes( $response )
             );
         }
+    }
+
+    /**
+     * @param string[] $discovered_urls from a processed page
+     */
+    public function saveDiscoveredURLs( array $discovered_urls, string $parent_page ) : void {
+        if ( ! $discovered_urls ) {
+            return;
+        }
+
+        // get all from CrawlLog
+        $known_urls = CrawlLog::getCrawlablePaths();
+
+        // filter only new URLs
+        $new_urls = array_diff( $discovered_urls, $known_urls );
+
+        if ( ! $new_urls ) {
+            return;
+        }
+
+        $page_path = (string) parse_url( $parent_page, PHP_URL_PATH );
+
+        // TODO: also add new URLs to CrawlLog
+        CrawlLog::addUrls( $new_urls, 'discovered on: ' . $page_path, 0 );
+        CrawlQueue::addUrls( $new_urls );
     }
 }

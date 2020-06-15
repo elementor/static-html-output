@@ -289,43 +289,43 @@ final class HTMLProcessorTest extends TestCase {
 
     /**
      * @covers StaticHTMLOutput\HTMLProcessor::__construct
-     * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
-     * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
-     * @covers StaticHTMLOutput\HTMLProcessor::getHTML
-     * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
-     * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
-     * @covers StaticHTMLOutput\HTMLProcessor::processHTML
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
-     * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
-     * @covers StaticHTMLOutput\HTMLProcessor::writeDiscoveredURLs
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
-     * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
-     * @covers StaticHTMLOutput\HTMLProcessor::getBaseURLRewritePatterns
-     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
-     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
-     * @covers StaticHTMLOutput\HTMLProcessor::processHead
-     * @covers StaticHTMLOutput\HTMLProcessor::processLink
-     * @covers StaticHTMLOutput\HTMLProcessor::processMeta
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
-     * @covers StaticHTMLOutput\HTMLProcessor::forceHTTPS
-     * @covers StaticHTMLOutput\HTMLProcessor::processImage
-     * @covers StaticHTMLOutput\HTMLProcessor::processImageSrcSet
-     * @covers StaticHTMLOutput\HTMLProcessor::processAnchor
-     * @covers StaticHTMLOutput\HTMLProcessor::processGenericHref
-     * @covers StaticHTMLOutput\HTMLProcessor::processGenericSrc
-     * @covers StaticHTMLOutput\HTMLProcessor::rewriteEncodedSiteURLAndHostName
-     * @covers StaticHTMLOutput\HTMLProcessor::processStyle
-     * @covers StaticHTMLOutput\HTMLProcessor::processStyleAttribute
      * @covers StaticHTMLOutput\CSSProcessor::__construct
      * @covers StaticHTMLOutput\CSSProcessor::addDiscoveredURL
      * @covers StaticHTMLOutput\CSSProcessor::getCSS
      * @covers StaticHTMLOutput\CSSProcessor::getProtocolRelativeURL
      * @covers StaticHTMLOutput\CSSProcessor::getTargetSiteProtocol
      * @covers StaticHTMLOutput\CSSProcessor::isInternalLink
+     * @covers StaticHTMLOutput\CSSProcessor::isValidURL
      * @covers StaticHTMLOutput\CSSProcessor::processCSS
      * @covers StaticHTMLOutput\CSSProcessor::rewritePlaceholderURLsToDestination
      * @covers StaticHTMLOutput\CSSProcessor::rewriteSiteURLsToPlaceholder
-     * @covers StaticHTMLOutput\CSSProcessor::writeDiscoveredURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::addDiscoveredURL
+     * @covers StaticHTMLOutput\HTMLProcessor::detectEscapedSiteURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::detectUnchangedPlaceholderURLs
+     * @covers StaticHTMLOutput\HTMLProcessor::forceHTTPS
+     * @covers StaticHTMLOutput\HTMLProcessor::getBaseURLRewritePatterns
+     * @covers StaticHTMLOutput\HTMLProcessor::getHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::getProtocolRelativeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::getTargetSiteProtocol
+     * @covers StaticHTMLOutput\HTMLProcessor::isInternalLink
+     * @covers StaticHTMLOutput\HTMLProcessor::isValidURL
+     * @covers StaticHTMLOutput\HTMLProcessor::normalizeURL
+     * @covers StaticHTMLOutput\HTMLProcessor::processAnchor
+     * @covers StaticHTMLOutput\HTMLProcessor::processGenericHref
+     * @covers StaticHTMLOutput\HTMLProcessor::processGenericSrc
+     * @covers StaticHTMLOutput\HTMLProcessor::processHTML
+     * @covers StaticHTMLOutput\HTMLProcessor::processHead
+     * @covers StaticHTMLOutput\HTMLProcessor::processImage
+     * @covers StaticHTMLOutput\HTMLProcessor::processImageSrcSet
+     * @covers StaticHTMLOutput\HTMLProcessor::processLink
+     * @covers StaticHTMLOutput\HTMLProcessor::processMeta
+     * @covers StaticHTMLOutput\HTMLProcessor::processStyle
+     * @covers StaticHTMLOutput\HTMLProcessor::processStyleAttribute
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteBaseURL
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteEncodedSiteURLAndHostName
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteSiteURLsToPlaceholder
+     * @covers StaticHTMLOutput\HTMLProcessor::rewriteWPPaths
+     * @covers StaticHTMLOutput\HTMLProcessor::stripHTMLComments
      * @dataProvider processHTMLProvider
      */
     public function testProcessHTML(
