@@ -46,11 +46,14 @@ class BitBucket extends SitePublisher {
         $this->api_base = 'https://api.bitbucket.org/2.0/repositories/';
 
         if ( defined( 'WP_CLI' ) ) {
-            return; }
+            $this->progress_bar = 
+                \WP_CLI\Utils\make_progress_bar( 'Deploying to BitBucket', 5 );
+        }
     }
 
     public function upload_files() : void {
         $this->files_remaining = $this->getRemainingItemsCount();
+        $this->progressBarTick( 'Uploading files' );
 
         if ( $this->files_remaining < 0 ) {
             echo 'ERROR';
@@ -116,6 +119,7 @@ class BitBucket extends SitePublisher {
     }
 
     public function test_upload() : void {
+        $this->progressBarTick( 'Testing upload', 0 );
         $this->client = new Request();
 
         try {
@@ -141,6 +145,8 @@ class BitBucket extends SitePublisher {
                 $this->client->status_code,
                 [ 200, 201, 301, 302, 304 ]
             );
+            
+            $this->progressBarTick( 'Completed upload test' );
         } catch ( StaticHTMLOutputException $e ) {
             $this->handleException( $e );
         }

@@ -28,6 +28,10 @@ abstract class SitePublisher {
      * @var Archive
      */
     public $archive;
+    /**
+     * @var null|\cli\progress\Bar
+     */
+    public $progress_bar;
 
     abstract public function upload_files() : void;
 
@@ -49,10 +53,12 @@ abstract class SitePublisher {
 
     public function loadArchive() : void {
         $this->archive = new Archive();
+        $this->progressBarTick( 'Archive loaded' );
     }
 
     public function bootstrap() : void {
         $this->archive_dir = $this->settings['wp_uploads_path'] . '/static-html-output/';
+        $this->progressBarTick( 'Boots strapped' );
     }
 
     public function pauseBetweenAPICalls() : void {
@@ -215,6 +221,8 @@ abstract class SitePublisher {
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
+        } else {
+            $this->progressBarTick( 'Prepared for deployment' );
         }
     }
 
@@ -255,6 +263,9 @@ abstract class SitePublisher {
     public function finalizeDeployment() : void {
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS'; }
+        else {
+            $this->progressBarFinish();
+        }
     }
 
     public function uploadsCompleted() : bool {
@@ -279,6 +290,9 @@ abstract class SitePublisher {
     public function handleException( string $e ) : void {
         Logger::l( 'Deployment: error encountered' );
         Logger::l( $e );
+        
+        $this->progressBarFinish();
+        
         throw new StaticHTMLOutputException( $e );
     }
 
@@ -298,6 +312,26 @@ abstract class SitePublisher {
                 'BAD RESPONSE STATUS FROM API (' . $code . ')'
             );
         }
+    }
+    
+    /**
+     * @param string $message
+     * @param int $increment
+     */
+    public function progressBarTick( string $message, int $increment = 1 ) {
+        if ( empty( $this->progress_bar ) ) {
+            return;
+        }
+        
+        $this->progress_bar->tick( $increment, $message );
+    }
+    
+    public function progressBarFinish() {
+        if ( empty( $this->progress_bar ) ) {
+            return;
+        }
+        
+        $this->progress_bar->finish();
     }
 }
 
