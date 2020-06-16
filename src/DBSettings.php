@@ -120,7 +120,9 @@ class DBSettings {
         }
 
         foreach ( $target_keys as $key ) {
-            $settings[ $key ] = $plugin->options->getOption( $key );
+            $value = $plugin->options->getOption( $key );
+
+            $settings[ $key ] = $value;
         }
 
         $wp_site = new WPSite();

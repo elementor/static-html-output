@@ -118,24 +118,17 @@ class PostSettings {
             $target_keys = array_merge( $target_keys, $key_sets[ $set ] );
         }
 
-        // @codingStandardsIgnoreStart
         foreach ( $target_keys as $key ) {
-            $settings[ $key ] =
-                isset( $_POST[ $key ] ) ?
-                $_POST[ $key ] :
-                null;
+            $post_value = filter_input( INPUT_POST, $key );
+
+            $settings[ $key ] = $post_value ? $post_value : null;
         }
-        // @codingStandardsIgnoreEnd
 
         /*
             Settings requiring transformation
         */
-
-        // @codingStandardsIgnoreStart
-        $settings['crawl_increment'] =
-            isset( $_POST['crawl_increment'] ) ?
-            (int) $_POST['crawl_increment'] :
-            1;
+        $crawl_incrment = filter_input( INPUT_POST, 'crawl_increment' );
+        $settings['crawl_increment'] = $crawl_incrment ? $crawl_incrment : 1;
 
         return array_filter( $settings );
     }

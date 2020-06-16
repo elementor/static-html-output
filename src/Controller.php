@@ -219,6 +219,16 @@ class Controller {
         $instance->wp_site = new WPSite();
         $instance->current_archive = '';
 
+        // guard against removed folder deploy option breaking UI (#103)
+        // @phpstan-ignore-next-line
+        if ( $instance->options->selected_deployment_option === 'folder' ) {
+            $instance->options->selected_deployment_option = 'zip';
+
+            if ( $instance->options->{'baseUrl-folder'} ) {
+                $instance->options->{'baseUrl-zip'} = $instance->options->{'baseUrl-folder'};
+            }
+        }
+
         $instance->view
             ->setTemplate( 'options-page-js' )
             ->assign(
