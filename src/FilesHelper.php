@@ -305,6 +305,7 @@ class FilesHelper {
         $url_queue = array_merge(
             [ trailingslashit( $base_url ) ],
             [ '/robots.txt' ],
+            [ '/ads.txt' ],
             [ '/favicon.ico' ],
             [ '/sitemap.xml' ]
         );
@@ -519,17 +520,28 @@ class FilesHelper {
             }
         );
 
-        $stripped_urls = str_replace(
-            $wp_site_url,
-            '/',
-            $url_queue
-        );
+        $cleaned_urls = [];
 
-        $cleaned_urls = str_replace(
-            '//',
-            '/',
-            $stripped_urls
-        );
+        foreach ( $url_queue as $url ) {
+            $url = strtok( (string) $url, '#' );
+            $url = strtok( (string) $url, '?' );
+
+            $url = str_replace(
+                $wp_site_url,
+                '/',
+                (string) $url
+            );
+
+            $url = str_replace(
+                '//',
+                '/',
+                (string) $url
+            );
+
+            if ( $url ) {
+                $cleaned_urls[] = $url;
+            }
+        }
 
         return $cleaned_urls;
     }
