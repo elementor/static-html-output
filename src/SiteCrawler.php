@@ -152,7 +152,7 @@ class SiteCrawler extends StaticHTMLOutput {
         }
 
         // TODO: add these to Exclusions table
-        $exclusions = [ 'wp-json' ];
+        $exclusions = [];
 
         if ( isset( $this->settings['excludeURLs'] ) ) {
             $user_exclusions = explode(
