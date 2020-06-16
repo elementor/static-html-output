@@ -11,14 +11,21 @@ class TemplateHelper {
     ) : void  {
         $options = $tpl_vars->__get('options');
 
+        $checked = $options->{$field_name} === '1' ? 'checked' : '';
+
         echo "
       <fieldset>
         <label for='{$field_name}'>
-          <input name='{$field_name}' id='{$field_name}' value='1' type='checkbox' " . ( $options->{$field_name} === '1' ? 'checked' : '' ) . ' />
-          <span>' . $field_label . '</span>
+          <input
+            name='{$field_name}'
+            id='{$field_name}'
+            value='1'
+            type='checkbox'
+            $checked />
+          <span>$field_label</span>
         </label>
       </fieldset>
-    ';
+    ";
     }
 
     public function displayTextfield(
@@ -31,7 +38,13 @@ class TemplateHelper {
         $options = $tpl_vars->__get('options');
 
         echo "
-      <input name='{$field_name}' class='regular-text' id='{$field_name}' type='{$type}' value='" . esc_attr( $options->{$field_name} ) . "' placeholder='" . $field_label . "' />
+      <input
+        name='{$field_name}'
+        class='regular-text'
+        id='{$field_name}'
+        type='{$type}'
+        autocomplete='new-password'
+        value='" . esc_attr( $options->{$field_name} ) . "' placeholder='" . $field_label . "' />
       <span class='description'>$description</span>
       <br>
     ";
