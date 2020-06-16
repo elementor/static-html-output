@@ -130,6 +130,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
 = 6.6.19 =
 
+ * fix for password managers trying to fill plugin option fields
  * granular crawl and deploy progress indicators
  * no more txt files polluting uploads dir, slowing things down
  * progress indicator on WP_CLI generate cmd
