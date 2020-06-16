@@ -193,7 +193,7 @@ class BitBucket extends SitePublisher {
             return;
         }
         
-        $this->cliLine( sprintf( 'Batch %d: sending %d files', $this->batch_count, count( $this->files_data ) ) );
+        $this->cliLine( sprintf( 'Batch %d: sending %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
 
         $this->client = new Request();
 
@@ -218,13 +218,17 @@ class BitBucket extends SitePublisher {
             );
 
             foreach ( $this->files_data as $curl_file ) {
+                if ( ! is_object( $curl_file ) ) {
+                    continue;
+                }
+                
                 $deploy_queue_path =
                     str_replace( $this->archive->path, '', $curl_file->name );
 
                 DeployCache::addFile( $deploy_queue_path );
             }
             
-            $this->cliLine( sprintf( 'Batch %d: sent %d files', $this->batch_count, count( $this->files_data ) ) );
+            $this->cliLine( sprintf( 'Batch %d: sent %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
         } catch ( StaticHTMLOutputException $e ) {
             \WP_Cli::error( sprintf( 'Batch %d: failed sending files', $this->batch_count ) );
             $this->handleException( $e );
