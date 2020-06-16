@@ -130,6 +130,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
 = 6.6.20 =
 
+ * include ads.txt in initial crawl list
  * don't force exclude wp-json from crawling
  * fix for password managers trying to fill plugin option fields
  * granular crawl and deploy progress indicators
