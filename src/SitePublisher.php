@@ -32,6 +32,10 @@ abstract class SitePublisher {
      * @var null|\cli\progress\Bar
      */
     public $progress_bar;
+    /**
+     * @var int
+     */
+    public $batch_count = 0;
 
     abstract public function upload_files() : void;
 
@@ -53,12 +57,12 @@ abstract class SitePublisher {
 
     public function loadArchive() : void {
         $this->archive = new Archive();
-        $this->progressBarTick( 'Archive loaded' );
+        $this->cliLine( 'Archive loaded' );
     }
 
     public function bootstrap() : void {
         $this->archive_dir = $this->settings['wp_uploads_path'] . '/static-html-output/';
-        $this->progressBarTick( 'Boots strapped' );
+        $this->cliLine( 'Bootstrapping completed' );
     }
 
     public function pauseBetweenAPICalls() : void {
@@ -212,6 +216,7 @@ abstract class SitePublisher {
     }
 
     public function prepareDeploy( bool $basename_in_target = false ) : void {
+        $this->cliLine( 'Preparing for deployment' );
         $this->clearFileList();
 
         $this->createDeploymentList(
@@ -221,8 +226,6 @@ abstract class SitePublisher {
 
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS';
-        } else {
-            $this->progressBarTick( 'Prepared for deployment' );
         }
     }
 
@@ -262,9 +265,7 @@ abstract class SitePublisher {
     // as is used in deployment tests/not just finalizing deploys
     public function finalizeDeployment() : void {
         if ( ! defined( 'WP_CLI' ) ) {
-            echo 'SUCCESS'; }
-        else {
-            $this->progressBarFinish();
+            echo 'SUCCESS'; 
         }
     }
 
@@ -291,8 +292,6 @@ abstract class SitePublisher {
         Logger::l( 'Deployment: error encountered' );
         Logger::l( $e );
         
-        $this->progressBarFinish();
-        
         throw new StaticHTMLOutputException( $e );
     }
 
@@ -314,19 +313,41 @@ abstract class SitePublisher {
         }
     }
     
+    protected function cliLine( $message ) {
+        if ( ! defined( 'WP_CLI' ) ) {
+            return;
+        }
+        
+        \WP_CLI::log( $message );
+    }
+    
+    protected function progressBarMessage() {
+        $current = 0;
+        
+        if ( !empty( $this->progress_bar ) ) {
+            $current = filter_var( $this->progress_bar->current(), FILTER_SANITIZE_NUMBER_INT );
+            $current++;
+        }
+        
+        return sprintf( 'Batch %d: processing files  %d / %d', $this->batch_count, $current, $this->files_remaining );
+    }
+    
     /**
-     * @param string $message
      * @param int $increment
      */
-    public function progressBarTick( string $message, int $increment = 1 ) {
+    protected function progressBarTick( int $increment = 1, $message = null ) {
         if ( empty( $this->progress_bar ) ) {
             return;
+        }
+        
+        if ( is_null( $message ) ) {
+            $message = $this->progressBarMessage();
         }
         
         $this->progress_bar->tick( $increment, $message );
     }
     
-    public function progressBarFinish() {
+    protected function progressBarFinish() {
         if ( empty( $this->progress_bar ) ) {
             return;
         }
