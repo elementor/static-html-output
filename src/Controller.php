@@ -52,6 +52,16 @@ class Controller {
     }
 
     public static function init( string $bootstrap_file ) : Controller {
+        $legacy_options = get_option( 'wp2static-options' );
+
+        if (
+            isset( $legacy_options['version'] ) &&
+            $legacy_options['version'] > 6.6 &&
+            $legacy_options['version'] < 7.0
+        ) {
+            V6Cleanup::cleanup();
+        }
+
         $instance = self::getInstance();
 
         register_activation_hook( $bootstrap_file, [ 'StaticHTMLOutput\Controller', 'activate' ] );
@@ -109,8 +119,6 @@ class Controller {
     }
 
     public function activate_for_single_site() : void {
-        // add_action( 'init', [ 'StaticHTMLOutput\Controller', 'add_custom_routes' ], 0 );
-
         Logger::createTable();
         $this->setDefaultOptions();
         CrawlQueue::createTable();
