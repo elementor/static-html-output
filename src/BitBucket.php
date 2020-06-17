@@ -187,7 +187,7 @@ class BitBucket extends SitePublisher {
             return;
         }
         
-        \WP_CLI::debug( sprintf( 'Uploading batch %d with %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
+        \WP_CLI::debug( sprintf( 'Sending batch %d with %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
         $this->progressBarBatchUpload();
 
         $this->client = new Request();
@@ -223,10 +223,10 @@ class BitBucket extends SitePublisher {
                 DeployCache::addFile( $deploy_queue_path );
             }
             
-            \WP_CLI::debug( sprintf( 'Uploaded batch %d with %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
+            \WP_CLI::debug( sprintf( 'Sent batch %d with %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
             $this->progressBarTick( 0, 'Deploying' );
         } catch ( StaticHTMLOutputException $e ) {
-            \WP_Cli::error( sprintf( 'Uploading batch %d failed', $this->batch_count ) );
+            \WP_Cli::error( sprintf( 'Sending batch %d failed', $this->batch_count ) );
             $this->handleException( $e );
         }
     }

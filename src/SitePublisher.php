@@ -348,7 +348,7 @@ abstract class SitePublisher {
             $current++;
         }
         
-        return sprintf( 'Processing files %d / %d', $current, $total );
+        return sprintf( 'Deploying: processing files %d / %d', $current, $total );
     }
     
     /**
@@ -379,7 +379,7 @@ abstract class SitePublisher {
             $batches = ceil( $total / $this->settings['deployBatchSize'] );
         }
         
-        $this->progressBarTick( 0, sprintf( 'Uploading batch %d / %d', $this->batch_count, $batches ) );
+        $this->progressBarTick( 0, sprintf( 'Deploying: sending batch %d / %d', $this->batch_count, $batches ) );
         \cli\Streams::out( "\r" );
         $this->progress_bar->display();
     }
