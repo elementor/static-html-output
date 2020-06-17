@@ -330,9 +330,12 @@ abstract class SitePublisher {
         if ( ! defined( 'WP_CLI' ) || ! empty( $this->progress_bar ) ) {
             return;
         }
+        
+        $total  = DeployQueue::getTotal();
+        $total += ceil( $total / $this->settings['deployBatchSize'] );
 
         $this->progress_bar = 
-            \WP_CLI\Utils\make_progress_bar( $this->progressBarMessage(), DeployQueue::getTotal(), 10 );
+            \WP_CLI\Utils\make_progress_bar( 'Deploying', $total, 10 );
     }
     
     protected function progressBarMessage() {

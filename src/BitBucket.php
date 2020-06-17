@@ -224,6 +224,7 @@ class BitBucket extends SitePublisher {
             }
             
             \WP_CLI::debug( sprintf( 'Uploaded batch %d with %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
+            $this->progressBarTick( 0, 'Deploying' );
         } catch ( StaticHTMLOutputException $e ) {
             \WP_Cli::error( sprintf( 'Uploading batch %d failed', $this->batch_count ) );
             $this->handleException( $e );
