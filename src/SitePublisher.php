@@ -266,6 +266,8 @@ abstract class SitePublisher {
     public function finalizeDeployment() : void {
         if ( ! defined( 'WP_CLI' ) ) {
             echo 'SUCCESS'; 
+        } else {
+            $this->progressBarFinish();
         }
     }
 
@@ -313,6 +315,9 @@ abstract class SitePublisher {
         }
     }
     
+    /**
+     * @param string $message
+     */
     protected function cliLine( $message ) {
         if ( ! defined( 'WP_CLI' ) ) {
             return;
@@ -321,19 +326,31 @@ abstract class SitePublisher {
         \WP_CLI::log( $message );
     }
     
+    protected function progressBarInit() {
+        if ( ! defined( 'WP_CLI' ) || ! empty( $this->progress_bar ) ) {
+            return;
+        }
+
+        $this->progress_bar = 
+            \WP_CLI\Utils\make_progress_bar( $this->progressBarMessage(), DeployQueue::getTotal(), 10 );
+    }
+    
     protected function progressBarMessage() {
         $current = 0;
+        $total   = DeployQueue::getTotal();
         
-        if ( !empty( $this->progress_bar ) ) {
+        if ( ! empty( $this->progress_bar ) ) {
+            $total   = filter_Var( $this->progress_bar->total(),   FILTER_SANITIZE_NUMBER_INT );
             $current = filter_var( $this->progress_bar->current(), FILTER_SANITIZE_NUMBER_INT );
             $current++;
         }
         
-        return sprintf( 'Batch %d: processing files  %d / %d', $this->batch_count, $current, $this->files_remaining );
+        return sprintf( 'Processing files %d / %d', $current, $total );
     }
     
     /**
      * @param int $increment
+     * @param null|string $message
      */
     protected function progressBarTick( int $increment = 1, $message = null ) {
         if ( empty( $this->progress_bar ) ) {
@@ -345,6 +362,32 @@ abstract class SitePublisher {
         }
         
         $this->progress_bar->tick( $increment, $message );
+    }
+    
+    protected function progressBarBatchUpload() {
+        static $batches = null;
+        
+        if ( empty( $this->progress_bar ) ) {
+            return;
+        }
+        
+        if ( is_null( $batches ) ) {
+            $total   = filter_Var( $this->progress_bar->total(), FILTER_SANITIZE_NUMBER_INT );
+            $batches = ceil( $total / $this->settings['deployBatchSize'] );
+        }
+        
+        $this->progressBarTick( 0, sprintf( 'Uploading batch %d / %d', $this->batch_count, $batches ) );
+        \cli\Streams::out( "\r" );
+        $this->progress_bar->display();
+    }
+    
+    protected function progressBarDisplay() {
+        if ( empty( $this->progress_bar ) ) {
+            return;
+        }
+        
+        \cli\Streams::out( "\r" );
+        $this->progress_bar->display();
     }
     
     protected function progressBarFinish() {

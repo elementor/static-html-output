@@ -53,13 +53,9 @@ class BitBucket extends SitePublisher {
             echo 'ERROR';
             die(); }
             
-        if ( defined( 'WP_CLI' ) ) {
-            $this->batch_count++;
+        $this->batch_count++;
             
-            $this->progress_bar = 
-                \WP_CLI\Utils\make_progress_bar( $this->progressBarMessage(), $this->files_remaining, 10 );
-        }
-
+        $this->progressBarInit();
         $this->initiateProgressIndicator();
 
         $batch_size = $this->settings['deployBatchSize'];
@@ -74,7 +70,7 @@ class BitBucket extends SitePublisher {
 
         foreach ( $lines as $i => $line ) {
             if ( defined( 'WP_CLI' ) )
-                \WP_CLI::debug( sprintf( 'Batch %d: processing %s', $this->batch_count, $line->url ) );
+                \WP_CLI::debug( sprintf( 'Processing %s', $line->url ) );
             
             $this->local_file = $line->url;
             $this->target_path = $line->remote_path;
@@ -87,7 +83,7 @@ class BitBucket extends SitePublisher {
                 DeployQueue::removeURL( $deploy_queue_path );
                 
                 if ( defined( 'WP_CLI' ) )
-                    \WP_CLI::debug( sprintf( 'Batch %d: skipped %s', $this->batch_count, $line->url ) );
+                    \WP_CLI::debug( sprintf( 'Skipped %s', $line->url ) );
                 
                 $this->progressBarTick();
                 return;
@@ -99,7 +95,7 @@ class BitBucket extends SitePublisher {
                 DeployQueue::removeURL( $deploy_queue_path );
                 
                 if ( defined( 'WP_CLI' ) )
-                    \WP_CLI::warning( sprintf( 'Batch %d: skipped empty %s', $this->batch_count, $line->url ) );
+                    \WP_CLI::warning( sprintf( 'Skipped empty %s', $line->url ) );
                 
                 $this->progressBarTick();
                 return;
@@ -123,12 +119,12 @@ class BitBucket extends SitePublisher {
             $this->updateProgress();
             
             if ( defined( 'WP_CLI' ) )
-                \WP_CLI::debug( sprintf( 'Batch %d: processed %s', $this->batch_count, $line->url ) );
+                \WP_CLI::debug( sprintf( 'Processed %s', $line->url ) );
             
             $this->progressBarTick();
         }
 
-        $this->progressBarFinish();
+        $this->progressBarDisplay();
         $this->sendBatchToBitbucket();
 
         $this->pauseBetweenAPICalls();
@@ -139,7 +135,6 @@ class BitBucket extends SitePublisher {
     }
 
     public function test_upload() : void {
-        $this->cliLine( 'Testing upload' );
         $this->client = new Request();
 
         try {
@@ -171,7 +166,6 @@ class BitBucket extends SitePublisher {
         }
 
         $this->finalizeDeployment();
-        $this->cliLine( 'Upload test successfully completed' );
     }
 
 
@@ -193,7 +187,8 @@ class BitBucket extends SitePublisher {
             return;
         }
         
-        $this->cliLine( sprintf( 'Batch %d: sending %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
+        \WP_CLI::debug( sprintf( 'Uploading batch %d with %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
+        $this->progressBarBatchUpload();
 
         $this->client = new Request();
 
@@ -228,9 +223,9 @@ class BitBucket extends SitePublisher {
                 DeployCache::addFile( $deploy_queue_path );
             }
             
-            $this->cliLine( sprintf( 'Batch %d: sent %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
+            \WP_CLI::debug( sprintf( 'Uploaded batch %d with %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
         } catch ( StaticHTMLOutputException $e ) {
-            \WP_Cli::error( sprintf( 'Batch %d: failed sending files', $this->batch_count ) );
+            \WP_Cli::error( sprintf( 'Uploading batch %d failed', $this->batch_count ) );
             $this->handleException( $e );
         }
     }
