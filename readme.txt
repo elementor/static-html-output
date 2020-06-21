@@ -4,7 +4,7 @@ Tags: security, performance, static
 Requires at least: 3.2
 Tested up to: 5.4.2
 Requires PHP: 7.3
-Stable tag: 6.6.20
+Stable tag: 6.6.21
 
 Publish your website as static HTML for improved performance and security.
 
@@ -128,7 +128,7 @@ Everyone's WordPress hosting environment and configuration is unique, with diffe
 
 == Changelog ==
 
-= 6.6.20 =
+= 6.6.21 =
 
  * include ads.txt in initial crawl list
  * don't force exclude wp-json from crawling

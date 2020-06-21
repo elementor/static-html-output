@@ -46,7 +46,7 @@ class CrawlLog {
             }
 
             $placeholders[] = '(%s, %s, %d)';
-            $values[] = rawurldecode( $url );
+            $values[] = urlencode( $url );
             $values[] = $note;
             $values[] = $status;
         }
@@ -73,7 +73,7 @@ class CrawlLog {
         $rows = $wpdb->get_results( "SELECT url FROM $table_name ORDER by url ASC" );
 
         foreach ( $rows as $row ) {
-            $urls[] = $row->url;
+            $urls[] = urldecode( $row->url );
         }
 
         return $urls;
@@ -166,10 +166,12 @@ class CrawlLog {
 
         $table_name = $wpdb->prefix . 'statichtmloutput_crawl_log';
 
+        $encoded_url = urlencode( $url );
+
         $wpdb->update(
             $table_name,
             [ 'status' => $status ],
-            [ 'url' => $url ]
+            [ 'url' => $encoded_url ]
         );
     }
 
@@ -183,7 +185,10 @@ class CrawlLog {
 
         $table_name = $wpdb->prefix . 'statichtmloutput_crawl_log';
 
-        $has_url = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name where url = '$url'" );
+        $encoded_url = urlencode( $url );
+
+        $has_url =
+            $wpdb->get_var( "SELECT COUNT(*) FROM $table_name where url = '$encoded_url'" );
 
         return (bool) $has_url;
     }

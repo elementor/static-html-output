@@ -3,7 +3,7 @@
  * Plugin Name: Static HTML Output
  * Plugin URI:  https://statichtmloutput.com
  * Description: Security & Performance via static website publishing.
- * Version:     6.6.20
+ * Version:     6.6.21
  * Author:      Leon Stafford
  * Author URI:  https://leonstafford.github.io
  * Text Domain: static-html-output-plugin
@@ -70,7 +70,7 @@ if ( $crawl_log ) {
             $crawl_status = $log_row->status;
         }
 
-        echo str_pad( $crawl_status, 9 ) . " $log_row->url " .
+        echo str_pad( $crawl_status, 9 ) . ' ' . rawurldecode( $log_row->url ) . ' ' .
         "  Note: $log_row->note \t" . PHP_EOL;
     }
 

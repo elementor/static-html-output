@@ -28,7 +28,7 @@ class Controller {
      */
     public $wp_site;
 
-    const VERSION = '6.6.20';
+    const VERSION = '6.6.21';
     const OPTIONS_KEY = 'statichtmloutput-options';
     const HOOK = 'statichtmloutput';
 

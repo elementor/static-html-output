@@ -40,7 +40,7 @@ class CrawlQueue {
             }
 
             $placeholders[] = '(%s)';
-            $values[] = rawurldecode( $url );
+            $values[] = urlencode( $url );
         }
 
         $query_string =
@@ -65,7 +65,7 @@ class CrawlQueue {
         $rows = $wpdb->get_results( "SELECT url FROM $table_name ORDER by url ASC LIMIT $limit" );
 
         foreach ( $rows as $row ) {
-            $urls[] = $row->url;
+            $urls[] = urldecode( $row->url );
         }
 
         return $urls;
@@ -124,9 +124,11 @@ class CrawlQueue {
 
         $table_name = $wpdb->prefix . 'statichtmloutput_urls';
 
+        $encoded_url = urlencode( $url );
+
         $result = $wpdb->delete(
             $table_name,
-            [ 'url' => $url ]
+            [ 'url' => $encoded_url ]
         );
     }
 }
