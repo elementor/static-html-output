@@ -123,16 +123,14 @@ class WPSite {
         $this->site_url = get_home_url() . '/';
         $this->parent_theme_url = get_template_directory_uri();
         $this->wp_content_url = content_url();
-        $this->site_path = ABSPATH;
-        error_log($this->site_path);
-
-        $this->plugins_path = $this->getWPDirFullPath( 'plugins' );
-        $this->wp_uploads_path = $this->getWPDirFullPath( 'uploads' );
-        $this->wp_includes_path = $this->getWPDirFullPath( 'wp-includes' );
-        $this->wp_content_path = $this->getWPDirFullPath( 'wp-content' );
-        $this->theme_root_path = $this->getWPDirFullPath( 'theme-root' );
-        $this->parent_theme_path = $this->getWPDirFullPath( 'parent-theme' );
-        $this->child_theme_path = $this->getWPDirFullPath( 'child-theme' );
+        $this->site_path = wp_normalize_path( ABSPATH );
+        $this->plugins_path = wp_normalize_path( $this->getWPDirFullPath( 'plugins' ) );
+        $this->wp_uploads_path = wp_normalize_path( $this->getWPDirFullPath( 'uploads' ) );
+        $this->wp_includes_path = wp_normalize_path( $this->getWPDirFullPath( 'wp-includes' ) );
+        $this->wp_content_path = wp_normalize_path( $this->getWPDirFullPath( 'wp-content' ) );
+        $this->theme_root_path = wp_normalize_path( $this->getWPDirFullPath( 'theme-root' ) );
+        $this->parent_theme_path = wp_normalize_path( $this->getWPDirFullPath( 'parent-theme' ) );
+        $this->child_theme_path = wp_normalize_path( $this->getWPDirFullPath( 'child-theme' ) );
         $this->child_theme_active =
             $this->parent_theme_path !== $this->child_theme_path;
 
@@ -140,7 +138,7 @@ class WPSite {
 
         $this->wp_inc = '/' . WPINC;
 
-        $this->wp_content = WP_CONTENT_DIR;
+        $this->wp_content = wp_normalize_path( WP_CONTENT_DIR );
         $this->wp_uploads =
                 str_replace( ABSPATH, '/', $this->wp_uploads_path );
         $this->wp_plugins = str_replace( ABSPATH, '/', WP_PLUGIN_DIR );
@@ -161,6 +159,37 @@ class WPSite {
         $this->uploads_writable = $this->uploadsPathIsWritable();
         $this->permalinks_set = $this->permalinksAreDefined();
         $this->curl_enabled = $this->hasCurlSupport();
+    }
+
+    public function __toString() {
+        $wpsite_string = "";
+
+        $wpsite_string .= "Site Path: $this->site_path" . PHP_EOL;
+        $wpsite_string .= "WP Uploads URL: $this->wp_uploads_url" . PHP_EOL;
+        $wpsite_string .= "WP Uploads Path: $this->wp_uploads_path" . PHP_EOL;
+        $wpsite_string .= "WP Uploads ??: $this->wp_uploads" . PHP_EOL;
+        $wpsite_string .= "WP Site Path: $this->wp_site_path" . PHP_EOL;
+        $wpsite_string .= "WP Site Subdirectory: $this->wp_site_subdir" . PHP_EOL;
+        $wpsite_string .= "Uploads URL: $this->uploads_url" . PHP_EOL;
+        $wpsite_string .= "Site URL: $this->site_url" . PHP_EOL;
+        $wpsite_string .= "Parent Theme URL: $this->parent_theme_url" . PHP_EOL;
+        $wpsite_string .= "Parent Theme Path: $this->parent_theme_path" . PHP_EOL;
+        $wpsite_string .= "Child Theme Path: $this->child_theme_path" . PHP_EOL;
+        $wpsite_string .= "Child Theme Active: $this->child_theme_active" . PHP_EOL;
+        $wpsite_string .= "Theme Root Path: $this->theme_root_path" . PHP_EOL;
+        $wpsite_string .= "Themes ??: $this->wp_themes" . PHP_EOL;
+        $wpsite_string .= "Active Theme ??: $this->wp_active_theme" . PHP_EOL;
+        $wpsite_string .= "WP Content URL: $this->wp_content_url" . PHP_EOL;
+        $wpsite_string .= "WP Content Path: $this->wp_content_path" . PHP_EOL;
+        $wpsite_string .= "WP Content ??: $this->wp_content" . PHP_EOL;
+        $wpsite_string .= "Plugins Path: $this->plugins_path" . PHP_EOL;
+        $wpsite_string .= "WP Plugins ??: $this->wp_plugins" . PHP_EOL;
+        $wpsite_string .= "WP Includes Path: $this->wp_includes_path" . PHP_EOL;
+        $wpsite_string .= "Permalink Structure: $this->permalink_structure" . PHP_EOL;
+        $wpsite_string .= "WP Inc Path: $this->wp_inc" . PHP_EOL;
+        $wpsite_string .= "Subdirectory install?: $this->subdirectory" . PHP_EOL;
+
+        return $wpsite_string;
     }
 
     public function isSiteInstalledInSubDirectory() : string {

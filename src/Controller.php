@@ -191,15 +191,6 @@ class Controller {
 
         $this->wp_site = new WPSite();
 
-        foreach( $this->wp_site as $wpsite) {
-            error_log(print_r($this->wp_site, true) . PHP_EOL);
-            error_log( PHP_EOL );
-            error_log( "
-            
-            " );
-
-        }
-
         $target_settings = [
             'general',
             'crawling',
@@ -361,6 +352,12 @@ class Controller {
         }
 
         Logger::l( implode( PHP_EOL, $info ) );
+
+        Logger::l( 'WP Site Info:' );
+
+        $wpsite = new WPSite();
+
+        Logger::l( (string) $wpsite );
 
         Logger::l( 'Active plugins:' );
 

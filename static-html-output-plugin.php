@@ -45,7 +45,6 @@ if ( $export_log ) {
         echo "$log_row->time \t $log_row->log \t" . PHP_EOL;
     }
 
-    die();
     return null;
 }
 
