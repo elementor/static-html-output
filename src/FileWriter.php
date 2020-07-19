@@ -54,6 +54,11 @@ class FileWriter extends StaticHTMLOutput {
         // url decode dirname
         $directory_in_archive = urldecode( $directory_in_archive );
 
+        // TODO: test force fix for Win filepath issue
+        if ( $directory_in_archive === '\\' ) {
+            $directory_in_archive = '';
+        }
+
         if ( ! empty( $this->settings['wp_site_subdir'] ) ) {
             $directory_in_archive = str_replace(
                 $this->settings['wp_site_subdir'],
@@ -65,8 +70,7 @@ class FileWriter extends StaticHTMLOutput {
         $file_dir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
         // set filename to index if no extension && base and filename are  same
-        if ( empty( $path_info['extension'] ) &&
-            $path_info['basename'] === $path_info['filename'] ) {
+        if ( empty( $path_info['extension'] ) && $path_info['basename'] === $path_info['filename'] ) {
             $file_dir .= '/' . urldecode( $path_info['basename'] );
             $path_info['filename'] = 'index';
         }
@@ -83,6 +87,8 @@ class FileWriter extends StaticHTMLOutput {
             $file_extension = 'html';
         } elseif ( $this->file_type == 'xml' ) {
             $file_extension = 'html';
+        } elseif ( $this->file_type == 'json' ) {
+            $file_extension = 'json';
         }
 
         $filename = '';
@@ -105,6 +111,9 @@ class FileWriter extends StaticHTMLOutput {
                 $file_dir . '/' . urldecode( $path_info['filename'] ) .
                 '.' . $file_extension;
         }
+
+        // TODO: note force rm double slashes
+        $filename = str_replace( '//', '/', $filename );
 
         $file_contents = $this->content;
 

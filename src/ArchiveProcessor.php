@@ -184,15 +184,18 @@ class ArchiveProcessor extends StaticHTMLOutput {
         foreach ( $iterator as $filename => $file_object ) {
             $base_name = basename( $filename );
             if ( $base_name != '.' && $base_name != '..' ) {
-                $realpath = realpath( $filename );
+                $realpath = wp_normalize_path( realpath( $filename ) );
+                $archive_path = wp_normalize_path( $this->archive->path );
+                $filename = wp_normalize_path( $filename );
 
                 if ( ! $realpath ) {
+                    Logger::l( "No realpath for filename: $filename" );
                     continue;
                 }
 
                 if ( ! $zip_archive->addFile(
                     $realpath,
-                    str_replace( $this->archive->path, '', $filename )
+                    str_replace( $archive_path, '', $filename )
                 )
                 ) {
                     Logger::l( 'Could not add file: ' . $filename );
