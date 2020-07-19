@@ -191,6 +191,15 @@ class Controller {
 
         $this->wp_site = new WPSite();
 
+        foreach( $this->wp_site as $wpsite) {
+            error_log(print_r($this->wp_site, true) . PHP_EOL);
+            error_log( PHP_EOL );
+            error_log( "
+            
+            " );
+
+        }
+
         $target_settings = [
             'general',
             'crawling',

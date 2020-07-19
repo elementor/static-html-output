@@ -20,9 +20,9 @@ mkdir -p $TMP_DIR
 rm -Rf $TMP_DIR/static-html-output-plugin
 mkdir $TMP_DIR/static-html-output-plugin
 
-
 # clear dev dependencies
 rm -Rf $EXEC_DIR/vendor/*
+
 # load prod deps and optimize loader
 composer install --no-dev --optimize-autoloader
 

@@ -124,6 +124,8 @@ class WPSite {
         $this->parent_theme_url = get_template_directory_uri();
         $this->wp_content_url = content_url();
         $this->site_path = ABSPATH;
+        error_log($this->site_path);
+
         $this->plugins_path = $this->getWPDirFullPath( 'plugins' );
         $this->wp_uploads_path = $this->getWPDirFullPath( 'uploads' );
         $this->wp_includes_path = $this->getWPDirFullPath( 'wp-includes' );

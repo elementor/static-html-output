@@ -125,6 +125,13 @@ Contributions are very much welcome! Please don't be intimidated to file an issu
  - `composer test`
  - `composer coverage` (optional coverage generation, requires [Xdebug](https://xdebug.org))
 
+### Building an install .zip file
+
+ - `composer build INSTALLER_FILENAME`
+
+This will create the installer and place in your `$HOME/Downloads` directory.
+
+On Windows, you will need the `zip` utility available to build an installer. I recommend using Git Bash shell and then manually installing the zip utility as per [these instructions](https://stackoverflow.com/a/55749636/1668057)
 
 ### Localisation / translations
 
