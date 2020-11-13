@@ -2,9 +2,11 @@
 
 # StaticHTMLOutput
 
-WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify, etc.  Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
+[![CircleCI](https://circleci.com/gh/leonstafford/static-html-output.svg?style=svg)](https://circleci.com/gh/leonstafford/static-html-output)
+[![Packagist](https://img.shields.io/packagist/v/wp2static/static-html-output-plugin.svg?color=239922&style=popout)](https://packagist.org/packages/wp2static/static-html-output-plugin)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-239922)](https://github.com/phpstan/phpstan)
 
-[![CircleCI](https://circleci.com/gh/WP2Static/static-html-output-plugin.svg?style=svg)](https://circleci.com/gh/WP2Static/static-html-output-plugin)
+WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify, etc.  Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.
 
 ### Other WordPress SSGs I mantain
 
