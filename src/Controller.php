@@ -28,7 +28,6 @@ class Controller {
      */
     public $wp_site;
 
-    const VERSION = '6.6.21';
     const OPTIONS_KEY = 'statichtmloutput-options';
     const HOOK = 'statichtmloutput';
 
@@ -96,8 +95,8 @@ class Controller {
     public function setDefaultOptions() : void {
         if ( null === $this->options->getOption( 'version' ) ) {
             $this->options
-            ->setOption( 'version', self::VERSION )
-            ->setOption( 'static_export_settings', self::VERSION )
+            ->setOption( 'version', STATICHTMLOUTPUT_VERSION )
+            ->setOption( 'static_export_settings', STATICHTMLOUTPUT_VERSION )
             // set default options
             ->setOption( 'rewriteWPPaths', '1' )
             ->setOption( 'removeConditionalHeadComments', '1' )
@@ -173,7 +172,7 @@ class Controller {
             self::HOOK . '-admin',
             $plugins_url . 'statichtmloutput.css',
             [],
-            self::VERSION
+            STATICHTMLOUTPUT_VERSION
         );
     }
 
@@ -343,7 +342,7 @@ class Controller {
             'WP SITEURL ' . get_option( 'siteurl' ),
             'WP HOME ' . get_option( 'home' ),
             'WP ADDRESS ' . get_bloginfo( 'wpurl' ),
-            'PLUGIN VERSION ' . $this::VERSION,
+            'PLUGIN VERSION ' . STATICHTMLOUTPUT_VERSION,
             'VIA WP-CLI? ' . defined( 'WP_CLI' ),
             'STATIC EXPORT URL ' . $this->exporter->settings['baseUrl'],
             'PERMALINK STRUCTURE ' . get_option( 'permalink_structure' ),

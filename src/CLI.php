@@ -19,7 +19,7 @@ class CLI {
         $environmental_info = [
             [
                 'key' => 'PLUGIN VERSION',
-                'value' => Controller::VERSION,
+                'value' => STATICHTMLOUTPUT_VERSION,
             ],
             [
                 'key' => 'PHP_VERSION',
