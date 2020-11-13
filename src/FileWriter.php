@@ -70,7 +70,10 @@ class FileWriter extends StaticHTMLOutput {
         $file_dir = $archive_dir . ltrim( $directory_in_archive, '/' );
 
         // set filename to index if no extension && base and filename are  same
-        if ( empty( $path_info['extension'] ) && $path_info['basename'] === $path_info['filename'] ) {
+        if (
+            empty( $path_info['extension'] ) &&
+            $path_info['basename'] === $path_info['filename']
+        ) {
             $file_dir .= '/' . urldecode( $path_info['basename'] );
             $path_info['filename'] = 'index';
         }

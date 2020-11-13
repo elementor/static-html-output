@@ -162,7 +162,7 @@ class WPSite {
     }
 
     public function __toString() {
-        $wpsite_string = "";
+        $wpsite_string = '';
 
         $wpsite_string .= "Site Path: $this->site_path" . PHP_EOL;
         $wpsite_string .= "WP Uploads URL: $this->wp_uploads_url" . PHP_EOL;
