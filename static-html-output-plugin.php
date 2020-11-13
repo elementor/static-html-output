@@ -122,6 +122,12 @@ if ( $deploy_progress ) {
     wp_send_json( $json_response, 200 );
 }
 
+/**
+ * Define Settings link for plugin
+ *
+ * @param string[] $links array of links
+ * @return string[] modified array of links
+ */
 function static_html_output_action_links( $links ) {
     $settings_link = '<a href="admin.php?page=statichtmloutput">Settings</a>';
     array_unshift( $links, $settings_link );
