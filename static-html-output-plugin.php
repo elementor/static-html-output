@@ -141,7 +141,7 @@ add_filter(
 );
 add_action( 'wp_ajax_wp_static_html_output_ajax', 'static_html_output_ajax' );
 
-function static_html_output_ajax() {
+function static_html_output_ajax() : void {
     $valid_referer = check_ajax_referer( 'statichtmloutput', 'nonce' );
 
     if ( ! $valid_referer ) {
@@ -162,7 +162,12 @@ function static_html_output_ajax() {
 
     if ( in_array( $ajax_method, $controller_methods ) ) {
         $class = StaticHTMLOutput\Controller::getInstance();
-        call_user_func( [ $class, $ajax_method ] );
+
+        $callback = [ $class, $ajax_method ];
+
+        if ( is_callable( $callback ) ) {
+            call_user_func( $callback );
+        }
 
         wp_die();
     } elseif ( strpos( $ajax_method, 'crawl' ) !== false ) {
@@ -296,7 +301,11 @@ function static_html_output_ajax() {
         wp_die();
     }
 
-    call_user_func( [ $class, $ajax_method ] );
+    $callback = [ $class, $ajax_method ];
+
+    if ( is_callable( $callback ) ) {
+        call_user_func( $callback );
+    }
 
     wp_die();
 }
@@ -304,7 +313,7 @@ function static_html_output_ajax() {
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
-function wp_static_html_output_deregister_scripts() {
+function wp_static_html_output_deregister_scripts() : void {
     wp_deregister_script( 'wp-embed' );
     wp_deregister_script( 'comment-reply' );
 }
@@ -313,6 +322,7 @@ add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
 remove_action( 'wp_head', 'wlwmanifest_link' );
 
 if ( defined( 'WP_CLI' ) ) {
+    // @phpstan-ignore-next-line
     WP_CLI::add_command( 'statichtmloutput', 'StaticHTMLOutput\CLI' );
     WP_CLI::add_command( 'statichtmloutput options', [ 'StaticHTMLOutput\CLI', 'options' ] );
 }
