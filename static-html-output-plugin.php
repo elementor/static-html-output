@@ -135,21 +135,6 @@ function static_html_output_action_links( $links ) {
     return $links;
 }
 
-function wp_static_html_output_server_side_export() {
-    $plugin = Controller::getInstance();
-    $plugin->doExportWithoutGUI();
-    wp_die();
-}
-
-add_action(
-    'static_html_output_server_side_export_hook',
-    'static_html_output_server_side_export',
-    10,
-    0
-);
-
-
-
 add_filter(
     'plugin_action_links_' . plugin_basename( __FILE__ ),
     'static_html_output_action_links'
