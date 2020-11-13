@@ -224,7 +224,9 @@ class Controller {
         if ( $instance->options->selected_deployment_option === 'folder' ) {
             $instance->options->selected_deployment_option = 'zip';
 
+            // @phpstan-ignore-next-line
             if ( $instance->options->{'baseUrl-folder'} ) {
+                // @phpstan-ignore-next-line
                 $instance->options->{'baseUrl-zip'} = $instance->options->{'baseUrl-folder'};
             }
         }

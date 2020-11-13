@@ -461,7 +461,7 @@ class FilesHelper {
         $category_links = [];
 
         foreach ( $taxonomies as $taxonomy ) {
-            if ( ! isset( $taxonomy->name ) ) {
+            if ( ! $taxonomy->name ) {
                 continue;
             }
 

@@ -184,7 +184,7 @@ class ArchiveProcessor extends StaticHTMLOutput {
         foreach ( $iterator as $filename => $file_object ) {
             $base_name = basename( $filename );
             if ( $base_name != '.' && $base_name != '..' ) {
-                $realpath = wp_normalize_path( realpath( $filename ) );
+                $realpath = wp_normalize_path( (string) realpath( $filename ) );
                 $archive_path = wp_normalize_path( $this->archive->path );
                 $filename = wp_normalize_path( $filename );
 
