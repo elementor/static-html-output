@@ -7,6 +7,7 @@ parameters:
     inferPrivatePropertyTypeFromConstructor: true
     paths:
         - %currentWorkingDirectory%/src/
+        - %currentWorkingDirectory%/static-html-output-plugin.php
     scanFiles:
         - %currentWorkingDirectory%/tests/phpstan/constants.php
         - %currentWorkingDirectory%/tests/phpstan/wp-cli-stubs-2.2.0.php

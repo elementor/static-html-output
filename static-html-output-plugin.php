@@ -75,7 +75,6 @@ if ( $crawl_log ) {
     }
 
     die();
-    return null;
 }
 
 if ( $crawl_queue ) {
@@ -91,7 +90,6 @@ if ( $crawl_queue ) {
     echo implode( $detected_urls, PHP_EOL );
 
     die();
-    return null;
 }
 
 if ( $crawl_progress ) {
@@ -135,7 +133,6 @@ function wp_static_html_output_server_side_export() {
     $plugin = Controller::getInstance();
     $plugin->doExportWithoutGUI();
     wp_die();
-    return null;
 }
 
 add_action(
@@ -158,7 +155,6 @@ function static_html_output_ajax() {
 
     if ( ! $valid_referer ) {
         wp_die();
-        return null;
     }
 
     $ajax_method = filter_input( INPUT_POST, 'ajax_action' );
@@ -178,7 +174,6 @@ function static_html_output_ajax() {
         call_user_func( [ $class, $ajax_method ] );
 
         wp_die();
-        return null;
     } elseif ( strpos( $ajax_method, 'crawl' ) !== false ) {
         $class = new StaticHTMLOutput\SiteCrawler();
     } elseif ( strpos( $ajax_method, 'bitbucket' ) !== false ) {
@@ -201,7 +196,6 @@ function static_html_output_ajax() {
         }
 
         wp_die();
-        return null;
     } elseif ( strpos( $ajax_method, 'gitlab' ) !== false ) {
         $class = new StaticHTMLOutput\GitLab();
 
@@ -223,7 +217,6 @@ function static_html_output_ajax() {
         }
 
         wp_die();
-        return null;
     } elseif ( strpos( $ajax_method, 'github' ) !== false ) {
         $class = new StaticHTMLOutput\GitHub();
 
@@ -244,7 +237,6 @@ function static_html_output_ajax() {
         }
 
         wp_die();
-        return null;
     } elseif ( strpos( $ajax_method, 'netlify' ) !== false ) {
         $class = new StaticHTMLOutput\Netlify();
 
@@ -261,7 +253,6 @@ function static_html_output_ajax() {
         }
 
         wp_die();
-        return null;
     } elseif ( strpos( $ajax_method, 's3' ) !== false ) {
         $class = new StaticHTMLOutput\S3();
 
@@ -285,7 +276,6 @@ function static_html_output_ajax() {
         }
 
         wp_die();
-        return null;
     } elseif ( strpos( $ajax_method, 'cloudfront' ) !== false ) {
         $class = new StaticHTMLOutput\S3();
     } elseif ( strpos( $ajax_method, 'bunny' ) !== false ) {
@@ -311,16 +301,13 @@ function static_html_output_ajax() {
         }
 
         wp_die();
-        return null;
     } else {
         wp_die();
-        return null;
     }
 
     call_user_func( [ $class, $ajax_method ] );
 
     wp_die();
-    return null;
 }
 
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
