@@ -162,48 +162,45 @@ class WPSite {
     }
 
     public function __toString() {
-        $wpsite_string = '';
-
-        $wpsite_string .= "Site Path: $this->site_path" . PHP_EOL;
-        $wpsite_string .= "WP Uploads URL: $this->wp_uploads_url" . PHP_EOL;
-        $wpsite_string .= "WP Uploads Path: $this->wp_uploads_path" . PHP_EOL;
-        $wpsite_string .= "WP Uploads ??: $this->wp_uploads" . PHP_EOL;
-        $wpsite_string .= "WP Site Path: $this->wp_site_path" . PHP_EOL;
-        $wpsite_string .= "WP Site Subdirectory: $this->wp_site_subdir" . PHP_EOL;
-        $wpsite_string .= "Uploads URL: $this->uploads_url" . PHP_EOL;
-        $wpsite_string .= "Site URL: $this->site_url" . PHP_EOL;
-        $wpsite_string .= "Parent Theme URL: $this->parent_theme_url" . PHP_EOL;
-        $wpsite_string .= "Parent Theme Path: $this->parent_theme_path" . PHP_EOL;
-        $wpsite_string .= "Child Theme Path: $this->child_theme_path" . PHP_EOL;
-        $wpsite_string .= "Child Theme Active: $this->child_theme_active" . PHP_EOL;
-        $wpsite_string .= "Theme Root Path: $this->theme_root_path" . PHP_EOL;
-        $wpsite_string .= "Themes ??: $this->wp_themes" . PHP_EOL;
-        $wpsite_string .= "Active Theme ??: $this->wp_active_theme" . PHP_EOL;
-        $wpsite_string .= "WP Content URL: $this->wp_content_url" . PHP_EOL;
-        $wpsite_string .= "WP Content Path: $this->wp_content_path" . PHP_EOL;
-        $wpsite_string .= "WP Content ??: $this->wp_content" . PHP_EOL;
-        $wpsite_string .= "Plugins Path: $this->plugins_path" . PHP_EOL;
-        $wpsite_string .= "WP Plugins ??: $this->wp_plugins" . PHP_EOL;
-        $wpsite_string .= "WP Includes Path: $this->wp_includes_path" . PHP_EOL;
-        $wpsite_string .= "Permalink Structure: $this->permalink_structure" . PHP_EOL;
-        $wpsite_string .= "WP Inc Path: $this->wp_inc" . PHP_EOL;
-        $wpsite_string .= "Subdirectory install?: $this->subdirectory" . PHP_EOL;
-
-        return $wpsite_string;
+        return implode(
+            PHP_EOL,
+            [
+                "Site Path: {$this->site_path}",
+                "WP Uploads URL: {$this->wp_uploads_url}",
+                "WP Uploads Path: {$this->wp_uploads_path}",
+                "WP Uploads ??: {$this->wp_uploads}",
+                "WP Site Path: {$this->wp_site_path}",
+                "WP Site Subdirectory: {$this->wp_site_subdir}",
+                "Uploads URL: {$this->uploads_url}",
+                "Site URL: {$this->site_url}",
+                "Parent Theme URL: {$this->parent_theme_url}",
+                "Parent Theme Path: {$this->parent_theme_path}",
+                "Child Theme Path: {$this->child_theme_path}",
+                "Child Theme Active: {$this->child_theme_active}",
+                "Theme Root Path: {$this->theme_root_path}",
+                "Themes ??: {$this->wp_themes}",
+                "Active Theme ??: {$this->wp_active_theme}",
+                "WP Content URL: {$this->wp_content_url}",
+                "WP Content Path: {$this->wp_content_path}",
+                "WP Content ??: {$this->wp_content}",
+                "Plugins Path: {$this->plugins_path}",
+                "WP Plugins ??: {$this->wp_plugins}",
+                "WP Includes Path: {$this->wp_includes_path}",
+                "Permalink Structure: {$this->permalink_structure}",
+                "WP Inc Path: {$this->wp_inc}",
+                "Subdirectory install?: {$this->subdirectory}",
+            ]
+        ) . PHP_EOL;
     }
 
     public function isSiteInstalledInSubDirectory() : string {
         $parsed_site_url = parse_url( rtrim( $this->site_url, '/' ) );
 
-        if ( ! is_array( $parsed_site_url ) ) {
+        if ( ! is_array( $parsed_site_url ) || ! array_key_exists( 'path', $parsed_site_url ) ) {
             return '';
         }
 
-        if ( array_key_exists( 'path', $parsed_site_url ) ) {
-            return $parsed_site_url['path'];
-        }
-
-        return '';
+        return $parsed_site_url['path'];
     }
 
     public function uploadsPathIsWritable() : bool {
@@ -219,8 +216,8 @@ class WPSite {
     }
 
     public function detect_base_url() : void {
-        $site_url = get_option( 'siteurl' );
-        $home = get_option( 'home' );
+        $this->site_url = get_option( 'siteurl' );
+        $this->home = get_option( 'home' );
     }
 
     /*
@@ -310,11 +307,7 @@ class WPSite {
     public function getWPContentSubDirectory() : string {
         $parsed_url = parse_url( $this->parent_theme_url );
 
-        if ( ! is_array( $parsed_url ) ) {
-            return '';
-        }
-
-        if ( ! array_key_exists( 'path', $parsed_url ) ) {
+        if ( ! is_array( $parsed_url ) || ! array_key_exists( 'path', $parsed_url ) ) {
             return '';
         }
 
@@ -331,11 +324,10 @@ class WPSite {
 
         */
 
-        if ( count( $path_segments ) === 5 ) {
-            return $path_segments[1] . '/';
-        } else {
+        if ( count( $path_segments ) !== 5 ) {
             return '';
         }
+
+        return $path_segments[1] . '/';
     }
 }
-
