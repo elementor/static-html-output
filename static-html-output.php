@@ -7,7 +7,7 @@
  * Version:     6.6.23-dev
  * Author:      Leon Stafford
  * Author URI:  https://ljs.dev
- * Text Domain: static-html-output-plugin
+ * Text Domain: static-html-output
  *
  * @package     WP_Static_HTML_Output
  */

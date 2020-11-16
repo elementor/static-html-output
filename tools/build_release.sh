@@ -17,8 +17,8 @@ TMP_DIR=$HOME/plugintmp
 rm -Rf $TMP_DIR
 mkdir -p $TMP_DIR
 
-rm -Rf $TMP_DIR/static-html-output-plugin
-mkdir $TMP_DIR/static-html-output-plugin
+rm -Rf $TMP_DIR/static-html-output
+mkdir $TMP_DIR/static-html-output
 
 # clear dev dependencies
 rm -Rf $EXEC_DIR/vendor/*
@@ -28,13 +28,13 @@ composer install --no-dev --optimize-autoloader
 
 
 # cp all required sources to build dir
-cp -r $EXEC_DIR/*.php $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/*.css $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/src $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/vendor $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output-plugin/
-cp -r $EXEC_DIR/views $TMP_DIR/static-html-output-plugin/
-#cp -r $EXEC_DIR/wpassets $TMP_DIR/static-html-output-plugin/
+cp -r $EXEC_DIR/*.php $TMP_DIR/static-html-output/
+cp -r $EXEC_DIR/*.css $TMP_DIR/static-html-output/
+cp -r $EXEC_DIR/src $TMP_DIR/static-html-output/
+cp -r $EXEC_DIR/vendor $TMP_DIR/static-html-output/
+cp -r $EXEC_DIR/readme.txt $TMP_DIR/static-html-output/
+cp -r $EXEC_DIR/views $TMP_DIR/static-html-output/
+#cp -r $EXEC_DIR/wpassets $TMP_DIR/static-html-output/
 
 cd $TMP_DIR
 
@@ -42,7 +42,7 @@ cd $TMP_DIR
 find . -type d -exec chmod 755 {} \;
 find . -type f -exec chmod 644 {} \;
 
-zip -r -9 ./$1.zip ./static-html-output-plugin
+zip -r -9 ./$1.zip ./static-html-output
 
 cd -
 

@@ -12,10 +12,10 @@
       ],
     "type": "wordpress-plugin",
     "support": {
-        "issues": "https://github.com/WP2Static/static-html-output/issues",
+        "issues": "https://github.com/leonstafford/static-html-output/issues",
         "forum": "https://www.staticword.press/c/wordpress-static-site-generators/static-html-output/7",
         "docs": "https://statichtmloutput.com",
-        "source": "https://github.com/WP2Static/static-html-output"
+        "source": "https://github.com/leonstafford/static-html-output"
     },
     "require": {
         "php": ">=7.3",

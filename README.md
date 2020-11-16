@@ -11,7 +11,6 @@ WordPress plugin to generate a static copy of your site and deploy to GitHub Pag
  - [WP2Static](https://github.com/WP2Static/wp2static)
  - [SimplerStatic](https://github.com/WP2Static/simplerstatic)
 
- - [Static HTML Output on wordpress.org](https://wordpress.org/plugins/static-html-output-plugin)
  - [Homepage](https://statichtmloutput.com)
  - [Documentation](https://statichtmloutput.com/docs/)
  - [Support Forum](https://www.staticword.press/c/wordpress-static-site-generators/static-html-output/7)
@@ -91,7 +90,7 @@ Archive Object
     [settings] => Array
         (
             [selected_deployment_option] => github
-            [baseUrl] => https://leonstafford.github.io/demo-site-wordpress-static-html-output-plugin/
+            [baseUrl] => https://leonstafford.github.io/demo-site-wordpress-static-html-output/
             [wp_site_url] => http://example.test/
             [wp_site_path] => /srv/www/example.com/current/web/wp/
             [wp_uploads_path] => /srv/www/example.com/current/web/app/uploads
@@ -119,8 +118,8 @@ Contributions are very much welcome! Please don't be intimidated to file an issu
 
 ### Developing
 
- - `git clone git@github.com:WP2Static/static-html-output-plugin.git`
- - `cd static-html-output-plugin`
+ - `git clone git@github.com:WP2Static/static-html-output.git`
+ - `cd static-html-output`
  - `composer install`
  - `composer test`
  - `composer coverage` (optional coverage generation, requires [Xdebug](https://xdebug.org))
@@ -139,5 +138,5 @@ Localisation within the plugin isn't supported. Rather, it's recommended to use 
 
 ## Support
 
-Please [raise an issue](https://github.com/WP2Static/static-html-output-plugin/issues/new) here on GitHub or on the plugin's [support forum](https://forum.wp2static.com).
+Please [raise an issue](https://github.com/WP2Static/static-html-output/issues/new) here on GitHub or on the plugin's [support forum](https://forum.wp2static.com).
 
