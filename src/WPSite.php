@@ -11,6 +11,10 @@ class WPSite {
     /**
      * @var string
      */
+    public $home;
+    /**
+     * @var string
+     */
     public $site_url;
     /**
      * @var string
@@ -146,7 +150,8 @@ class WPSite {
         $this->wp_active_theme =
             str_replace( home_url(), '', get_template_directory_uri() );
 
-        $this->detect_base_url();
+        $this->site_url = get_option( 'siteurl' );
+        $this->home = get_option( 'home' );
 
         $this->subdirectory = $this->isSiteInstalledInSubDirectory();
 
@@ -213,11 +218,6 @@ class WPSite {
 
     public function permalinksAreDefined() : bool {
         return strlen( get_option( 'permalink_structure' ) ) > 0;
-    }
-
-    public function detect_base_url() : void {
-        $this->site_url = get_option( 'siteurl' );
-        $this->home = get_option( 'home' );
     }
 
     /*
