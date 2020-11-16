@@ -1,9 +1,7 @@
-[![Static HTML Output](https://cdn.statically.io/img/statichtmloutput.com/wp-content/uploads/2020/05/cropped-logo.png?w=200&f=auto)](https://statichtmloutput.com)
-
 # StaticHTMLOutput
 
 [![CircleCI](https://circleci.com/gh/leonstafford/static-html-output.svg?style=svg)](https://circleci.com/gh/leonstafford/static-html-output)
-[![Packagist](https://img.shields.io/packagist/v/wp2static/static-html-output-plugin.svg?color=239922&style=popout)](https://packagist.org/packages/wp2static/static-html-output-plugin)
+[![Packagist](https://img.shields.io/packagist/v/leonstafford/static-html-output.svg?color=239922&style=popout)](https://packagist.org/packages/leonstafford/static-html-output)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-239922)](https://github.com/phpstan/phpstan)
 
 WordPress plugin to generate a static copy of your site and deploy to GitHub Pages, S3, Netlify, etc.  Increase security, pageload speed and hosting options. Connect WordPress into your CI/CD workflow.

@@ -4,7 +4,7 @@
  * Plugin Name: Static HTML Output
  * Plugin URI:  https://statichtmloutput.com
  * Description: Security & Performance via static website publishing.
- * Version:     6.6.22
+ * Version:     6.6.23-dev
  * Author:      Leon Stafford
  * Author URI:  https://ljs.dev
  * Text Domain: static-html-output-plugin
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     die;
 }
 
-define( 'STATICHTMLOUTPUT_VERSION', '6.6.22' );
+define( 'STATICHTMLOUTPUT_VERSION', '6.6.23-dev' );
 define( 'STATICHTMLOUTPUT_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( file_exists( STATICHTMLOUTPUT_PATH . 'vendor/autoload.php' ) ) {
