@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Static HTML Output
  * Plugin URI:  https://statichtmloutput.com
@@ -11,9 +12,7 @@
  * @package     WP_Static_HTML_Output
  */
 
-
-
-if ( ! defined( 'WPINC' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
     die;
 }
 
@@ -46,7 +45,7 @@ if ( $export_log ) {
         echo "$log_row->time \t $log_row->log \t" . PHP_EOL;
     }
 
-    return null;
+    return;
 }
 
 if ( $crawl_log ) {
@@ -322,7 +321,6 @@ add_action( 'wp_footer', 'wp_static_html_output_deregister_scripts' );
 remove_action( 'wp_head', 'wlwmanifest_link' );
 
 if ( defined( 'WP_CLI' ) ) {
-    // @phpstan-ignore-next-line
-    WP_CLI::add_command( 'statichtmloutput', 'StaticHTMLOutput\CLI' );
-    WP_CLI::add_command( 'statichtmloutput options', [ 'StaticHTMLOutput\CLI', 'options' ] );
+    WP_CLI::add_command( 'statichtmloutput', StaticHTMLOutput\CLI::class );
+    WP_CLI::add_command( 'statichtmloutput options', [ StaticHTMLOutput\CLI::class, 'options' ] );
 }

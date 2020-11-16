@@ -13,4 +13,5 @@ parameters:
         - %currentWorkingDirectory%/tests/phpstan/wp-cli-stubs-2.2.0.php
     ignoreErrors:
         - '#[a-zA-Z0-9\\_]+superglobal[a-zA-Z0-9\\_]+#'
-    excludes_analyse:
+        # WP-CLI accepts a class as callable
+        - '/^Parameter #2 \$callable of static method WP_CLI::add_command\(\) expects callable\(\): mixed, \S+ given\.$/'
