@@ -1,4 +1,4 @@
-# StaticHTMLOutput
+# Static HTML Output
 
 [![CircleCI](https://circleci.com/gh/leonstafford/static-html-output.svg?style=svg)](https://circleci.com/gh/leonstafford/static-html-output)
 [![Packagist](https://img.shields.io/packagist/v/leonstafford/static-html-output.svg?color=239922&style=popout)](https://packagist.org/packages/leonstafford/static-html-output)
