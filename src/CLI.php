@@ -146,7 +146,9 @@ class CLI {
             }
         }
 
-        WP_CLI::log( 'Deploying static site' );
+        if ( ! $test ) {
+            WP_CLI::log( 'Deploying static site' );
+        }
 
         $deployer = new Deployer();
 

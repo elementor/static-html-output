@@ -44,9 +44,6 @@ class BitBucket extends SitePublisher {
         );
 
         $this->api_base = 'https://api.bitbucket.org/2.0/repositories/';
-
-        if ( defined( 'WP_CLI' ) ) {
-            return; }
     }
 
     public function upload_files() : void {
@@ -55,7 +52,10 @@ class BitBucket extends SitePublisher {
         if ( $this->files_remaining < 0 ) {
             echo 'ERROR';
             die(); }
-
+            
+        $this->batch_count++;
+            
+        $this->progressBarInit();
         $this->initiateProgressIndicator();
 
         $batch_size = $this->settings['deployBatchSize'];
@@ -68,7 +68,10 @@ class BitBucket extends SitePublisher {
 
         $this->files_data = [];
 
-        foreach ( $lines as $line ) {
+        foreach ( $lines as $i => $line ) {
+            if ( defined( 'WP_CLI' ) )
+                \WP_CLI::debug( sprintf( 'Processing %s', $line->url ) );
+            
             $this->local_file = $line->url;
             $this->target_path = $line->remote_path;
 
@@ -78,6 +81,11 @@ class BitBucket extends SitePublisher {
 
             if ( ! is_file( $this->local_file ) ) {
                 DeployQueue::removeURL( $deploy_queue_path );
+                
+                if ( defined( 'WP_CLI' ) )
+                    \WP_CLI::debug( sprintf( 'Skipped %s', $line->url ) );
+                
+                $this->progressBarTick();
                 return;
             }
 
@@ -85,6 +93,11 @@ class BitBucket extends SitePublisher {
 
             if ( ! $this->local_file_contents ) {
                 DeployQueue::removeURL( $deploy_queue_path );
+                
+                if ( defined( 'WP_CLI' ) )
+                    \WP_CLI::warning( sprintf( 'Skipped empty %s', $line->url ) );
+                
+                $this->progressBarTick();
                 return;
             }
 
@@ -104,8 +117,14 @@ class BitBucket extends SitePublisher {
 
             // NOTE: progress will indicate file preparation, not the transfer
             $this->updateProgress();
+            
+            if ( defined( 'WP_CLI' ) )
+                \WP_CLI::debug( sprintf( 'Processed %s', $line->url ) );
+            
+            $this->progressBarTick();
         }
 
+        $this->progressBarDisplay();
         $this->sendBatchToBitbucket();
 
         $this->pauseBetweenAPICalls();
@@ -142,6 +161,7 @@ class BitBucket extends SitePublisher {
                 [ 200, 201, 301, 302, 304 ]
             );
         } catch ( StaticHTMLOutputException $e ) {
+            \WP_CLI::error( 'Upload test failed' );
             $this->handleException( $e );
         }
 
@@ -166,6 +186,9 @@ class BitBucket extends SitePublisher {
         if ( ! $this->files_data ) {
             return;
         }
+        
+        \WP_CLI::debug( sprintf( 'Sending batch %d with %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
+        $this->progressBarBatchUpload();
 
         $this->client = new Request();
 
@@ -190,12 +213,20 @@ class BitBucket extends SitePublisher {
             );
 
             foreach ( $this->files_data as $curl_file ) {
+                if ( ! is_object( $curl_file ) ) {
+                    continue;
+                }
+                
                 $deploy_queue_path =
                     str_replace( $this->archive->path, '', $curl_file->name );
 
                 DeployCache::addFile( $deploy_queue_path );
             }
+            
+            \WP_CLI::debug( sprintf( 'Sent batch %d with %d files', $this->batch_count, count( $this->files_data ) - 1 ) ); // subtract one to account for 'message' key in files_data array
+            $this->progressBarTick( 0, 'Deploying' );
         } catch ( StaticHTMLOutputException $e ) {
+            \WP_Cli::error( sprintf( 'Sending batch %d failed', $this->batch_count ) );
             $this->handleException( $e );
         }
     }
