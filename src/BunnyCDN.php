@@ -40,10 +40,6 @@ class BunnyCDN extends SitePublisher {
             $this->api_base = 'https://storage.bunnycdn.com';
         }
 
-        if ( defined( 'WP_CLI' ) ) {
-            return;
-        }
-
         $this->account_client = new Client( [ 'base_uri' => $this->api_base ] );
         $this->account_headers =
             [ 'AccessKey' => $this->settings['bunnycdnStorageZoneAccessKey'] ];
