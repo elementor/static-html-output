@@ -84,25 +84,25 @@ class HTMLProcessor extends StaticHTMLOutput {
     public $tlds;
 
     public function __construct(
+        string $base_url,
+        string $wp_site_url,
+        string $wp_uploads_path,
         bool $remove_conditional_head_comments = false,
         bool $remove_html_comments = false,
         bool $remove_wp_links = false,
         bool $remove_wp_meta = false,
         string $rewrite_rules = '',
-        string $base_url,
         string $selected_deployment_option = 'zip',
-        string $wp_site_url,
-        string $wp_uploads_path
     ) {
+        $this->base_url = $base_url;
+        $this->wp_site_url = $wp_site_url;
+        $this->wp_uploads_path = $wp_uploads_path;
         $this->remove_conditional_head_comments = $remove_conditional_head_comments;
         $this->remove_html_comments = $remove_html_comments;
         $this->remove_wp_links = $remove_wp_links;
         $this->remove_wp_meta = $remove_wp_meta;
         $this->rewrite_rules = $rewrite_rules;
-        $this->base_url = $base_url;
         $this->selected_deployment_option = $selected_deployment_option;
-        $this->wp_site_url = $wp_site_url;
-        $this->wp_uploads_path = $wp_uploads_path;
         $this->processed_urls = [];
         $this->tlds = [
             'app',

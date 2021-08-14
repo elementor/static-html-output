@@ -316,15 +316,15 @@ class SiteCrawler extends StaticHTMLOutput {
                 }
 
                 $processor = new HTMLProcessor(
+                    $this->settings['baseUrl'],
+                    $this->settings['wp_site_url'],
+                    $this->settings['wp_uploads_path'],
                     $this->settings['removeConditionalHeadComments'],
                     $this->settings['removeHTMLComments'],
                     $this->settings['removeWPLinks'],
                     $this->settings['removeWPMeta'],
                     $this->settings['rewrite_rules'],
-                    $this->settings['baseUrl'],
                     $this->settings['selected_deployment_option'],
-                    $this->settings['wp_site_url'],
-                    $this->settings['wp_uploads_path']
                 );
 
                 $processed = $processor->processHTML(

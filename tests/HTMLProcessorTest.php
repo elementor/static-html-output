@@ -36,15 +36,15 @@ final class HTMLProcessorTest extends TestCase {
 
         */
         $html_processor = new HTMLProcessor(
+            '', // $base_url
+            '', // $wp_site_url
+            '', // $wp_uploads_path
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            '', // $base_url
             '', // $selected_deployment_option = 'zip'
-            '', // $wp_site_url
-            '' // $wp_uploads_path
         );
 
         $html_processor->placeholder_url = 'https://PLACEHOLDER.wpsho/';
@@ -134,15 +134,15 @@ final class HTMLProcessorTest extends TestCase {
         $element = $links[0];
 
         $html_processor = new HTMLProcessor(
+            'https://mynewdomain.com', // $base_url
+            'http://mywpsite.com', // $wp_site_url
+            '', // $wp_uploads_path
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            'https://mynewdomain.com', // $base_url
             '', // $selected_deployment_option = 'zip'
-            'http://mywpsite.com', // $wp_site_url
-            '' // $wp_uploads_path
         );
 
         $html_processor->page_url = new \Net_URL2(
@@ -207,15 +207,15 @@ final class HTMLProcessorTest extends TestCase {
        ) {
 
         $html_processor = new HTMLProcessor(
+            '', // $base_url
+            $site_url, // $wp_site_url
+            '', // $wp_uploads_path
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            '', // $base_url
             '', // $selected_deployment_option = 'zip'
-            $site_url, // $wp_site_url
-            '' // $wp_uploads_path
         );
 
         $this->assertEquals(
@@ -329,29 +329,29 @@ final class HTMLProcessorTest extends TestCase {
      * @dataProvider processHTMLProvider
      */
     public function testProcessHTML(
+        $base_url, // deployment URL
+        $wp_site_url,
+        $wp_uploads_path, // temp write file during test while refactoring
         $remove_conditional_head_comments,
         $remove_html_comments,
         $remove_wp_links,
         $remove_wp_meta,
         $rewrite_rules,
-        $base_url, // deployment URL
         $selected_deployment_option,
-        $wp_site_url,
-        $wp_uploads_path, // temp write file during test while refactoring
         $page_url, // url of current HTML page being processed
         $input_html_content,
         $output_html_content
         ) {
         $html_processor = new HTMLProcessor(
+            $base_url,
+            $wp_site_url,
+            $wp_uploads_path,
             $remove_conditional_head_comments,
             $remove_html_comments,
             $remove_wp_links,
             $remove_wp_meta,
             $rewrite_rules,
-            $base_url,
             $selected_deployment_option,
-            $wp_site_url,
-            $wp_uploads_path
         );
 
         $html_processor->processHTML( $input_html_content, $page_url );
@@ -362,141 +362,141 @@ final class HTMLProcessorTest extends TestCase {
     public function processHTMLProvider() {
         return [
             'preserves HTML encoding within <code> el' => [
+                'https://mynewdomain.com', // $base_url
+                'http://localhost:4040', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'https://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://localhost:4040', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mywpsite.com/a-page/',
                 $this->loadTestHTML( 'input_preserves_html_entities_within_code_element' ),
                 $this->loadTestHTML( 'output_preserves_html_entities_within_code_element' ),
             ],
             'rewrites DNS prefetch with port in WP Site URL' => [
+                'https://mynewdomain.com', // $base_url
+                'http://localhost:4040', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'https://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://localhost:4040', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mywpsite.com/a-page/',
                 $this->loadTestHTML( 'input_prefetch_site_url_with_custom_port' ),
                 $this->loadTestHTML( 'output_prefetch_site_url_with_custom_port' ),
             ],
             'Unicode within page' => [
+                'https://mynewdomain.com', // $base_url
+                'http://localhost:4040', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'https://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://localhost:4040', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mywpsite.com/a-page/',
                 $this->loadTestHTML( 'input_unicode_within_page' ),
                 $this->loadTestHTML( 'output_unicode_within_page' ),
             ],
             'process link elements without stripping option enabled' => [
+                'https://mynewdomain.com', // $base_url
+                'http://mydomain.com', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'https://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://mydomain.com', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mydomain.com/',
                 $this->loadTestHTML( 'input_process_links_without_stripping' ),
                 $this->loadTestHTML( 'output_process_links_without_stripping' ),
             ],
             'process link elements with stripping option enabled' => [
+                'https://mynewdomain.com', // $base_url
+                'http://mydomain.com', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 true, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'https://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://mydomain.com', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://mydomain.com/',
                 $this->loadTestHTML( 'input_process_links_with_stripping' ),
                 $this->loadTestHTML( 'output_process_links_with_stripping' ),
             ],
             'forces https on safe external URLs if destination protocol is https' => [
+                'https://mynewdomain.com', // $base_url
+                'http://localhost', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'https://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://localhost', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost/',
                 $this->loadTestHTML( 'input_force_external_urls_to_https_to_match_destination' ),
                 $this->loadTestHTML( 'output_force_external_urls_to_https_to_match_destination' ),
             ],
             'no force https on external URLs if destination protocol is http' => [
+                'http://mynewdomain.com', // $base_url
+                'http://localhost', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'http://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://localhost', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost/',
                 $this->loadTestHTML( 'input_no_force_https_external_urls_for_http_destination' ),
                 $this->loadTestHTML( 'output_no_force_https_external_urls_for_http_destination' ),
             ],
             'rewrites encoded site url with custom port to https' => [
+                'https://mynewdomain.com', // $base_url
+                'http://localhost:4444', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'https://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://localhost:4444', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost:4444/',
                 $this->loadTestHTML( 'input_encoded_site_url_with_custom_port' ),
                 $this->loadTestHTML( 'output_encoded_site_url_with_custom_port' ),
             ],
             'rewrites inline styles forcing https to match destination' => [
+                'https://mynewdomain.com', // $base_url
+                'http://localhost:4444', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'https://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://localhost:4444', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost:4444/',
                 $this->loadTestHTML( 'input_inline_style_processing' ),
                 $this->loadTestHTML( 'output_inline_style_processing' ),
             ],
             'preserves non-URI meta content values, rewrites Site URL without port' => [
+                'https://mynewdomain.com', // $base_url
+                'http://localhost:4444', // $wp_site_url
+                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 false, // $remove_conditional_head_comments = false
                 false, // $remove_html_comments = false
                 false, // $remove_wp_links = false
                 false, // $remove_wp_meta = false
                 '', // $rewrite_rules = ''
-                'https://mynewdomain.com', // $base_url
                 '', // $selected_deployment_option = 'zip'
-                'http://localhost:4444', // $wp_site_url
-                '/tmp/', // $wp_uploads_path - temp write file during test while refactoring
                 'http://localhost:4444/',
                 $this->loadTestHTML( 'input_meta_contents' ),
                 $this->loadTestHTML( 'output_meta_contents' ),
