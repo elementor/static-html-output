@@ -136,19 +136,16 @@ class Options {
     /**
      * @param mixed[] $value
      */
-    public function __set( string $name, $value ) : Options {
+    public function __set( string $name, $value ) : void {
         $this->statichtmloutput_options[ $name ] = $value;
-
-        // NOTE: this is required, not certain why, investigate
-        // and make more intuitive
-        return $this;
     }
 
     /**
      * @param mixed $value
      */
-    public function setOption( string $name, $value ) : Options {
-        return $this->__set( $name, $value );
+    public function setOption( string $name, $value ) : self {
+        $this->__set( $name, $value );
+        return $this;
     }
 
     /**

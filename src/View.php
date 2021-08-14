@@ -35,7 +35,7 @@ class View {
         $this->path = implode( '/', $path_array );
     }
 
-    public function setTemplate( string $tpl ) : View {
+    public function setTemplate( string $tpl ) : self {
         $this->template = $tpl;
         $this->variables = [];
         return $this;
@@ -44,16 +44,16 @@ class View {
     /**
      * @param mixed $value template variable value
      */
-    public function __set( string $name, $value ) : View {
+    public function __set( string $name, $value ) : void {
         $this->variables[ $name ] = $value;
-        return $this;
     }
 
     /**
      * @param mixed $value template variable value
      */
-    public function assign( string $name, $value ) : View {
-        return $this->__set( $name, $value );
+    public function assign( string $name, $value ) : self {
+        $this->__set( $name, $value );
+        return $this;
     }
 
     /**
@@ -67,7 +67,7 @@ class View {
         return $value;
     }
 
-    public function render() : View {
+    public function render() : self {
         $file = $this->path . '/' . $this->template . $this->extension;
 
         include $file;

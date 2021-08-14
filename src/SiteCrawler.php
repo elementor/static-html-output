@@ -175,8 +175,8 @@ class SiteCrawler extends StaticHTMLOutput {
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
                 if ( $exclusion != '' ) {
-                    $exclusion = str_replace('/', '\/', $exclusion);
-                    if ( preg_match("/$exclusion/", $this->url) ) {
+                    $exclusion = str_replace( '/', '\/', $exclusion );
+                    if ( preg_match( "/$exclusion/", $this->url ) ) {
                         Logger::l(
                             'Excluding ' . $this->url .
                             ' because of rule ' . $exclusion
