@@ -292,10 +292,10 @@ class FilesHelper {
      * @param mixed[] $settings
      */
     public static function buildInitialFileList(
-        bool $via_cli = false,
         string $uploads_path,
         string $uploads_url,
         array $settings
+        bool $via_cli = false,
         ) : int {
         $wp_site = new WPSite();
 

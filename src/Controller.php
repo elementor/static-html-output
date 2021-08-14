@@ -205,10 +205,10 @@ class Controller {
 
         $initial_file_list_count =
             FilesHelper::buildInitialFileList(
-                true,
                 $this->wp_site->wp_uploads_path,
                 $this->wp_site->uploads_url,
-                $this->settings
+                $this->settings,
+                true,
             );
     }
 
