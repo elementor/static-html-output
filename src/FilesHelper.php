@@ -294,7 +294,7 @@ class FilesHelper {
     public static function buildInitialFileList(
         string $uploads_path,
         string $uploads_url,
-        array $settings
+        array $settings,
         bool $via_cli = false,
         ) : int {
         $wp_site = new WPSite();
