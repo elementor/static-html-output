@@ -465,6 +465,7 @@ class FilesHelper {
                 continue;
             }
 
+            // should return WP_Term[]
             $terms = get_terms(
                 $taxonomy->name,
                 [
@@ -477,6 +478,10 @@ class FilesHelper {
             }
 
             foreach ( $terms as $term ) {
+                if ( ! $term instanceof \WP_Term ) {
+                    continue;
+                }
+
                 $term_link = get_term_link( $term );
 
                 if ( ! is_string( $term_link ) ) {
