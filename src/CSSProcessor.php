@@ -88,7 +88,7 @@ class CSSProcessor extends StaticHTMLOutput {
         bool $remove_wp_links = false,
         bool $remove_wp_meta = false,
         string $rewrite_rules = '',
-        string $selected_deployment_option = 'zip',
+        string $selected_deployment_option = 'zip'
     ) {
         $this->base_url = $base_url;
         $this->wp_site_url = $wp_site_url;

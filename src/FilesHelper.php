@@ -295,7 +295,7 @@ class FilesHelper {
         string $uploads_path,
         string $uploads_url,
         array $settings,
-        bool $via_cli = false,
+        bool $via_cli = false
         ) : int {
         $wp_site = new WPSite();
 

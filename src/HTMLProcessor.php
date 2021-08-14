@@ -92,7 +92,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         bool $remove_wp_links = false,
         bool $remove_wp_meta = false,
         string $rewrite_rules = '',
-        string $selected_deployment_option = 'zip',
+        string $selected_deployment_option = 'zip'
     ) {
         $this->base_url = $base_url;
         $this->wp_site_url = $wp_site_url;
@@ -696,7 +696,7 @@ class HTMLProcessor extends StaticHTMLOutput {
             $this->remove_wp_links,
             $this->remove_wp_meta,
             $this->rewrite_rules,
-            $this->selected_deployment_option,
+            $this->selected_deployment_option
         );
 
         $processed = $processor->processCSS(
