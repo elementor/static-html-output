@@ -35,15 +35,15 @@ final class CSSProcessorTest extends TestCase {
 
         */
         $css_processor = new CSSProcessor(
+            'https://deploysite.com/', // $base_url
+            'http://localsite.com/', // $wp_site_url
+            '/tmp/', // $wp_uploads_path
             false, // $remove_conditional_head_comments = false
             false, // $remove_html_comments = false
             false, // $remove_wp_links = false
             false, // $remove_wp_meta = false
             '', // $rewrite_rules = false
-            'https://deploysite.com/', // $base_url
             '', // $selected_deployment_option = 'zip'
-            'http://localsite.com/', // $wp_site_url
-            '/tmp/' // $wp_uploads_path
         );
 
         $css_processor->processCSS(

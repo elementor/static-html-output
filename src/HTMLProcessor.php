@@ -688,15 +688,15 @@ class HTMLProcessor extends StaticHTMLOutput {
         }
 
         $processor = new CSSProcessor(
+            $this->base_url,
+            $this->wp_site_url,
+            $this->wp_uploads_path,
             $this->remove_conditional_head_comments,
             $this->remove_html_comments,
             $this->remove_wp_links,
             $this->remove_wp_meta,
             $this->rewrite_rules,
-            $this->base_url,
             $this->selected_deployment_option,
-            $this->wp_site_url,
-            $this->wp_uploads_path
         );
 
         $processed = $processor->processCSS(
@@ -1316,15 +1316,15 @@ class HTMLProcessor extends StaticHTMLOutput {
         $css_doc .= '}' . PHP_EOL;
 
         $processor = new CSSProcessor(
+            $this->base_url,
+            $this->wp_site_url,
+            $this->wp_uploads_path,
             $this->remove_conditional_head_comments,
             $this->remove_html_comments,
             $this->remove_wp_links,
             $this->remove_wp_meta,
             $this->rewrite_rules,
-            $this->base_url,
             $this->selected_deployment_option,
-            $this->wp_site_url,
-            $this->wp_uploads_path
         );
 
         $processed = $processor->processCSS(
