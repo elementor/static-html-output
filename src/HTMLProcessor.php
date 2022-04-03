@@ -768,7 +768,7 @@ class HTMLProcessor extends StaticHTMLOutput {
         // early abort invalid links as early as possible
         // to save overhead/potential errors
         // apply to other functions
-        if ( $url[0] === '#' ) {
+        if ( empty( $url ) || $url[0] === '#' ) {
             return;
         }
 
