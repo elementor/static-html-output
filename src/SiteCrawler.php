@@ -169,8 +169,8 @@ class SiteCrawler extends StaticHTMLOutput {
         foreach ( $this->urls_to_crawl as $link_to_crawl ) {
             $this->url = $link_to_crawl;
 
-            $this->full_url = $this->settings['wp_site_url'] .
-                ltrim( $this->url, '/' );
+            $this->full_url = rtrim($this->settings['wp_site_url'], '/') .
+                $this->url;
 
             foreach ( $exclusions as $exclusion ) {
                 $exclusion = trim( $exclusion );
