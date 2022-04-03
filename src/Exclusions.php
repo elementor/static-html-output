@@ -65,7 +65,7 @@ class Exclusions {
         $rows = $wpdb->get_results( "SELECT pattern FROM $table_name" );
 
         foreach ( $rows as $row ) {
-            $patterns[] = $row->url;
+            $patterns[] = $row->pattern;
         }
 
         return $patterns;
