@@ -325,7 +325,7 @@ class FilesHelper {
         );
 
         $unique_urls = array_unique( $url_queue );
-        array_filter( $unique_urls );
+        $unique_urls = array_filter( $unique_urls );
         sort( $unique_urls );
 
         $initial_crawl_list_total = count( $unique_urls );
